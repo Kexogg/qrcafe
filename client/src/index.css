@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.no-ring:focus-visible {
+    @apply focus:ring-0 focus:ring-offset-0 focus:outline-none;
+}
