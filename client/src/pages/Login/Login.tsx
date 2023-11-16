@@ -4,6 +4,8 @@ import {QrReader} from "react-qr-reader";
 import TextField from "../../components/UI/TextField/TextField.tsx";
 import QrCodeScannerRoundedIcon from '@mui/icons-material/QrCodeScannerRounded';
 import {CodeInputForm} from "../../components/UI/CodeInputForm/CodeInputForm.tsx";
+import {Waiter} from "../../types/Waiter.ts";
+import {AccountCircle} from "@mui/icons-material";
 
 enum LOGIN_SCREEN_STATES {
     INITIAL,
@@ -25,8 +27,12 @@ const InitialScreen = ({setLoginScreenState}: InitialScreenProps) => {
     return (
         <>
             <QrCodeScannerRoundedIcon fontSize={"inherit"} style={{fontSize: 200}} className={'mx-auto'}/>
-            <h1 className={'max-w-sm mx-auto'}>Для совершения заказа отсканируйте QR код на столике</h1>
+            <h1 className={'max-w-sm mx-auto text-xl'}>Для совершения заказа отсканируйте QR код на столике</h1>
             <div className={buttonBoxClass}>
+                <small className={'opacity-50 mt-auto'}>
+                    Нажав на кнопку, вы даете согласие на обработку персональных данных в соответствии с <a
+                    className={'underline opacity-60'} href={'#'}>политикой конфиденциальности</a>
+                </small>
                 <Button label={'Сканировать код'} onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.QR_CODE_INPUT)
                 }}/>
@@ -104,6 +110,9 @@ type NameInputScreenProps = {
     name: string
 }
 const NameInputScreen = ({setLoginScreenState, setName, name}: NameInputScreenProps) => {
+    const verifyName = (name: string): boolean => {
+        return !(name.length >= 2 && name.length <= 10)
+    }
     return (
         <>
             <label className={'flex flex-col items-center mt-[25%]'}>
@@ -111,7 +120,7 @@ const NameInputScreen = ({setLoginScreenState, setName, name}: NameInputScreenPr
                 <TextField placeholder={'Введите имя'} onChange={(e) => setName(e.target.value)}/>
             </label>
             <div className={buttonBoxClass}>
-                <Button label={'Продолжить'} border disabled={name.length == 0} onClick={() => {
+                <Button label={'Продолжить'} border disabled={verifyName(name)} onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.WAITER_INFO)
                 }}/>
                 <Button label={'Пропустить'} dark border onClick={() => {
@@ -127,12 +136,26 @@ type WaiterInfoScreenProps = {
     name: string
 }
 const WaiterInfoScreen = ({setLoginScreenState, name}: WaiterInfoScreenProps) => {
+    //TODO: Remove placeholder, get actual data info
+    const waiter = new Waiter('Иванов Иван Иванович', '0001');
     return (
         <>
-            <h1>
-                Здравствуйте, {name}!
+            <h1 className={'my-3 text-3xl'}>
+                {name ?
+                    <>Добро пожаловать, <br/>{name}!</>
+                    :
+                    <>Добро пожаловать!</>}
             </h1>
-            Вас обслуживает <b>Иванов Иван Иванович</b>
+            <section className={'flex flex-col justify-center items-center'}>
+                <b className={'text-lg'}>Вас обслуживает</b>
+                {waiter.image ?
+                    <img src={waiter.image} alt={waiter.name}
+                         className={'my-5 mx-auto w-auto h-40 object-cover aspect-square rounded-full'}/>
+                    :
+                    <AccountCircle fontSize={'inherit'} style={{fontSize: 105}} className={'mx-auto my-5'}/>}
+                <p className={'col-span-1 text-2xl'}>{waiter.name}</p>
+            </section>
+
             <div className={buttonBoxClass}>
                 <Button label={'Продолжить'} border onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.DONE)
