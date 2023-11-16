@@ -15,4 +15,7 @@
     input[type="number"] {
         -moz-appearance: textfield;
     }
+    button {
+        -webkit-tap-highlight-color: transparent;
+    }
 }

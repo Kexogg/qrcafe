@@ -1,5 +1,5 @@
 import {Button} from "../../components/UI/Button/Button.tsx";
-import { useState} from "react";
+import {useState} from "react";
 import {QrReader} from "react-qr-reader";
 import TextField from "../../components/UI/TextField/TextField.tsx";
 import QrCodeScannerRoundedIcon from '@mui/icons-material/QrCodeScannerRounded';
@@ -13,6 +13,7 @@ enum LOGIN_SCREEN_STATES {
     WAITER_INFO,
     DONE
 }
+
 const buttonBoxClass = 'flex flex-col gap-3 mt-auto';
 
 
@@ -29,42 +30,8 @@ const InitialScreen = ({setLoginScreenState}: InitialScreenProps) => {
                 <Button label={'Сканировать код'} onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.QR_CODE_INPUT)
                 }}/>
-                <Button label={'Ввести код'} dark={true} border={true} onClick={() => {
+                <Button label={'Ввести код'} dark border onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.CODE_INPUT)
-                }}/>
-            </div>
-        </>
-    )
-}
-
-type QRCodeInputScreenProps = {
-    setLoginScreenState: React.Dispatch<React.SetStateAction<LOGIN_SCREEN_STATES>>,
-    verifyCode: (code: string) => boolean,
-    setData: React.Dispatch<React.SetStateAction<string>>,
-    data: string
-}
-const QRCodeInputScreen = ({ setLoginScreenState, verifyCode, setData, data }: QRCodeInputScreenProps) => {
-    return (<>
-            <QrReader constraints={{facingMode: 'environment'}}
-                      onResult={(result, error) => {
-                          if (result) {
-                              if (verifyCode(result.getText())) {
-                                  setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT);
-                                  setData(result.getText());
-                              } else console.log('Invalid code');
-                          }
-                          if (error) {
-                              console.debug(error);
-                          }
-                      }} className={'max-w-[50vh] w-full mx-auto'}
-            />
-            <p>{data}</p>
-            <div className={'flex flex-col gap-3 mt-auto'}>
-                <Button label={'Назад'} dark border onClick={() => {
-                    setLoginScreenState(LOGIN_SCREEN_STATES.INITIAL)
-                }}/>
-                <Button label={'ПРОПУСТИТЬ (DEBUG)'} border onClick={() => {
-                    setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT)
                 }}/>
             </div>
         </>
@@ -77,8 +44,35 @@ type CodeInputScreenProps = {
     setData: React.Dispatch<React.SetStateAction<string>>,
     data: string
 }
+const QRCodeInputScreen = ({setLoginScreenState, verifyCode, setData, data}: CodeInputScreenProps) => {
+    return (<>
+            <QrReader constraints={{facingMode: 'environment'}}
+                      onResult={(result, error) => {
+                          if (result) {
+                              if (verifyCode(result.getText())) {
+                                  setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT);
+                                  setData(result.getText());
+                              } else console.log('Invalid code');
+                          }
+                          if (error) {
+                              console.debug(error);
+                          }
+                      }} className={'max-w-[40vh] w-full mx-auto'}
+            />
+            <p>{data}</p>
+            <div className={'flex flex-col gap-3 mt-auto'}>
+                <Button label={'Назад'} dark border onClick={() => {
+                    setLoginScreenState(LOGIN_SCREEN_STATES.INITIAL)
+                }}/>
+                <Button label={'ПРОПУСТИТЬ (DEBUG)'} onClick={() => {
+                    setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT)
+                }}/>
+            </div>
+        </>
+    )
+}
 
-const CodeInputScreen = ({ setLoginScreenState, verifyCode, setData, data }: CodeInputScreenProps) => {
+const CodeInputScreen = ({setLoginScreenState, verifyCode, setData, data}: CodeInputScreenProps) => {
     const handleCode = (code: string) => {
         if (verifyCode(code)) {
             //setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT);
@@ -93,7 +87,7 @@ const CodeInputScreen = ({ setLoginScreenState, verifyCode, setData, data }: Cod
                 <CodeInputForm length={6} verifyCode={handleCode}/>
             </label>
             <div className={buttonBoxClass}>
-                <Button label={'Продолжить'} border disabled={data.length == 0} onClick={() => {
+                <Button label={'Продолжить'} disabled={data.length == 0} onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT)
                 }}/>
                 <Button label={'Назад'} dark border onClick={() => {
@@ -109,7 +103,7 @@ type NameInputScreenProps = {
     setName: React.Dispatch<React.SetStateAction<string>>,
     name: string
 }
-const NameInputScreen = ({ setLoginScreenState, setName, name }: NameInputScreenProps) => {
+const NameInputScreen = ({setLoginScreenState, setName, name}: NameInputScreenProps) => {
     return (
         <>
             <label className={'flex flex-col items-center mt-[25%]'}>
@@ -132,7 +126,7 @@ type WaiterInfoScreenProps = {
     setLoginScreenState: React.Dispatch<React.SetStateAction<LOGIN_SCREEN_STATES>>,
     name: string
 }
-const WaiterInfoScreen = ({ setLoginScreenState, name }: WaiterInfoScreenProps) => {
+const WaiterInfoScreen = ({setLoginScreenState, name}: WaiterInfoScreenProps) => {
     return (
         <>
             <h1>
@@ -163,9 +157,11 @@ export const Login = () => {
         case LOGIN_SCREEN_STATES.INITIAL:
             return <InitialScreen setLoginScreenState={setLoginScreenState}/>
         case LOGIN_SCREEN_STATES.QR_CODE_INPUT:
-            return <QRCodeInputScreen setLoginScreenState={setLoginScreenState} verifyCode={verifyCode} setData={setData} data={data}/>
+            return <QRCodeInputScreen setLoginScreenState={setLoginScreenState} verifyCode={verifyCode}
+                                      setData={setData} data={data}/>
         case LOGIN_SCREEN_STATES.CODE_INPUT:
-            return <CodeInputScreen setLoginScreenState={setLoginScreenState} verifyCode={verifyCode} setData={setData} data={data}/>
+            return <CodeInputScreen setLoginScreenState={setLoginScreenState} verifyCode={verifyCode} setData={setData}
+                                    data={data}/>
         case LOGIN_SCREEN_STATES.NAME_INPUT:
             //TODO: add name verification
             return <NameInputScreen setLoginScreenState={setLoginScreenState} setName={setName} name={name}/>

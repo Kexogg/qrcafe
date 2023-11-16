@@ -65,7 +65,6 @@ export const CodeInputForm = ({length, verifyCode}: CodeInputProps) => {
         }
 
     }, [allowedKeys, getNextInput, modifierKeys]);
-
     const onInputPaste = useCallback((e: React.ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
         const text = e.clipboardData.getData('text/plain');
@@ -85,10 +84,10 @@ export const CodeInputForm = ({length, verifyCode}: CodeInputProps) => {
 
 
     return (
-        <div className={'flex gap-5 w-full'}>
+        <div className={'flex gap-2 sm:gap-3 w-full text-4xl sm:text-5xl'}>
             {[...Array(length)].map((_, i) =>
                 <input key={'bid' + i} type={"number"} id={'code_input_' + i} required={true}
-                       className={'code_input pb-1 valid:bg-primary-500 no-ring bg-transparent border-2 border-primary-400 focus:border-primary-200 rounded-3xl text-6xl min-w-0 text-center placeholder-primary-400'}
+                       className={'transition-colors code_input aspect-[3/4] rounded-3xl valid:bg-primary-500 no-ring bg-transparent border-2 border-primary-400 focus:border-primary-200 min-w-0 text-center placeholder-primary-400'}
                        maxLength={1} minLength={1} max={9} min={0} placeholder={(i + 1).toString()}
                        onChange={onInputChange}
                        onPaste={onInputPaste}
