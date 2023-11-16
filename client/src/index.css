@@ -5,3 +5,14 @@
 .no-ring:focus-visible {
     @apply focus:ring-0 focus:ring-offset-0 focus:outline-none;
 }
+@layer base {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+
+    }
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+}
