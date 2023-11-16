@@ -52,7 +52,7 @@ type CodeInputScreenProps = {
 }
 const QRCodeInputScreen = ({setLoginScreenState, verifyCode, setData, data}: CodeInputScreenProps) => {
     return (<>
-            <QrReader constraints={{facingMode: 'environment'}}
+            <QrReader className={'max-w-sm w-full mx-auto'} constraints={{facingMode: 'environment'}}
                       onResult={(result, error) => {
                           if (result) {
                               if (verifyCode(result.getText())) {
@@ -63,7 +63,7 @@ const QRCodeInputScreen = ({setLoginScreenState, verifyCode, setData, data}: Cod
                           if (error) {
                               console.debug(error);
                           }
-                      }} className={'max-w-[40vh] w-full mx-auto'}
+                      }}
             />
             <p>{data}</p>
             <div className={'flex flex-col gap-3 mt-auto'}>
@@ -111,23 +111,23 @@ type NameInputScreenProps = {
 }
 const NameInputScreen = ({setLoginScreenState, setName, name}: NameInputScreenProps) => {
     const verifyName = (name: string): boolean => {
-        return !(name.length >= 2 && name.length <= 10)
+        return !(name.length >= 2 && name.length <= 10 && /^[а-яА-ЯёЁa-zA-Z]+$/.test(name));
     }
     return (
-        <>
-            <label className={'flex flex-col items-center mt-[25%]'}>
-                <h1>Как Вас зовут?</h1>
+        <form className={'h-full flex flex-col'}>
+            <label className={'flex flex-col items-center'}>
+                <h1 className={'my-5'}>Как Вас зовут?</h1>
                 <TextField placeholder={'Введите имя'} onChange={(e) => setName(e.target.value)}/>
             </label>
             <div className={buttonBoxClass}>
-                <Button label={'Продолжить'} border disabled={verifyName(name)} onClick={() => {
+                <Button label={'Продолжить'} disabled={verifyName(name)} onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.WAITER_INFO)
                 }}/>
                 <Button label={'Пропустить'} dark border onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.WAITER_INFO)
                 }}/>
             </div>
-        </>
+        </form>
     )
 }
 
@@ -152,12 +152,12 @@ const WaiterInfoScreen = ({setLoginScreenState, name}: WaiterInfoScreenProps) =>
                     <img src={waiter.image} alt={waiter.name}
                          className={'my-5 mx-auto w-auto h-40 object-cover aspect-square rounded-full'}/>
                     :
-                    <AccountCircle fontSize={'inherit'} style={{fontSize: 105}} className={'mx-auto my-5'}/>}
+                    <AccountCircle fontSize={'inherit'} style={{fontSize: 120}} className={'mx-auto my-5'}/>}
                 <p className={'col-span-1 text-2xl'}>{waiter.name}</p>
             </section>
 
             <div className={buttonBoxClass}>
-                <Button label={'Продолжить'} border onClick={() => {
+                <Button label={'Продолжить'} onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.DONE)
                 }}/>
             </div>
@@ -170,7 +170,6 @@ export const Login = () => {
         //TODO: add code verification
         console.log('Code verification requested: ' + code)
         return !!code;
-
     }
     const [loginScreenState, setLoginScreenState] = useState<LOGIN_SCREEN_STATES>(0);
     const [data, setData] = useState('');
