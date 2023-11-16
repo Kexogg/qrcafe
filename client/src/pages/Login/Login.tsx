@@ -48,15 +48,13 @@ const QRCodeInputScreen = ({ setLoginScreenState, verifyCode, setData, data }: Q
             <QrReader constraints={{facingMode: 'environment'}}
                       onResult={(result, error) => {
                           if (result) {
-                              // @ts-ignore
-                              if (verifyCode(result.text)) {
+                              if (verifyCode(result.getText())) {
                                   setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT);
-                                  // @ts-ignore
-                                  setData(result.text);
+                                  setData(result.getText());
                               } else console.log('Invalid code');
                           }
                           if (error) {
-                              console.info(error);
+                              console.debug(error);
                           }
                       }} className={'max-w-[50vh] w-full mx-auto'}
             />
@@ -81,23 +79,28 @@ type CodeInputScreenProps = {
 }
 
 const CodeInputScreen = ({ setLoginScreenState, verifyCode, setData, data }: CodeInputScreenProps) => {
+    const handleCode = (code: string) => {
+        if (verifyCode(code)) {
+            //setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT);
+            //TODO: add notification about code verification
+            setData(code);
+        }
+    }
     return (
-        <>
+        <form className={'flex h-full flex-col'}>
             <label className={'flex flex-col items-center mt-[25%]'}>
                 <h1>Введите код столика</h1>
-                <CodeInputForm length={6} verifyCode={verifyCode}/>
+                <CodeInputForm length={6} verifyCode={handleCode}/>
             </label>
             <div className={buttonBoxClass}>
                 <Button label={'Продолжить'} border disabled={data.length == 0} onClick={() => {
-                    //TODO: set data
-                    setData('123456');
                     setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT)
                 }}/>
                 <Button label={'Назад'} dark border onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.INITIAL)
                 }}/>
             </div>
-        </>
+        </form>
     )
 }
 

@@ -2,7 +2,7 @@ import {useCallback, useMemo, useRef} from "react";
 
 type CodeInputProps = {
     length: number
-    verifyCode: (code: string) => boolean
+    verifyCode: (code: string) => void
 }
 
 export const CodeInputForm = ({length, verifyCode}: CodeInputProps) => {
