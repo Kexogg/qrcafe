@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import plugin from 'tailwindcss/plugin';
 export default {
   content: [
     "./index.html",
@@ -39,6 +40,14 @@ export default {
       sans: ['Nunito Sans', ...defaultTheme.fontFamily.sans]
     }*/
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addBase, theme }) {
+      addBase({
+        h1: { fontSize: theme('fontSize.2xl') },
+        h2: { fontSize: theme('fontSize.xl') },
+        h3: { fontSize: theme('fontSize.lg') }
+      });
+    })
+  ]
 }
 
