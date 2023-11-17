@@ -88,8 +88,8 @@ const CodeInputScreen = ({setLoginScreenState, verifyCode, setData, data}: CodeI
     }
     return (
         <form className={'flex h-full flex-col'}>
-            <label className={'flex flex-col items-center mt-[25%]'}>
-                <h1>Введите код столика</h1>
+            <label className={'flex flex-col items-center'}>
+                <h1 className={'my-5'}>Введите код столика</h1>
                 <CodeInputForm length={6} verifyCode={handleCode}/>
             </label>
             <div className={buttonBoxClass}>
@@ -132,10 +132,9 @@ const NameInputScreen = ({setLoginScreenState, setName, name}: NameInputScreenPr
 }
 
 type WaiterInfoScreenProps = {
-    setLoginScreenState: React.Dispatch<React.SetStateAction<LOGIN_SCREEN_STATES>>,
     name: string
 }
-const WaiterInfoScreen = ({setLoginScreenState, name}: WaiterInfoScreenProps) => {
+const WaiterInfoScreen = ({name}: WaiterInfoScreenProps) => {
     //TODO: Remove placeholder, get actual data info
     const waiter = new Waiter('Иванов Иван Иванович', '0001');
     return (
@@ -155,11 +154,8 @@ const WaiterInfoScreen = ({setLoginScreenState, name}: WaiterInfoScreenProps) =>
                     <AccountCircle fontSize={'inherit'} style={{fontSize: 120}} className={'mx-auto my-5'}/>}
                 <p className={'col-span-1 text-2xl'}>{waiter.name}</p>
             </section>
-
             <div className={buttonBoxClass}>
-                <Button label={'Продолжить'} onClick={() => {
-                    setLoginScreenState(LOGIN_SCREEN_STATES.DONE)
-                }}/>
+                <Button href={'/customer'} label={'Продолжить'}/>
             </div>
         </>
     )
