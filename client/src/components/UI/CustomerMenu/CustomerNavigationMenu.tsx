@@ -21,7 +21,7 @@ export const CustomerNavigationMenu = () => {
             <ul className={'flex justify-around bg-primary-700'}>
                 {menuItems.map((item) => (
                     <li key={item.path}>
-                        <Link className={`block p-3 ${location.pathname.includes(item.path) ? 'text-primary-50' : 'text-primary-300'}`} to={item.path}>
+                        <Link className={`block p-3 active:bg-white/10 ${location.pathname.includes(item.path) ? 'text-primary-50' : 'text-primary-300'}`} to={item.path}>
                             {item.icon}
                         </Link>
                     </li>
