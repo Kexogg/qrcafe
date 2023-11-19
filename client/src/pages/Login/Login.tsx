@@ -6,6 +6,7 @@ import QrCodeScannerRoundedIcon from '@mui/icons-material/QrCodeScannerRounded';
 import {CodeInputForm} from "../../components/UI/CodeInputForm/CodeInputForm.tsx";
 import {Waiter} from "../../types/Waiter.ts";
 import {AccountCircle} from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
 
 enum LOGIN_SCREEN_STATES {
     INITIAL,
@@ -132,9 +133,10 @@ const NameInputScreen = ({setLoginScreenState, setName, name}: NameInputScreenPr
 }
 
 type WaiterInfoScreenProps = {
-    name: string
+    name: string,
+    setLoginScreenState: React.Dispatch<React.SetStateAction<LOGIN_SCREEN_STATES>>
 }
-const WaiterInfoScreen = ({name}: WaiterInfoScreenProps) => {
+const WaiterInfoScreen = ({name, setLoginScreenState}: WaiterInfoScreenProps) => {
     //TODO: Remove placeholder, get actual data info
     const waiter = new Waiter('Иванов Иван Иванович', '0001');
     return (
@@ -155,7 +157,7 @@ const WaiterInfoScreen = ({name}: WaiterInfoScreenProps) => {
                 <p className={'col-span-1 text-2xl'}>{waiter.name}</p>
             </section>
             <div className={buttonBoxClass}>
-                <Button href={'/customer'} label={'Продолжить'}/>
+                <Button label={'Продолжить'} onClick={() => setLoginScreenState(LOGIN_SCREEN_STATES.DONE)}/>
             </div>
         </>
     )
@@ -170,7 +172,7 @@ export const Login = () => {
     const [loginScreenState, setLoginScreenState] = useState<LOGIN_SCREEN_STATES>(0);
     const [data, setData] = useState('');
     const [name, setName] = useState('');
-
+    const navigate = useNavigate();
     switch (loginScreenState) {
         case LOGIN_SCREEN_STATES.INITIAL:
             return <InitialScreen setLoginScreenState={setLoginScreenState}/>
@@ -186,5 +188,8 @@ export const Login = () => {
         case LOGIN_SCREEN_STATES.WAITER_INFO:
             //TODO: add waiter picture
             return <WaiterInfoScreen setLoginScreenState={setLoginScreenState} name={name}/>
+        case LOGIN_SCREEN_STATES.DONE:
+            navigate('/customer');
+            console.log('Redirecting to /customer');
     }
 };
