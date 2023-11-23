@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: nyashdev-qr-cafe
-          image: hub.66bit.ru/urfu-2023-rtf/nyashdev/nyashdev/backend:latest
+          image: hub.66bit.ru/urfu-2023-rtf/nyashdev/nyashdev/frontend:latest
           ports:
             - containerPort: 80
       imagePullSecrets:
