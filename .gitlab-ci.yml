@@ -25,7 +25,7 @@ deploy:
   stage: deploy
   image: hub.66bit.ru/shared/stk8s:1.26.2
   script:
-#    - kubectl delete -f ./cicd/kubernetes-deployment.yaml
+    - kubectl delete -f ./CI/CD/FrontDeployment.yaml
     - kubectl apply -f ./CI/CD/persistent.yaml
     - kubectl apply -f ./CI/CD/FrontDeployment.yaml
   rules:
