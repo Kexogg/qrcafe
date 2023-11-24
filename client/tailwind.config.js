@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import plugin from 'tailwindcss/plugin';
+import defaultTheme from 'tailwindcss/defaultTheme';
 export default {
   content: [
     "./index.html",
@@ -36,9 +37,9 @@ export default {
         },
       }
     },
-    /*fontFamily: {
-      sans: ['Nunito Sans', ...defaultTheme.fontFamily.sans]
-    }*/
+    fontFamily: {
+      sans: ['Roboto Flex Variable', ...defaultTheme.fontFamily.sans]
+    }
   },
   plugins: [
     plugin(function ({ addBase, theme }) {

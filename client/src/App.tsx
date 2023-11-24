@@ -7,6 +7,7 @@ import {CustomerChat} from "./pages/CustomerChat/CustomerChat.tsx";
 import {CustomerAccount} from "./pages/CustomerAccount/CustomerAccount.tsx";
 import {CustomerNotifications} from "./pages/CustomerNotifications/CustomerNotifications.tsx";
 import {CustomerCart} from "./pages/CustomerCart/CustomerCart.tsx";
+import "@fontsource-variable/roboto-flex";
 function App() {
   return (
     <BrowserRouter>
