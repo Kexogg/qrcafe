@@ -17,10 +17,10 @@ function App() {
         </Route>
           <Route path="/customer" element={<Layout />}>
               <Route index path="home" element={<CustomerHome />}/>
-              <Route index path="chat" element={<CustomerChat />}/>
-              <Route index path="cart" element={<CustomerCart />}/>
-              <Route index path="account" element={<CustomerAccount />}/>
-              <Route index path="notifications" element={<CustomerNotifications />}/>
+              <Route path="chat" element={<CustomerChat />}/>
+              <Route path="cart" element={<CustomerCart />}/>
+              <Route path="account" element={<CustomerAccount />}/>
+              <Route path="notifications" element={<CustomerNotifications />}/>
         </Route>
       </Routes>
     </BrowserRouter>
