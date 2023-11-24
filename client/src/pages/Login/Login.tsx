@@ -183,13 +183,10 @@ export const Login = () => {
             return <CodeInputScreen setLoginScreenState={setLoginScreenState} verifyCode={verifyCode} setData={setData}
                                     data={data}/>
         case LOGIN_SCREEN_STATES.NAME_INPUT:
-            //TODO: add name verification
             return <NameInputScreen setLoginScreenState={setLoginScreenState} setName={setName} name={name}/>
         case LOGIN_SCREEN_STATES.WAITER_INFO:
-            //TODO: add waiter picture
             return <WaiterInfoScreen setLoginScreenState={setLoginScreenState} name={name}/>
         case LOGIN_SCREEN_STATES.DONE:
-            navigate('/customer');
-            console.log('Redirecting to /customer');
+            navigate('/customer/home');
     }
 };
