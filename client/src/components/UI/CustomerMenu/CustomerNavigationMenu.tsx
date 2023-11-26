@@ -1,4 +1,10 @@
-import {AccountCircle, Chat, Home, Notifications, ShoppingCart} from "@mui/icons-material";
+import {
+    AccountCircleRounded,
+    ChatRounded,
+    HomeRounded,
+    NotificationsRounded,
+    ShoppingCartRounded
+} from "@mui/icons-material";
 import {Link, useLocation} from "react-router-dom";
 
 interface MenuItem {
@@ -9,11 +15,11 @@ interface MenuItem {
 export const CustomerNavigationMenu = () => {
     const location = useLocation();
     const menuItems: MenuItem[] = [
-        {path: '/customer/chat', icon: <Chat fontSize={'large'}/>},
-        {path: '/customer/notifications', icon: <Notifications fontSize={'large'}/>},
-        {path: '/customer/home', icon: <Home fontSize={'large'}/>},
-        {path: '/customer/cart', icon: <ShoppingCart fontSize={'large'}/>},
-        {path: '/customer/account', icon: <AccountCircle fontSize={'large'}/>},
+        {path: '/customer/chat', icon: <ChatRounded fontSize={'large'}/>},
+        {path: '/customer/notifications', icon: <NotificationsRounded fontSize={'large'}/>},
+        {path: '/customer/home', icon: <HomeRounded fontSize={'large'}/>},
+        {path: '/customer/cart', icon: <ShoppingCartRounded fontSize={'large'}/>},
+        {path: '/customer/account', icon: <AccountCircleRounded fontSize={'large'}/>},
     ];
 
     return (
