@@ -16,7 +16,7 @@ export const Showcase = ({title, items}: ShowcaseProps) => {
                     <li key={item.id}
                         className={'snap-center group relative flex w-48 h-48 rounded-3xl shadow overflow-hidden shrink-0'}>
                         <img src={item.image} alt={item.name}
-                             className={'z-0 absolute w-full h-full object-cover group-hover:scale-110 transition-transform'}/>
+                             className={'absolute w-full h-full object-cover group-hover:scale-110 transition-transform'}/>
                         <p className={'relative text-gray-200 bg-neutral-400 bg-opacity-30 backdrop-blur-sm rounded-2xl p-3 w-fit text-right mt-auto ml-auto mb-2 mr-2 font-bold'}>{item.name}</p>
                     </li>
                 ))}
