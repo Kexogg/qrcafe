@@ -23,7 +23,7 @@ export const CustomerNavigationMenu = () => {
     ];
 
     return (
-        <nav className={'sticky bottom-0'}>
+        <nav className={'sticky bottom-0 z-20'}>
             <ul className={'flex justify-around bg-primary-700'}>
                 {menuItems.map((item) => (
                     <li key={item.path}>
