@@ -3,6 +3,7 @@ import food_placeholder from "/public/food_placeholder.jpg";
 import {Dish} from "../../../types/Dish.ts";
 import DishCard from "../DishCard/DishCard.tsx";
 import {useEffect, useRef, useState} from "react";
+import {Link} from "react-router-dom";
 
 type CatalogProps = {
     title: string;
@@ -50,7 +51,7 @@ export const Catalog = ({title}: CatalogProps) => {
                     setActiveCategory(entry.target.id);
                 }
             });
-        }, { threshold: 1 });
+        }, {threshold: 1});
 
         categoryRefs.current.forEach((ref) => {
             if (ref) observer.observe(ref);
@@ -66,7 +67,7 @@ export const Catalog = ({title}: CatalogProps) => {
     const scrollToCategory = (category: string) => {
         const categoryRef = categoryRefs.current.find((ref) => ref?.id === category);
         if (headerRef.current?.offsetHeight && categoryRef) {
-            window.scrollTo({ top: categoryRef?.offsetTop - headerRef.current.offsetHeight, behavior: 'smooth'});
+            window.scrollTo({top: categoryRef?.offsetTop - headerRef.current.offsetHeight, behavior: 'smooth'});
         }
     }
 
@@ -77,7 +78,8 @@ export const Catalog = ({title}: CatalogProps) => {
                 <nav>
                     <ul className={'flex gap-3 overflow-x-scroll pb-1 px-5 no-scrollbar'}>
                         {categories.map((category) => {
-                            return <Chip active={category.name === activeCategory} text={category.name} key={category.name} onClick={() => scrollToCategory(category.name)}/>
+                            return <Chip active={category.name === activeCategory} text={category.name}
+                                         key={category.name} onClick={() => scrollToCategory(category.name)}/>
                         })}
                     </ul>
                 </nav>
@@ -102,6 +104,11 @@ export const Catalog = ({title}: CatalogProps) => {
                     })
                 }
             </ul>
+            <section className={'text-center my-6 text-primary-700'}>
+                <h3> Похоже, что вы просмотрели все блюда </h3>
+                <p>Вы можете перейти в <Link className={'underline'} to={'/customer/cart'}>корзину</Link> и оформить
+                    заказ</p>
+            </section>
         </section>
 
     );
