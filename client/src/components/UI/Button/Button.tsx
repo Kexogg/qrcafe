@@ -19,14 +19,14 @@ export const Button = ({label, dark, border, ...props}: ButtonProps) => {
     if (props.href) {
         return (
             <Link to={props.href} className={'flex flex-col'}>
-                <button className={`${colorClass} ${borderClass} transition-colors h-10 rounded-3xl justify-center items-center text-center font-semibold`} {...props}>
+                <button {...props} className={`${colorClass} ${borderClass} shrink-0 transition-colors h-10 rounded-3xl justify-center items-center text-center font-semibold`} >
                     {label}
                 </button>
             </Link>
         );
     }
     return (
-        <button className={`${colorClass} ${borderClass} transition-colors h-10 rounded-3xl justify-center items-center text-center font-semibold`} {...props}>
+        <button className={`${colorClass} ${borderClass} shrink-0 transition-colors h-10 rounded-3xl justify-center items-center text-center font-semibold`} {...props}>
             {label}
         </button>
     );
