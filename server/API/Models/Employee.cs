@@ -16,7 +16,7 @@ public class EmployeeDTO
 
     public int RoleId { get; set; }
 
-    public Guid? RestaurantId { get; set; }
+    public int? RestaurantId { get; set; }
 
     public bool Available { get; set; }
 }
@@ -28,7 +28,7 @@ public partial class Employee
 
     public int RoleId { get; set; }
 
-    public Guid? RestaurantId { get; set; }
+    public int? RestaurantId { get; set; }
 
     public bool Available { get; set; }
 

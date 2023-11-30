@@ -6,7 +6,7 @@ public partial class FoodQueue
 
     public Guid ClientId { get; set; }
 
-    public Guid RestaurantId { get; set; }
+    public int RestaurantId { get; set; }
 
     public Guid FoodId { get; set; }
 

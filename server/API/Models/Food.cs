@@ -13,7 +13,7 @@ public class FoodDTO
     }
     public Guid Id { get; set; }
 
-    public Guid RestaurantId { get; set; }
+    public int RestaurantId { get; set; }
 
     public bool IsAvailable { get; set; }
 
@@ -27,7 +27,7 @@ public partial class Food
 {
     public Guid Id { get; set; }
 
-    public Guid RestaurantId { get; set; }
+    public int RestaurantId { get; set; }
 
     public bool IsAvailable { get; set; }
 

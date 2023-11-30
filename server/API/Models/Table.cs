@@ -12,7 +12,7 @@ public class TableDTO
     }
     public int Num { get; set; }
 
-    public Guid RestaurantId { get; set; }
+    public int RestaurantId { get; set; }
 
     public Guid? AssignedEmployeeId { get; set; }
 }
@@ -20,7 +20,7 @@ public partial class Table
 {
     public int Num { get; set; }
 
-    public Guid RestaurantId { get; set; }
+    public int RestaurantId { get; set; }
 
     public Guid? AssignedEmployeeId { get; set; }
 

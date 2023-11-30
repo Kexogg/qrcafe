@@ -11,7 +11,7 @@ public class RestaurantDTO
         Address = restaurant.Address;
         OrgId = restaurant.OrgId;
     }
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -21,7 +21,7 @@ public class RestaurantDTO
 }
 public partial class Restaurant
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 

@@ -19,17 +19,17 @@ app.MapPost("/api/clients", async (Client client, QrCafeDbContext db) =>
     await db.SaveChangesAsync();
     return client;
 });
-app.MapGet("/api/restaurants/{id:guid}/food", async (Guid id, QrCafeDbContext db) =>
+app.MapGet("/api/restaurants/{id:int}/food", async (int id, QrCafeDbContext db) =>
 {
     return await db.Foods.Where(f => f.RestaurantId == id).Select(f => new FoodDTO(f)).ToListAsync();
 });
 app.MapGet("/api/restaurants", async (QrCafeDbContext db) => await db.Restaurants.ToListAsync());
-app.MapGet("/api/restaurants/{id:guid}/tables", (QrCafeDbContext db, Guid id) =>
+app.MapGet("/api/restaurants/{id:int}/tables", (QrCafeDbContext db, int id) =>
 {
     var tables = db.Tables.Where(t=>t.RestaurantId==id).Select(t=>new TableDTO(t)).ToListAsync();
     return tables.Result;
 });
-app.MapPost("/api/restaurants/{id:guid}/tables/{num:int}", async (Guid id, int num, QrCafeDbContext db) =>
+app.MapGet("/api/restaurants/{id:int}/tables/{num:int}", async (int id, int num, QrCafeDbContext db) =>
 {
     var table = db.Tables.FirstOrDefault(table => table.Num == num && table.RestaurantId == id);
     if (table.AssignedEmployeeId != null) return Results.NotFound(new { message = "Столик уже занят" });

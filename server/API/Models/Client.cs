@@ -20,7 +20,7 @@ public class ClientDTO
 
     public int TableId { get; set; }
 
-    public Guid RestaurantId { get; set; }
+    public int RestaurantId { get; set; }
 
     public Guid Id { get; set; }
 
@@ -47,7 +47,7 @@ public partial class Client
 {
     public int TableId { get; set; }
 
-    public Guid RestaurantId { get; set; }
+    public int RestaurantId { get; set; }
 
     public Guid Id { get; set; }
 
