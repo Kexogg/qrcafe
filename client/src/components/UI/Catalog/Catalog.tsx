@@ -4,6 +4,7 @@ import {Dish} from "../../../types/Dish.ts";
 import DishCard from "../DishCard/DishCard.tsx";
 import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
+import DishModal from "../Modal/DishModal.tsx";
 
 type CatalogProps = {
     title: string;
@@ -31,7 +32,7 @@ export const Catalog = ({title}: CatalogProps) => {
         categories.push({
             name: categoryName,
             dishes: [
-                new Dish(i, 'Dish', 1000, 'Description', '100 kg', [], food_placeholder),
+                new Dish(i, 'Dish', 1000, 'Description', '100 kg', [{id: 0, name: 'Сыр', price: 200, applied: false}, {id: 1, name: 'Соус', price: 250, applied: false}], food_placeholder),
                 new Dish(i + 1, 'Dish', 1000, 'Description', '100 kg', [], food_placeholder),
                 new Dish(i + 2, 'Dish', 1000, 'Description', '100 kg', [], food_placeholder),
             ]
@@ -41,6 +42,7 @@ export const Catalog = ({title}: CatalogProps) => {
 
 
     const [activeCategory, setActiveCategory] = useState<string>(category_names[0]);
+    const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
     const categoryRefs = useRef<(HTMLLIElement | null)[]>([]);
     const headerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -73,6 +75,7 @@ export const Catalog = ({title}: CatalogProps) => {
 
     return (
         <section>
+            <DishModal dish={selectedDish} onClose={() => setSelectedDish(null)}/>
             <div className={'sticky top-0 bg-primary-100 z-10 py-3'} ref={headerRef}>
                 <h2 className={'text-accent-800 font-bold text-3xl ml-5 my-5 align-middle'}>{title}</h2>
                 <nav>
@@ -94,7 +97,9 @@ export const Catalog = ({title}: CatalogProps) => {
                                     {
                                         category.dishes.map((dish) => {
                                             return (
-                                                <DishCard dish={dish} key={dish.id}/>
+                                                <DishCard onClick={() => {
+                                                    setSelectedDish(dish)
+                                                }} dish={dish} key={dish.id}/>
                                             )
                                         })
                                     }
