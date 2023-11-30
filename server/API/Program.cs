@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using QrCafe;
 using QrCafe.Models;
@@ -19,20 +20,28 @@ app.MapPost("/api/clients", async (Client client, QrCafeDbContext db) =>
     await db.SaveChangesAsync();
     return client;
 });
+
 app.MapGet("/api/restaurants/{id:int}/food", async (int id, QrCafeDbContext db) =>
 {
     return await db.Foods.Where(f => f.RestaurantId == id).Select(f => new FoodDTO(f)).ToListAsync();
 });
+
 app.MapGet("/api/restaurants", async (QrCafeDbContext db) => await db.Restaurants.ToListAsync());
-app.MapGet("/api/restaurants/{id:int}/tables", (QrCafeDbContext db, int id) =>
+
+//Если используешь Results, то все возвращаемые значения метода должны быть в Results
+app.MapGet("/api/restaurants/{id:int}/tables",  (int id, QrCafeDbContext db) =>
 {
-    var tables = db.Tables.Where(t=>t.RestaurantId==id).Select(t=>new TableDTO(t)).ToListAsync();
-    return tables.Result;
+    var restaurant = db.Restaurants.FirstOrDefault(r => r.Id == id);
+    if (restaurant == null) return Results.NotFound("Ресторана не существует");
+    var tables = restaurant.Tables;
+    return tables.Count == 0 ? Results.NoContent() : Results.Json(tables.Select(t=>new TableDTO(t)));
 });
+
 app.MapGet("/api/restaurants/{id:int}/tables/{num:int}", async (int id, int num, QrCafeDbContext db) =>
 {
     var table = db.Tables.FirstOrDefault(table => table.Num == num && table.RestaurantId == id);
-    if (table.AssignedEmployeeId != null) return Results.NotFound(new { message = "Столик уже занят" });
+    if (table == null) return Results.NotFound("Столика не существует");
+    if (table.AssignedEmployeeId != null) return Results.BadRequest(new { message = "Столик уже занят" });
     var employee = Table.AssignEmployee(db, table);
     table.AssignedEmployee = employee;
     table.AssignedEmployeeId = employee.Id;
