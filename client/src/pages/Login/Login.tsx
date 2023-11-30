@@ -7,6 +7,7 @@ import {CodeInputForm} from "../../components/UI/CodeInputForm/CodeInputForm.tsx
 import {Waiter} from "../../types/Waiter.ts";
 import {AccountCircle} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
+import Modal from "../../components/UI/Modal/Modal.tsx";
 
 enum LOGIN_SCREEN_STATES {
     INITIAL,
@@ -25,14 +26,22 @@ interface InitialScreenProps {
 }
 
 const InitialScreen = ({setLoginScreenState}: InitialScreenProps) => {
+    const [modalOpen, setModalOpen] = useState(false);
+    const legalSpeak = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     return (
         <>
             <QrCodeScannerRoundedIcon fontSize={"inherit"} style={{fontSize: 200}} className={'mx-auto'}/>
             <h1 className={'max-w-sm mx-auto text-xl'}>Для совершения заказа отсканируйте QR код на столике</h1>
             <div className={buttonBoxClass}>
                 <small className={'opacity-50 mt-auto'}>
-                    Нажав на кнопку, вы даете согласие на обработку персональных данных в соответствии с <a
-                    className={'underline opacity-60'} href={'#'}>политикой конфиденциальности</a>
+                    <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={'Политика конфиденциальности'}>
+                        <div className={'overflow-y-scroll my-3'}>
+                            {legalSpeak}<br />{legalSpeak}<br />{legalSpeak}<br />{legalSpeak}<br />{legalSpeak}
+                        </div>
+                        <Button label={'Закрыть'} dark onClick={() => setModalOpen(false)}/>
+                    </Modal>
+                    Нажав на кнопку, вы даете согласие на обработку персональных данных в соответствии с <button
+                    className={'underline opacity-60'} onClick={() => setModalOpen(true)}>политикой конфиденциальности</button>
                 </small>
                 <Button label={'Сканировать код'} onClick={() => {
                     setLoginScreenState(LOGIN_SCREEN_STATES.QR_CODE_INPUT)

@@ -11,7 +11,7 @@ const DishCard = ({dish}: DishCardProps) => {
                 <p className={'relative text-gray-200 bg-neutral-400 bg-opacity-30 backdrop-blur-sm rounded-2xl p-3 w-fit text-right mt-auto mb-2 ml-2 font-bold'}>{dish.price} ₽</p>
             </div>
             <div className={'h-auto flex flex-col'}>
-                <h3 className={'text-primary-700 font-medium text-xl'}>{dish.name}</h3>
+                <h3 className={'text-primary-700 font-semibold text-xl'}>{dish.name}</h3>
                 <p className={'text-primary-500 text-lg font-normal'}>{dish.description}</p>
                 <p className={'text-primary-700 text-lg font-normal mt-auto block'}>{dish.weight}</p>
             </div>

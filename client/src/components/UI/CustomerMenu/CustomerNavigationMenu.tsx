@@ -6,6 +6,8 @@ import {
     ShoppingCartRounded
 } from "@mui/icons-material";
 import {Link, useLocation} from "react-router-dom";
+import {OverridableStringUnion} from "@mui/types";
+import {SvgIconPropsSizeOverrides} from "@mui/material/SvgIcon/SvgIcon";
 
 interface MenuItem {
     path: string;
@@ -14,12 +16,15 @@ interface MenuItem {
 
 export const CustomerNavigationMenu = () => {
     const location = useLocation();
+    const iconSize: OverridableStringUnion<
+        'inherit' | 'large' | 'medium' | 'small',
+        SvgIconPropsSizeOverrides> = 'medium';
     const menuItems: MenuItem[] = [
-        {path: '/customer/chat', icon: <ChatRounded fontSize={'large'}/>},
-        {path: '/customer/notifications', icon: <NotificationsRounded fontSize={'large'}/>},
-        {path: '/customer/home', icon: <HomeRounded fontSize={'large'}/>},
-        {path: '/customer/cart', icon: <ShoppingCartRounded fontSize={'large'}/>},
-        {path: '/customer/account', icon: <AccountCircleRounded fontSize={'large'}/>},
+        {path: '/customer/chat', icon: <ChatRounded fontSize={iconSize}/>},
+        {path: '/customer/notifications', icon: <NotificationsRounded fontSize={iconSize}/>},
+        {path: '/customer/home', icon: <HomeRounded fontSize={iconSize}/>},
+        {path: '/customer/cart', icon: <ShoppingCartRounded fontSize={iconSize}/>},
+        {path: '/customer/account', icon: <AccountCircleRounded fontSize={iconSize}/>},
     ];
 
     return (
