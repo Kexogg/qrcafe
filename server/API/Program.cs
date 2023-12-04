@@ -12,8 +12,11 @@ builder.Services.AddDbContext<QrCafeDbContext>(options => options.UseNpgsql(conn
 
 var app = builder.Build();
 
-app.MapGet("/api/clients", async (QrCafeDbContext db) => await db.Clients.Select(c=>new ClientDTO(c)).ToListAsync());
-
+app.MapGet("/api/clients", async (QrCafeDbContext db) =>
+{
+    var clientsList = await db.Clients.Select(c=> new ClientDTO(c)).ToListAsync();
+    return clientsList.Count != 0 ? Results.Json(clientsList) : Results.NotFound("Клиенты не найдены");
+});
 app.MapPost("/api/clients", async (string name, Guid employeeId, int tableId, int restaurantId, QrCafeDbContext db) =>
 {   
     await db.Clients.AddAsync(new Client(new ClientDTO(name, employeeId, tableId, restaurantId)));

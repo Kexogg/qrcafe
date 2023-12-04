@@ -53,6 +53,9 @@ public class ClientDTO
 }
 public partial class Client
 {
+    public Client()
+    {
+    }
     public Client(ClientDTO client)
     {
         TableId = client.TableId;
