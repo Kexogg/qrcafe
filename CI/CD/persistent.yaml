@@ -24,9 +24,23 @@ spec:
       http:
         paths:
           - pathType: Prefix
-            path: /
+            path: /nyashdev/server/API/
             backend:
               service:
                 name: nyashdev-qr-cafe-frontend-service
                 port:
                   number: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nyashdev-qr-cafe-backend-service
+  namespace: nyashdev
+spec:
+  selector:
+    project: nyashdev-qr-cafe
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
