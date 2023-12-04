@@ -20,3 +20,28 @@ spec:
             - containerPort: 80
       imagePullSecrets:
         - name: nyashdev-qr-cafe-secret
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nyashdev-qr-cafe-backend
+  namespace: nyashdev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: nyashdev-qr-cafe
+  template:
+    metadata:
+      labels:
+        project: nyashdev-qr-cafe
+    spec:
+      containers:
+        - name: nyashdev-qr-cafe-backend
+          image: hub.66bit.ru/urfu-2023-rtf/nyashdev/nyashdev/backend:latest
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: nyashdev-qr-cafe-backend-secret
+
