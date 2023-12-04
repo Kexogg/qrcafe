@@ -32,20 +32,22 @@ const DishModal = ({dish, onClose}: DishModalProps) => {
                             </button>
                         </nav>
                     </div>
-                    <h1 className={'text-primary-700 text-3xl font-bold'}>{currentDish.name}</h1>
-                    <p className={'text-primary-700 text-xl'}>{currentDish.weight}</p>
-                    <p className={'text-primary-500 text-lg'}>{currentDish.description}</p>
-                    <div className={'flex flex-col mt-auto gap-3 grow-0 justify-end'}>
+                    <section className={'min-h-0 grow overflow-y-scroll'}>
+                        <h1 className={'text-primary-700 text-3xl font-bold'}>{currentDish.name}</h1>
+                        <p className={'text-primary-700 text-lg'}>{currentDish.weight}</p>
+                        <p className={'text-primary-500 text-lg'}>{currentDish.description}</p>
+                    </section>
+                    <section className={'flex flex-col mt-auto gap-3 grow-0 justify-end'}>
                         {
                             currentDish.extras.length > 0 &&
                             <>
                                 <h2 className={'text-primary-700 text-xl font-medium'}>Добавить</h2>
-                                <ul className={'flex gap-3'}>
+                                <ul className={'flex gap-3 overflow-y-scroll no-scrollbar pb-1'}>
                                     {currentDish.extras.map((extra) => {
                                         return (
                                             <li key={extra.id}>
                                                 <button
-                                                    className={`border-2 p-2.5 border-primary-700 rounded-3xl ${extra.applied ? 'bg-primary-700 text-white' : 'text-primary-700'}`}
+                                                    className={`whitespace-nowrap border-2 p-2 border-primary-700 rounded-3xl ${extra.applied ? 'bg-primary-700 text-white' : 'text-primary-700'}`}
                                                     onClick={() => {
                                                         setCurrentDish({...currentDish, extras: toggleDishExtra(currentDish, extra.id)})
                                                     }}>
@@ -76,7 +78,7 @@ const DishModal = ({dish, onClose}: DishModalProps) => {
                             <p className={'rounded-full bg-primary-700 text-white py-2.5 px-4 text-lg font-semibold '}>{getDishTotal(currentDish)}₽</p>
                         </div>
                         <Button label={'Добавить в заказ'} dark onClick={onClose /*TODO: Add cart*/}/>
-                    </div>
+                    </section>
                 </div>
             }
         </Modal>
