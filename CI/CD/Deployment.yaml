@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nyashdev-qr-cafe-frontend
+  namespace: nyashdev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: nyashdev-qr-cafe-frontend
+  template:
+    metadata:
+      labels:
+        project: nyashdev-qr-cafe-frontend
+    spec:
+      containers:
+        - name: nyashdev-qr-cafe-frontend
+          image: hub.66bit.ru/urfu-2023-rtf/nyashdev/nyashdev/frontend:latest
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: nyashdev-qr-cafe-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nyashdev-qr-cafe-backend
+  namespace: nyashdev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: nyashdev-qr-cafe-backend
+  template:
+    metadata:
+      labels:
+        project: nyashdev-qr-cafe-backend
+    spec:
+      containers:
+        - name: nyashdev-qr-cafe-backend
+          image: hub.66bit.ru/urfu-2023-rtf/nyashdev/nyashdev/backend:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+      imagePullSecrets:
+        - name: nyashdev-qr-cafe-secret

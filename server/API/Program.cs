@@ -5,7 +5,7 @@ using QrCafe.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
-string connection =
+string connection = builder.Configuration.GetConnectionString("DefaultConnection") ??
     "Host=kexogg.ru;Port=61433;Database=QR_Cafe;Username=kexogg;Password=3k3s38Ku7MPFgT5MAmbQ8TdwLJ2ZHfxZ2w3VYa7tonkCt9q6nPTYtQEiNhF3y7GTsgYZw2auhwX5UBEXLjSABMtkJX9g6E9funQnHBdREohELQYp8JYuD6cKkh2Yr4zk";
 
 builder.Services.AddDbContext<QrCafeDbContext>(options => options.UseNpgsql(connection));

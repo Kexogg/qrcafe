@@ -1,5 +1,6 @@
 variables:
   FRONTEND_TAG_LATEST: $CI_REGISTRY_IMAGE/frontend:latest
+  BACKEND_TAG_LATEST: $CI_REGISTRY_IMAGE/backend:latest
 stages:
   - make_docker_image
   - deploy
@@ -7,6 +8,19 @@ stages:
 .before script docker registry login: &before-script-docker-registry-login
   - mkdir ~/.docker
   - cat $CR_CONFIG > ~/.docker/config.json
+
+make_back_docker_image:
+  stage: make_docker_image
+  image: docker:latest
+  before_script:
+    - *before-script-docker-registry-login
+  script:
+    - cd server
+    - docker build --pull -t $BACKEND_TAG_LATEST -f ./Dockerfile .
+    - docker push $BACKEND_TAG_LATEST
+  when: manual
+  only:
+    - main
 
 make_front_docker_image:
   stage: make_docker_image
@@ -17,17 +31,17 @@ make_front_docker_image:
     - cd client
     - docker build --pull -t $FRONTEND_TAG_LATEST -f ./Dockerfile .
     - docker push $FRONTEND_TAG_LATEST
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
+  when: manual
+  only:
+    - main
 
 deploy:
   stage: deploy
   image: hub.66bit.ru/shared/stk8s:1.26.2
   script:
-    - kubectl delete -f ./CI/CD/FrontDeployment.yaml
+    - kubectl delete -f ./CI/CD/Deployment.yaml
     - kubectl apply -f ./CI/CD/persistent.yaml
-    - kubectl apply -f ./CI/CD/FrontDeployment.yaml
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
+    - kubectl apply -f ./CI/CD/Deployment.yaml
+  when: manual
+  only:
+    - main
