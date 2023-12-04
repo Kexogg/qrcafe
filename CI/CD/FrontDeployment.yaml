@@ -54,14 +54,14 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: nyashdev-qr-cafe-database
+      app: nyashdev-qr-cafe-postgres
   serviceName: "nyashdev-qr-cafe-database"
   replicas: 1
   minReadySeconds: 5
   template:
     metadata:
       labels:
-        app: nyashdev-qr-cafe-database
+        app: nyashdev-qr-cafe-postgres
     spec:
       terminationGracePeriodSeconds: 10
       containers:
