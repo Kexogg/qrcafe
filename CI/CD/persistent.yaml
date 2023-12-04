@@ -58,3 +58,64 @@ spec:
     - protocol: TCP
       port: 5432
       targetPort: 5432
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nyashdev-qr-cafe-database
+  namespace: nyashdev
+spec:
+  selector:
+    matchLabels:
+      app: nyashdev-qr-cafe-postgres
+  serviceName: "nyashdev-qr-cafe-database"
+  replicas: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: nyashdev-qr-cafe-postgres
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: nyashdev-qr-cafe-database
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: nyashdev-qr-cafe-database-volume
+              mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_USER
+              value: kexogg
+            - name: POSTGRES_PASSWORD
+              value: 3k3s38Ku7MPFgT5MAmbQ8TdwLJ2ZHfxZ2w3VYa7tonkCt9q6nPTYtQEiNhF3y7GTsgYZw2auhwX5UBEXLjSABMtkJX9g6E9funQnHBdREohELQYp8JYuD6cKkh2Yr4zk
+            - name: POSTGRES_DB
+              value: QR_Cafe
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+      initContainers:
+        - name: nyashdev-qr-cafe-rights-to-data
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              "mkdir -p /var/lib/postgresql/data/pgdata && chown -R 999:999 /var/lib/postgresql/data/pgdata",
+            ]
+          securityContext:
+            runAsUser: 0
+            privileged: true
+          volumeMounts:
+            - name: nyashdev-qr-cafe-database-volume
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: nyashdev-qr-cafe-database-volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "rook-ceph-block"
+        resources:
+          requests:
+            storage: 2Gi
