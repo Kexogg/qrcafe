@@ -3,6 +3,7 @@ import DishCard from "../DishCard/DishCard.tsx";
 import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
 import DishModal from "../Modal/DishModal.tsx";
+import {Searchbar} from "../Searchbar/Searchbar.tsx";
 
 type CatalogProps = {
     title: string;
@@ -52,7 +53,7 @@ export const Catalog = ({title}: CatalogProps) => {
                     scrollToChip(entry.target.id)
                 }
             });
-        }, {threshold: .75, rootMargin: `0px ${(headerRef.current?.offsetHeight && + 1) ?? '0'}px 0px 0px`});
+        }, {threshold: .75, rootMargin: `0px ${(headerRef.current?.offsetHeight && +1) ?? '0'}px 0px 0px`});
 
         categoryRefs.current.forEach((ref) => {
             if (ref) observer.observe(ref);
@@ -81,20 +82,19 @@ export const Catalog = ({title}: CatalogProps) => {
     return (
         <section>
             <DishModal dish={selectedDish} onClose={() => setSelectedDish(null)}/>
-            <div className={'sticky top-0 bg-primary-100 z-10 py-3'} ref={headerRef}>
-                <h2 className={'text-accent-800 font-bold text-3xl ml-5 my-5 align-middle'}>{title}</h2>
-                <nav>
-                    <ul className={'flex gap-3 overflow-x-scroll pb-1 px-5 no-scrollbar'}>
-                        {categories.map((category, index) => {
-                            return <li key={category.name} ref={(el) => chipRefs.current[index] = el}>
-                                <button
-                                    className={`border-2 border-primary-700 py-1 px-3 ${category.name === activeCategory ? ' bg-primary-700 text-primary-50' : 'text-primary-700'} rounded-full text-center font-medium text-lg inline-block`}
-                                    onClick={() => scrollToCategory(category.name)}>{category.name}</button>
-                            </li>
-                        })}
-                    </ul>
-                </nav>
-            </div>
+            <h2 className={'text-accent-800 font-bold text-3xl ml-5 my-5 align-middle'}>{title}</h2>
+            <Searchbar/>
+            <nav className={'sticky top-0 bg-primary-100 z-10 py-3'} ref={headerRef}>
+                <ul className={'flex gap-3 overflow-x-scroll pb-1 px-5 no-scrollbar'}>
+                    {categories.map((category, index) => {
+                        return <li key={category.name} ref={(el) => chipRefs.current[index] = el}>
+                            <button
+                                className={`border-2 border-primary-700 py-1 px-3 ${category.name === activeCategory ? ' bg-primary-700 text-primary-50' : 'text-primary-700'} rounded-full text-center font-medium text-lg inline-block`}
+                                onClick={() => scrollToCategory(category.name)}>{category.name}</button>
+                        </li>
+                    })}
+                </ul>
+            </nav>
             <ul className={'mx-5 gap-5 flex flex-col mt-5'}>
                 {
                     categories.map((category, index) => {
