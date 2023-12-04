@@ -14,9 +14,9 @@ var app = builder.Build();
 
 app.MapGet("/api/clients", async (QrCafeDbContext db) => await db.Clients.Select(c=>new ClientDTO(c)).ToListAsync());
 
-app.MapPost("/api/clients", async (ClientDTO client, QrCafeDbContext db) =>
+app.MapPost("/api/clients", async (string name, Guid employeeId, int tableId, int restaurantId, QrCafeDbContext db) =>
 {   
-    await db.Clients.AddAsync(new Client(client));
+    await db.Clients.AddAsync(new Client(new ClientDTO(name, employeeId, tableId, restaurantId)));
     await db.SaveChangesAsync();
     return Results.Ok("Клиент добавлен");
 });
