@@ -11,15 +11,17 @@ export interface IDish {
     count: number | undefined; //undefined means that the dish is not in the cart
 }
 
-export function toggleDishExtra(dish: IDish, id: number) {
-    const extra = dish.extras.find(extra => extra.id === id);
-    if (extra) {
-        extra.applied = !extra.applied;
-    }
+export function toggleDishExtra(dish: IDish, id: number): IDishExtra[] {
+    return dish.extras.map(extra => {
+        if (extra.id === id) {
+            extra.applied = !extra.applied;
+        }
+        return extra;
+    });
 }
 
 export function getDishTotal(dish: IDish) {
-    return dish.price + dish.extras.filter(extra => extra.applied).reduce((acc, extra) => acc + extra.price, 0);
+    return (dish.price + dish.extras.filter(extra => extra.applied).reduce((acc, extra) => acc + extra.price, 0)) * (dish.count || 1);
 }
 
 export function getPlaceholderDish(): IDish {
@@ -30,7 +32,7 @@ export function getPlaceholderDish(): IDish {
         'Салат с тунцом',
         'Салат с лососем',
         'Салат с мидиями',
-        'Салат с кальмарами'
+        'Салат с кальмарами',
     ]
     const DishExtras = [
         {id: 0, name: 'Сыр', price: 200, applied: false},
@@ -50,7 +52,8 @@ export function getPlaceholderDish(): IDish {
         price: Math.floor(Math.random() * 100),
         description: DishDescription,
         weight: '100 гр.',
-        extras: DishExtras.filter(extra => Math.random() > 0.5),
+        //@ts-ignore
+        extras: DishExtras.filter(value => Math.random() > 0.5),
         image: food_placeholder,
         count: undefined
     };

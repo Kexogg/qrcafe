@@ -26,7 +26,7 @@ const Modal = ({children, title, onClose, open}: ModalProps) => {
     }, [open]);
 
     return (
-        <dialog className={'h-[95dvh] container max-w-md bg-transparent p-3'} ref={modalRef} open={isOpen}
+        <dialog className={'h-[95dvh] container max-w-md bg-transparent p-3 no-ring'} ref={modalRef} open={isOpen}
                 onKeyDown={(e) => {
                     if (e.key == 'Escape' && onClose) onClose()
                 }}

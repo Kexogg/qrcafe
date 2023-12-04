@@ -1,4 +1,3 @@
-import {Chip} from "../Chip/Chip.tsx";
 import {getPlaceholderDish, IDish} from "../../../types/IDish.ts";
 import DishCard from "../DishCard/DishCard.tsx";
 import {useEffect, useRef, useState} from "react";
@@ -26,15 +25,15 @@ export const Catalog = ({title}: CatalogProps) => {
     const categories: Category[] = []
     //fake data generator
     //TODO: replace with real data
-    let i = 0
     for (const categoryName of category_names) {
         categories.push({
             name: categoryName,
             dishes: [
                 getPlaceholderDish(),
+                getPlaceholderDish(),
+                getPlaceholderDish()
             ]
         })
-        i += 3
     }
 
 
@@ -85,8 +84,8 @@ export const Catalog = ({title}: CatalogProps) => {
                 <nav>
                     <ul className={'flex gap-3 overflow-x-scroll pb-1 px-5 no-scrollbar'}>
                         {categories.map((category, index) => {
-                            return <Chip ref={(el) => chipRefs.current[index] = el} active={category.name === activeCategory} text={category.name}
-                                         key={category.name} onClick={() => scrollToCategory(category.name)}/>
+                            return <li key={category.name} ref={(el) => chipRefs.current[index] = el}><button className={`border-2 border-primary-700 py-1 px-3 ${category.name === activeCategory ? ' bg-primary-700 text-primary-50' : 'text-primary-700'} rounded-full text-center font-medium text-lg inline-block`}
+                                                onClick={() => scrollToCategory(category.name)}>{category.name}</button></li>
                         })}
                     </ul>
                 </nav>
