@@ -11,7 +11,9 @@ export const CustomerCart = () => {
         getPlaceholderDish(),
         getPlaceholderDish()
     ]
+    //@ts-expect-error TODO: remove later
     const [cart, setCart] = useState<IDish[]>(dishes);
+
     const totalCost = cart.reduce((acc, dish) => acc + getDishTotal(dish), 0);
     return (
         <>
