@@ -1,8 +1,8 @@
-import {Dish} from "../../../types/Dish.ts";
+import {IDish} from "../../../types/IDish.ts";
 
 type ShowcaseProps = {
     title: string;
-    items: Dish[];
+    items: IDish[];
 }
 
 export const Showcase = ({title, items}: ShowcaseProps) => {

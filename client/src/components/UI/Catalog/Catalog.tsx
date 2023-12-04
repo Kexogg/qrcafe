@@ -1,6 +1,5 @@
 import {Chip} from "../Chip/Chip.tsx";
-import food_placeholder from "/public/food_placeholder.jpg";
-import {Dish} from "../../../types/Dish.ts";
+import {getPlaceholderDish, IDish} from "../../../types/IDish.ts";
 import DishCard from "../DishCard/DishCard.tsx";
 import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
@@ -12,7 +11,7 @@ type CatalogProps = {
 
 interface Category {
     name: string;
-    dishes: Dish[];
+    dishes: IDish[];
 }
 
 export const Catalog = ({title}: CatalogProps) => {
@@ -32,9 +31,7 @@ export const Catalog = ({title}: CatalogProps) => {
         categories.push({
             name: categoryName,
             dishes: [
-                new Dish(i, 'Dish', 1000, 'Description', '100 kg', [{id: 0, name: 'Сыр', price: 200, applied: false}, {id: 1, name: 'Соус', price: 250, applied: false}], food_placeholder),
-                new Dish(i + 1, 'Dish', 1000, 'Description', '100 kg', [], food_placeholder),
-                new Dish(i + 2, 'Dish', 1000, 'Description', '100 kg', [], food_placeholder),
+                getPlaceholderDish(),
             ]
         })
         i += 3
@@ -42,7 +39,7 @@ export const Catalog = ({title}: CatalogProps) => {
 
 
     const [activeCategory, setActiveCategory] = useState<string>(category_names[0]);
-    const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
+    const [selectedDish, setSelectedDish] = useState<IDish | null>(null);
     const categoryRefs = useRef<(HTMLLIElement | null)[]>([]);
     const headerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -51,6 +48,7 @@ export const Catalog = ({title}: CatalogProps) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     setActiveCategory(entry.target.id);
+                    scrollToChip(entry.target.id)
                 }
             });
         }, {threshold: 1});
@@ -73,6 +71,12 @@ export const Catalog = ({title}: CatalogProps) => {
         }
     }
 
+    const chipRefs = useRef<(HTMLLIElement | null)[]>([]);
+    const scrollToChip = (category: string) => {
+        const chipRef = chipRefs.current.find((ref) => ref?.id === category);
+        chipRef?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    }
+
     return (
         <section>
             <DishModal dish={selectedDish} onClose={() => setSelectedDish(null)}/>
@@ -80,8 +84,8 @@ export const Catalog = ({title}: CatalogProps) => {
                 <h2 className={'text-accent-800 font-bold text-3xl ml-5 my-5 align-middle'}>{title}</h2>
                 <nav>
                     <ul className={'flex gap-3 overflow-x-scroll pb-1 px-5 no-scrollbar'}>
-                        {categories.map((category) => {
-                            return <Chip active={category.name === activeCategory} text={category.name}
+                        {categories.map((category, index) => {
+                            return <Chip ref={(el) => chipRefs.current[index] = el} active={category.name === activeCategory} text={category.name}
                                          key={category.name} onClick={() => scrollToCategory(category.name)}/>
                         })}
                     </ul>
