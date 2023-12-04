@@ -52,7 +52,7 @@ export const Catalog = ({title}: CatalogProps) => {
                     scrollToChip(entry.target.id)
                 }
             });
-        }, {threshold: 1, rootMargin: `0px ${headerRef.current?.offsetHeight ?? '0'}px 0px 0px`});
+        }, {threshold: .75, rootMargin: `0px ${(headerRef.current?.offsetHeight && + 1) ?? '0'}px 0px 0px`});
 
         categoryRefs.current.forEach((ref) => {
             if (ref) observer.observe(ref);
