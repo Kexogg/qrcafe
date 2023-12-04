@@ -24,10 +24,17 @@ spec:
       http:
         paths:
           - pathType: Prefix
-            path: /nyashdev/server/API/
+            path: /
             backend:
               service:
                 name: nyashdev-qr-cafe-frontend-service
+                port:
+                  number: 80
+          - pathType: Prefix
+            path: /api
+            backend:
+              service:
+                name: nyashdev-qr-cafe-backend-service
                 port:
                   number: 80
 
