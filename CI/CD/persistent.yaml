@@ -50,7 +50,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nyashdev-qr-cafe-postgres-service
-  namespace: my-project
+  namespace: nyashdev
 spec:
   selector:
     app: nyashdev-qr-cafe-postgres
