@@ -25,6 +25,7 @@ export const Catalog = ({title}: CatalogProps) => {
     const categories: Category[] = []
     //fake data generator
     //TODO: replace with real data
+
     for (const categoryName of category_names) {
         categories.push({
             name: categoryName,
@@ -36,11 +37,12 @@ export const Catalog = ({title}: CatalogProps) => {
         })
     }
 
-
     const [activeCategory, setActiveCategory] = useState<string>(category_names[0]);
     const [selectedDish, setSelectedDish] = useState<IDish | null>(null);
     const categoryRefs = useRef<(HTMLLIElement | null)[]>([]);
     const headerRef = useRef<HTMLDivElement>(null);
+
+
     useEffect(() => {
         const refs = categoryRefs.current;
         const observer = new IntersectionObserver((entries) => {
@@ -50,7 +52,7 @@ export const Catalog = ({title}: CatalogProps) => {
                     scrollToChip(entry.target.id)
                 }
             });
-        }, {threshold: 1});
+        }, {threshold: 1, rootMargin: `0px ${headerRef.current?.offsetHeight ?? '0'}px 0px 0px`});
 
         categoryRefs.current.forEach((ref) => {
             if (ref) observer.observe(ref);
@@ -73,7 +75,7 @@ export const Catalog = ({title}: CatalogProps) => {
     const chipRefs = useRef<(HTMLLIElement | null)[]>([]);
     const scrollToChip = (category: string) => {
         const chipRef = chipRefs.current.find((ref) => ref?.id === category);
-        chipRef?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        chipRef?.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
     }
 
     return (
@@ -84,8 +86,11 @@ export const Catalog = ({title}: CatalogProps) => {
                 <nav>
                     <ul className={'flex gap-3 overflow-x-scroll pb-1 px-5 no-scrollbar'}>
                         {categories.map((category, index) => {
-                            return <li key={category.name} ref={(el) => chipRefs.current[index] = el}><button className={`border-2 border-primary-700 py-1 px-3 ${category.name === activeCategory ? ' bg-primary-700 text-primary-50' : 'text-primary-700'} rounded-full text-center font-medium text-lg inline-block`}
-                                                onClick={() => scrollToCategory(category.name)}>{category.name}</button></li>
+                            return <li key={category.name} ref={(el) => chipRefs.current[index] = el}>
+                                <button
+                                    className={`border-2 border-primary-700 py-1 px-3 ${category.name === activeCategory ? ' bg-primary-700 text-primary-50' : 'text-primary-700'} rounded-full text-center font-medium text-lg inline-block`}
+                                    onClick={() => scrollToCategory(category.name)}>{category.name}</button>
+                            </li>
                         })}
                     </ul>
                 </nav>
