@@ -6,7 +6,7 @@ type DishCardProps = {
 }
 const DishCard = ({dish, onClick}: DishCardProps) => {
     return (
-        <li key={dish.id}>
+        <li key={dish.id} className={'w-full'}>
             <button className={'w-full p-5 bg-primary-50 rounded-3xl flex gap-7 text-left'} onClick={onClick}>
                 <div className={'relative w-28 h-28 md:w-40 md:h-40 flex shrink-0'}>
                     <img className={'absolute w-full aspect-square object-cover rounded-3xl shadow'} src={dish.image}
