@@ -42,7 +42,7 @@ const DishModal = ({dish, onClose}: DishModalProps) => {
                             currentDish.extras.length > 0 &&
                             <>
                                 <h2 className={'text-primary-700 text-xl font-medium'}>Добавить</h2>
-                                <ul className={'flex gap-3 overflow-y-scroll no-scrollbar pb-1'}>
+                                <ul className={'flex gap-3 overflow-y-scroll grow-0 no-scrollbar pb-1'}>
                                     {currentDish.extras.map((extra) => {
                                         return (
                                             <li key={extra.id}>
