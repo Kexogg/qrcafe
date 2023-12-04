@@ -14,16 +14,17 @@ var app = builder.Build();
 
 app.MapGet("/api/clients", async (QrCafeDbContext db) => await db.Clients.Select(c=>new ClientDTO(c)).ToListAsync());
 
-app.MapPost("/api/clients", async (Client client, QrCafeDbContext db) =>
-{
-    await db.Clients.AddAsync(client);
+app.MapPost("/api/clients", async (ClientDTO client, QrCafeDbContext db) =>
+{   
+    await db.Clients.AddAsync(new Client(client));
     await db.SaveChangesAsync();
-    return client;
+    return Results.Ok("Клиент добавлен");
 });
+
 
 app.MapGet("/api/restaurants/{id:int}/food", async (int id, QrCafeDbContext db) =>
 {
-    return await db.Foods.Where(f => f.RestaurantId == id).Select(f => new FoodDTO(f)).ToListAsync();
+    return await db.Foods.Where(f => f.RestaurantId == id && f.IsAvailable).Select(f => new FoodDTO(f)).ToListAsync();
 });
 
 app.MapGet("/api/restaurants", async (QrCafeDbContext db) => await db.Restaurants.ToListAsync());
@@ -37,7 +38,7 @@ app.MapGet("/api/restaurants/{id:int}/tables",  (int id, QrCafeDbContext db) =>
     return tables.Count == 0 ? Results.NoContent() : Results.Json(tables.Select(t=>new TableDTO(t)));
 });
 
-app.MapGet("/api/restaurants/{id:int}/tables/{num:int}", async (int id, int num, QrCafeDbContext db) =>
+app.MapPut("/api/restaurants/{id:int}/tables/{num:int}", async (int id, int num, QrCafeDbContext db) =>
 {
     var table = db.Tables.FirstOrDefault(table => table.Num == num && table.RestaurantId == id);
     if (table == null) return Results.NotFound("Столика не существует");

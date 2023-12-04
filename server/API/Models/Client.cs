@@ -6,7 +6,6 @@ public class ClientDTO
     {
         TableId = client.TableId;
         RestaurantId = client.RestaurantId;
-        Id = client.Id;
         Name = client.Name;
         IsActive = client.IsActive;
         AssignedEmployeeId = client.AssignedEmployeeId;
@@ -21,8 +20,6 @@ public class ClientDTO
     public int TableId { get; set; }
 
     public int RestaurantId { get; set; }
-
-    public Guid Id { get; set; }
 
     public string? Name { get; set; }
 
@@ -45,6 +42,21 @@ public class ClientDTO
 }
 public partial class Client
 {
+    public Client(ClientDTO client)
+    {
+        TableId = client.TableId;
+        RestaurantId = client.RestaurantId;
+        Id = new Guid();
+        Name = client.Name;
+        IsActive = client.IsActive;
+        AssignedEmployeeId = client.AssignedEmployeeId;
+        PaymentType = client.PaymentType;
+        Discount = client.Discount;
+        PaymentStatus = client.PaymentStatus;
+        Tip = client.Tip;
+        Total = client.Total;
+        PaymentMethod = client.PaymentMethod;
+    }
     public int TableId { get; set; }
 
     public int RestaurantId { get; set; }
