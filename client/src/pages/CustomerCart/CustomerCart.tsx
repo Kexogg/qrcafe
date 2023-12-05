@@ -25,10 +25,10 @@ export const CustomerCart = () => {
                 </div>
                 <ul className={'flex gap-5 flex-col'}>
                     {cart.map((item) => (
-                        <li key={item.id} className={'flex gap-5 items-start max-w-lg'}>
+                        <li key={item.id} className={'flex gap-5 max-w-lg h-44 py-2'}>
                             <img src={item.image} alt={item.name}
                                  className={'w-40 h-40 shrink-0 rounded-3xl object-cover'}/>
-                            <div className={'flex flex-col gap-1 w-full'}>
+                            <div className={'flex flex-col gap-1 w-full h-full'}>
                                 <h2 className={'text-accent-800 text-2xl'}>{item.name}</h2>
                                 <div className={'flex flex-col gap-1'}>
                                     {
