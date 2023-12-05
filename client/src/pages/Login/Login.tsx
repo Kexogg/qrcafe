@@ -8,6 +8,8 @@ import {Waiter} from "../../types/Waiter.ts";
 import {AccountCircle} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 import Modal from "../../components/UI/Modal/Modal.tsx";
+import {useAppDispatch, useAppSelector} from "../../hooks.ts";
+import {setWaiter} from "../../features/waiter/waiterSlice.ts";
 
 enum LOGIN_SCREEN_STATES {
     INITIAL,
@@ -28,6 +30,7 @@ interface InitialScreenProps {
 const InitialScreen = ({setLoginScreenState}: InitialScreenProps) => {
     const [modalOpen, setModalOpen] = useState(false);
     const legalSpeak = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
     return (
         <>
             <QrCodeScannerRoundedIcon fontSize={"inherit"} style={{fontSize: 200}} className={'mx-auto'}/>
@@ -146,8 +149,10 @@ type WaiterInfoScreenProps = {
     setLoginScreenState: React.Dispatch<React.SetStateAction<LOGIN_SCREEN_STATES>>
 }
 const WaiterInfoScreen = ({name, setLoginScreenState}: WaiterInfoScreenProps) => {
-    //TODO: Remove placeholder, get actual data info
-    const waiter = new Waiter('Иванов Иван Иванович', '0001');
+    const dispatch = useAppDispatch()
+    //TODO: remove placeholder
+    dispatch(setWaiter(new Waiter('Иванов Иван Иванович', '0001')))
+    const waiter = useAppSelector((state) => state.waiter.waiter)
     return (
         <>
             <h1 className={'my-3 text-3xl'}>
