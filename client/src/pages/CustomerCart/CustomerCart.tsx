@@ -1,9 +1,12 @@
-import {AddRounded, ArrowBackRounded, RemoveRounded} from "@mui/icons-material";
+import {ArrowBackRounded} from "@mui/icons-material";
 import {getDishTotal} from "../../types/IDish.ts";
-import {useAppSelector} from "../../hooks.ts";
+import {useAppDispatch, useAppSelector} from "../../hooks.ts";
+import {clearCart, updateCart} from "../../features/cart/cartSlice.ts";
+import {CountInput} from "../../components/UI/CountInput/CountInput.tsx";
 
 export const CustomerCart = () => {
     const cart = useAppSelector(state => state.cart.items)
+    const dispatch = useAppDispatch()
     const totalCost = cart.reduce((acc, dish) => acc + getDishTotal(dish), 0);
     return (
         <>
@@ -11,7 +14,7 @@ export const CustomerCart = () => {
                 <div className={'text-accent-800 flex gap-5 pb-5 items-center'}>
                     <ArrowBackRounded fontSize={'large'}/>
                     <h1>Ваш заказ</h1>
-                    <button className={'ml-auto text-primary-700'}>Удалить всё</button>
+                    <button className={'ml-auto text-primary-700'} onClick={() => dispatch(clearCart())}>Удалить всё</button>
                 </div>
                 <ul className={'flex gap-5 flex-col'}>
                     {cart.map((item) => (
@@ -35,18 +38,7 @@ export const CustomerCart = () => {
                                     }
                                 </div>
                                 <div className={'flex items-center justify-between mt-auto'}>
-                                    <div className={'flex items-center'}>
-                                        <button
-                                            className={`${item.count == 1 ? 'bg-primary-400' : 'bg-primary-700'} text-white p-2 rounded-full aspect-square`}>
-                                            <RemoveRounded/>
-                                        </button>
-                                        <span
-                                            className={'font-semibold text-xl text-primary-700 mx-3 w-3 text-center'}>{item.count ?? 1 /*TODO: remove later*/}</span>
-                                        <button
-                                            className={`${item.count == 20 ? 'bg-primary-400' : 'bg-primary-700'} text-white p-2 rounded-full aspect-square`}>
-                                            <AddRounded/>
-                                        </button>
-                                    </div>
+                                    <CountInput count={item.count ?? 1} onCountChange={(count) => dispatch(updateCart({...item, count}))}/>
                                     <p className={'text-primary-700 text-lg font-semibold'}>{getDishTotal(item)}₽</p>
                                 </div>
                             </div>

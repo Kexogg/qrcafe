@@ -1,10 +1,11 @@
-import {AddRounded, ArrowBackRounded, FavoriteBorderOutlined, RemoveRounded} from "@mui/icons-material";
+import {ArrowBackRounded, FavoriteBorderOutlined} from "@mui/icons-material";
 import Modal from "./Modal.tsx";
 import {getDishTotal, IDish, toggleDishExtra} from "../../../types/IDish.ts";
 import {useEffect, useState} from "react";
 import {Button} from "../Button/Button.tsx";
 import {addToCart} from "../../../features/cart/cartSlice.ts";
 import {useAppDispatch} from "../../../hooks.ts";
+import {CountInput} from "../CountInput/CountInput.tsx";
 
 type DishModalProps = {
     dish: IDish | null;
@@ -63,20 +64,7 @@ const DishModal = ({dish, onClose}: DishModalProps) => {
                             </>
                         }
                         <div className={'flex items-center'}>
-                            <div className={'flex items-center'}>
-                                <button
-                                    className={`${currentDish.count == 1 ? 'bg-primary-400' : 'bg-primary-700'} text-white p-3 rounded-full aspect-square`}
-                                    onClick={() => setCurrentDish({...currentDish, count: Math.max((currentDish.count ?? 1) - 1, 1)})}>
-                                    <RemoveRounded/>
-                                </button>
-                                <span
-                                    className={'font-semibold text-xl text-primary-700 mx-3 w-3 text-center'}>{currentDish.count}</span>
-                                <button
-                                    className={`${currentDish.count == 20 ? 'bg-primary-400' : 'bg-primary-700'} text-white p-3 rounded-full aspect-square`}
-                                    onClick={() => setCurrentDish({...currentDish, count: Math.min((currentDish.count ?? 1) + 1, 20)})}>
-                                    <AddRounded/>
-                                </button>
-                            </div>
+                            <CountInput onCountChange={(count) => setCurrentDish({...currentDish, count: count})} count={currentDish.count ?? 1} />
                             <span className={'text-xl font-bold text-primary-700 ml-auto mr-3'}>Итого:</span>
                             <p className={'rounded-full bg-primary-700 text-white py-2.5 px-4 text-lg font-semibold '}>{getDishTotal(currentDish)}₽</p>
                         </div>
