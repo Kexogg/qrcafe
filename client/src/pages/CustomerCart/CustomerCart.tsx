@@ -1,19 +1,9 @@
 import {AddRounded, ArrowBackRounded, RemoveRounded} from "@mui/icons-material";
-import {getDishTotal, getPlaceholderDish, IDish} from "../../types/IDish.ts";
-import {useState} from "react";
-
+import {getDishTotal} from "../../types/IDish.ts";
+import {useAppSelector} from "../../hooks.ts";
 
 export const CustomerCart = () => {
-    const dishes = [
-        getPlaceholderDish(),
-        getPlaceholderDish(),
-        getPlaceholderDish(),
-        getPlaceholderDish(),
-        getPlaceholderDish()
-    ]
-    //@ts-expect-error TODO: remove later
-    const [cart, setCart] = useState<IDish[]>(dishes);
-
+    const cart = useAppSelector(state => state.cart.items)
     const totalCost = cart.reduce((acc, dish) => acc + getDishTotal(dish), 0);
     return (
         <>
@@ -25,7 +15,7 @@ export const CustomerCart = () => {
                 </div>
                 <ul className={'flex gap-5 flex-col'}>
                     {cart.map((item) => (
-                        <li key={item.id} className={'flex gap-5 max-w-lg h-44 py-2'}>
+                        <li key={item.cartId} className={'flex gap-5 max-w-lg h-44 py-2'}>
                             <img src={item.image} alt={item.name}
                                  className={'w-40 h-40 shrink-0 rounded-3xl object-cover'}/>
                             <div className={'flex flex-col gap-1 w-full h-full'}>

@@ -1,7 +1,8 @@
 import food_placeholder from "/src/assets/food_placeholder.jpg";
 
 export interface IDish {
-    id: number;
+    id: string;
+    cartId?: string;
     name: string;
     price: number;
     description: string;
@@ -47,7 +48,7 @@ export function getPlaceholderDish(): IDish {
     const DishName = DishNames[Math.floor(Math.random() * DishNames.length)];
     const DishDescription = DishName + ', приготовленный по греческому рецепту, с добавлением оливок, сыра фета, огурцов, помидоров, лука, перца и оливкового масла.';
     return {
-        id: Math.random(),
+        id: Math.random().toString(),
         name: DishName,
         price: Math.floor(Math.random() * 100),
         description: DishDescription,

@@ -3,6 +3,8 @@ import Modal from "./Modal.tsx";
 import {getDishTotal, IDish, toggleDishExtra} from "../../../types/IDish.ts";
 import {useEffect, useState} from "react";
 import {Button} from "../Button/Button.tsx";
+import {addToCart} from "../../../features/cart/cartSlice.ts";
+import {useAppDispatch} from "../../../hooks.ts";
 
 type DishModalProps = {
     dish: IDish | null;
@@ -14,6 +16,7 @@ const DishModal = ({dish, onClose}: DishModalProps) => {
     useEffect(() => {
         setCurrentDish(dish ? {...dish, count: 1} : null)
     }, [dish]);
+    const dispatch = useAppDispatch()
     return (
         <Modal open={!!dish} onClose={onClose}>
             {
@@ -77,7 +80,10 @@ const DishModal = ({dish, onClose}: DishModalProps) => {
                             <span className={'text-xl font-bold text-primary-700 ml-auto mr-3'}>Итого:</span>
                             <p className={'rounded-full bg-primary-700 text-white py-2.5 px-4 text-lg font-semibold '}>{getDishTotal(currentDish)}₽</p>
                         </div>
-                        <Button label={'Добавить в заказ'} dark onClick={onClose /*TODO: Add cart*/}/>
+                        <Button label={'Добавить в заказ'} dark onClick={() => {
+                            dispatch(addToCart(currentDish));
+                            onClose();
+                        }}/>
                     </section>
                 </div>
             }
