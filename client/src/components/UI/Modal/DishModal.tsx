@@ -3,19 +3,20 @@ import Modal from "./Modal.tsx";
 import {getDishTotal, IDish, toggleDishExtra} from "../../../types/IDish.ts";
 import {useEffect, useState} from "react";
 import {Button} from "../Button/Button.tsx";
-import {addToCart} from "../../../features/cart/cartSlice.ts";
+import {addToCart, updateCart} from "../../../features/cart/cartSlice.ts";
 import {useAppDispatch} from "../../../hooks.ts";
 import {CountInput} from "../CountInput/CountInput.tsx";
 
 type DishModalProps = {
     dish: IDish | null;
     onClose: () => void;
+    isInCart?: boolean;
 }
 
-const DishModal = ({dish, onClose}: DishModalProps) => {
+const DishModal = ({dish, onClose, isInCart}: DishModalProps) => {
     const [currentDish, setCurrentDish] = useState<IDish | null>(null);
     useEffect(() => {
-        setCurrentDish(dish ? {...dish, count: 1} : null)
+        setCurrentDish(dish ? {...structuredClone(dish), count: 1} : null)
     }, [dish]);
     const dispatch = useAppDispatch()
     return (
@@ -64,12 +65,14 @@ const DishModal = ({dish, onClose}: DishModalProps) => {
                             </>
                         }
                         <div className={'flex items-center'}>
-                            <CountInput onCountChange={(count) => setCurrentDish({...currentDish, count: count})} count={currentDish.count ?? 1} />
+                            <CountInput onCountChange={(count) => setCurrentDish({...currentDish, count: count})}
+                                        count={currentDish.count ?? 1}/>
                             <span className={'text-xl font-bold text-primary-700 ml-auto mr-3'}>Итого:</span>
                             <p className={'rounded-full bg-primary-700 text-white py-2.5 px-4 text-lg font-semibold '}>{getDishTotal(currentDish)}₽</p>
                         </div>
-                        <Button label={'Добавить в заказ'} dark onClick={() => {
-                            dispatch(addToCart(currentDish));
+                        <Button label={isInCart ? 'Подтвердить изменения' : 'Добавить в заказ'} dark onClick={() => {
+                            if (isInCart) dispatch(updateCart(currentDish))
+                            else dispatch(addToCart(currentDish));
                             onClose();
                         }}/>
                     </section>
