@@ -19,7 +19,7 @@ export const Showcase = ({title, items}: ShowcaseProps) => {
                         <button onClick={() => setActiveItem(item)} className={'snap-center group relative flex justify-end w-48 h-48 rounded-3xl shadow overflow-hidden shrink-0'}>
                             <img src={item.image} alt={item.name}
                                  className={'absolute w-full h-full object-cover group-hover:scale-110 transition-transform'}/>
-                            <p className={'w-min relative text-gray-200 bg-neutral-400 bg-opacity-30 backdrop-blur-sm rounded-2xl p-3 text-right mt-auto mb-2 mr-2 font-bold'}>{item.name}</p>
+                            <div className={'max-w-[90%] relative text-gray-200 bg-neutral-400 bg-opacity-30 backdrop-blur-sm rounded-2xl p-3 text-right mt-auto mb-2 mr-2 font-bold'}>{item.name}</div>
                         </button>
                     </li>
                 ))}
