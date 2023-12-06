@@ -4,7 +4,7 @@ import {
     removeFromCart,
     updateCartItem,
 } from '../../../features/cart/cartSlice.ts'
-import { getDishTotal, IDish } from '../../../types/IDish.ts'
+import { DishStatus, getDishTotal, IDish } from '../../../types/IDish.ts'
 import { useAppDispatch } from '../../../hooks.ts'
 import { useEffect, useState } from 'react'
 
@@ -48,22 +48,26 @@ export const DishCardCart = ({
             <div className={'flex h-full w-full flex-col gap-1'}>
                 <span className={'flex justify-between'}>
                     <h2 className={'text-2xl text-accent-800'}>{item.name}</h2>
-                    <span
-                        className={'mb-auto flex gap-3 pl-3 text-primary-700'}>
-                        <button onClick={() => setSelectedDish(item)}>
-                            <EditRounded />
-                        </button>
-                        <button
-                            onClick={() =>
-                                dispatch(
-                                    removeFromCart(
-                                        currentDish.cartId as string,
-                                    ),
-                                )
+                    {item.status === DishStatus.NEW && (
+                        <span
+                            className={
+                                'mb-auto flex gap-3 pl-3 text-primary-700'
                             }>
-                            <DeleteRounded />
-                        </button>
-                    </span>
+                            <button onClick={() => setSelectedDish(item)}>
+                                <EditRounded />
+                            </button>
+                            <button
+                                onClick={() =>
+                                    dispatch(
+                                        removeFromCart(
+                                            currentDish.cartId as string,
+                                        ),
+                                    )
+                                }>
+                                <DeleteRounded />
+                            </button>
+                        </span>
+                    )}
                 </span>
                 {item.extras.filter((extra) => extra.applied).length > 0 && (
                     <div className={'flex flex-col gap-1'}>
@@ -73,6 +77,7 @@ export const DishCardCart = ({
                 )}
                 <div className={'mt-auto flex items-center justify-between'}>
                     <CountInput
+                        disabled={item.status !== DishStatus.NEW}
                         count={currentDish.count ?? 1}
                         onCountChange={(count) =>
                             dispatch(updateCartItem({ ...item, count }))
