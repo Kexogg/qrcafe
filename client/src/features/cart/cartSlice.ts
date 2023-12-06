@@ -1,4 +1,4 @@
-import { IDish } from '../../types/IDish.ts'
+import { DishStatus, IDish } from '../../types/IDish.ts'
 import { createSlice } from '@reduxjs/toolkit'
 
 export interface CartState {
@@ -21,6 +21,7 @@ export const cartSlice = createSlice({
             state.items.push({
                 ...action.payload,
                 cartId: Date.now().toString(),
+                status: DishStatus.NEW,
             })
         },
         updateCartItem: (state, action: { payload: IDish }) => {
@@ -62,6 +63,7 @@ export const {
 } = cartSlice.actions
 
 export const selectCartItems = (state: { cart: CartState }) => state.cart.items
+
 export const selectOrdered = (state: { cart: CartState }) =>
     state.cart.confirmed
 export const selectPaid = (state: { cart: CartState }) => state.cart.paid
