@@ -1,9 +1,11 @@
-import {Waiter} from "../../../types/Waiter.ts";
 import {AccountCircle} from "@mui/icons-material";
+import {useAppSelector} from "../../../hooks.ts";
 
 export const ServedBy = () => {
-    const waiter: Waiter = new Waiter('Иванов Иван Иванович', '1')
+
+    const waiter = useAppSelector((state) => state.waiter.waiter)
     return (
+        waiter &&
         <section className={'flex gap-5 px-5'}>
             {waiter.image
                 ? <img src={waiter.image} alt={waiter.name} className={'w-12 h-12 rounded-full'}/>
