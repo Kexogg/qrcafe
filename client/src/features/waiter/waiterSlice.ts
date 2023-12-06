@@ -1,29 +1,32 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {IWaiter} from "../../types/IWaiter.ts";
+import { createSlice } from '@reduxjs/toolkit'
 
 export interface WaiterState {
-    waiter: IWaiter | null
+    name: string
+    id: string
+    image: string | null
 }
 
 const initialState: WaiterState = {
-    waiter: null
+    name: '',
+    id: '0',
+    image: null,
 }
 
 export const waiterSlice = createSlice({
     name: 'waiter',
     initialState,
     reducers: {
-        setWaiter: (state, action: { payload: IWaiter }) => {
-            state.waiter = action.payload
+        setWaiter: (state, action: { payload: WaiterState }) => {
+            Object.assign(state, action.payload)
         },
         clearWaiter: (state) => {
-            state.waiter = null
+            Object.assign(state, initialState)
         },
     },
 })
 
-export const {setWaiter, clearWaiter} = waiterSlice.actions
+export const { setWaiter, clearWaiter } = waiterSlice.actions
 
-export const selectWaiter = (state: { waiter: WaiterState }) => state.waiter.waiter
+export const selectWaiter = (state: WaiterState) => state
 
 export default waiterSlice.reducer

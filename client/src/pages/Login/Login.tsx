@@ -243,11 +243,11 @@ const WaiterInfoScreen = ({
     name,
     setLoginScreenState,
 }: WaiterInfoScreenProps) => {
-    const waiter = useAppSelector((state) => state.waiter.waiter)
+    const waiter = useAppSelector((state) => state.waiter)
     //TODO: remove placeholder, fix dispatch
     const dispatch = useAppDispatch()
-    if (!waiter) {
-        dispatch(setWaiter({ name: 'Иван', id: '2134' }))
+    if (waiter.id == '0') {
+        dispatch(setWaiter({ name: 'Иван', id: '2134', image: null }))
         return <></>
     } else {
         return (
