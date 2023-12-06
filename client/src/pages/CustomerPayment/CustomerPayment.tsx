@@ -5,14 +5,12 @@ import { RadioButtonChecked, RadioButtonUnchecked } from '@mui/icons-material'
 import { Button } from '../../components/UI/Button/Button.tsx'
 import { updatePaid } from '../../features/cart/cartSlice.ts'
 import { PageTitle } from '../../components/UI/PageTitle/PageTitle.tsx'
+import { getDishTotal } from '../../types/IDish.ts'
 
 export const CustomerPayment = () => {
     const dispatch = useAppDispatch()
     const total = useAppSelector((state) =>
-        state.cart.items.reduce(
-            (acc, dish) => acc + (dish.count ?? 1) * dish.price,
-            0,
-        ),
+        state.cart.items.reduce((acc, dish) => acc + getDishTotal(dish), 0),
     )
     const [tip, setTip] = useState(0)
     const [paymentMethod, setPaymentMethod] = useState('')
