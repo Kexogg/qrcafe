@@ -1,0 +1,81 @@
+import { EditRounded } from '@mui/icons-material'
+import { CountInput } from '../CountInput/CountInput.tsx'
+import { updateCartItem } from '../../../features/cart/cartSlice.ts'
+import { getDishTotal, IDish } from '../../../types/IDish.ts'
+import { useAppDispatch } from '../../../hooks.ts'
+import { useEffect, useState } from 'react'
+
+type DishCardCartProps = {
+    item: IDish
+    setSelectedDish: (dish: IDish) => void
+    dispatch: ReturnType<typeof useAppDispatch>
+}
+
+export const DishCardCart = ({
+    item,
+    setSelectedDish,
+    dispatch,
+}: DishCardCartProps) => {
+    const [currentDish, setCurrentDish] = useState<IDish>(item)
+    useEffect(() => {
+        setCurrentDish({ ...structuredClone(item), count: item.count ?? 1 })
+    }, [item])
+    return (
+        <li
+            key={item.cartId}
+            className={
+                'flex min-h-[12rem] max-w-lg gap-5 rounded-3xl border-2 border-primary-700 p-4 hover:bg-primary-50/50'
+            }>
+            <img
+                src={item.image}
+                alt={item.name}
+                className={
+                    'aspect-square h-28 shrink-0 rounded-3xl object-cover sm:h-40'
+                }
+            />
+            <div className={'flex h-full w-full flex-col gap-1'}>
+                <span className={'flex justify-between'}>
+                    <h2 className={'text-2xl text-accent-800'}>{item.name}</h2>
+                    <button
+                        className={'mb-auto text-primary-700'}
+                        onClick={() => setSelectedDish(item)}>
+                        <EditRounded />
+                    </button>
+                </span>
+                {item.extras.filter((extra) => extra.applied).length > 0 && (
+                    <div className={'flex flex-col gap-1'}>
+                        <h3 className={'text-accent-800'}>Добавки</h3>
+                        <p className={'flex flex-wrap gap-1'}>
+                            {item.extras.map(
+                                (extra) =>
+                                    extra.applied && (
+                                        <span key={extra.name}>
+                                            {extra.name}
+                                            {extra !==
+                                                item.extras
+                                                    .filter(
+                                                        (extra) =>
+                                                            extra.applied,
+                                                    )
+                                                    .slice(-1)[0] && ', '}
+                                        </span>
+                                    ),
+                            )}
+                        </p>
+                    </div>
+                )}
+                <div className={'mt-auto flex items-center justify-between'}>
+                    <CountInput
+                        count={currentDish.count ?? 1}
+                        onCountChange={(count) =>
+                            dispatch(updateCartItem({ ...item, count }))
+                        }
+                    />
+                    <p className={'text-lg font-semibold text-primary-700'}>
+                        {getDishTotal(item)}₽
+                    </p>
+                </div>
+            </div>
+        </li>
+    )
+}
