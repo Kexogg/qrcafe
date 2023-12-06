@@ -1,15 +1,18 @@
-import { ArrowBackRounded } from '@mui/icons-material'
 import { getDishTotal, IDish } from '../../types/IDish.ts'
 import { useAppDispatch, useAppSelector } from '../../hooks.ts'
-import { clearCart } from '../../features/cart/cartSlice.ts'
+import { clearCart, updateConfirmed } from '../../features/cart/cartSlice.ts'
 import { useState } from 'react'
 import DishModal from '../../components/UI/Modal/DishModal.tsx'
 import { DishCardCart } from '../../components/UI/DishCartdCart/DishCardCart.tsx'
 import { Button } from '../../components/UI/Button/Button.tsx'
 import Modal from '../../components/UI/Modal/Modal.tsx'
+import { PageTitle } from '../../components/UI/PageTitle/PageTitle.tsx'
+import { useNavigate } from 'react-router-dom'
 
 export const CustomerCart = () => {
     const cart = useAppSelector((state) => state.cart.items)
+    const navigate = useNavigate()
+    const isOrderConfirmed = useAppSelector((state) => state.cart.confirmed)
     const [selectedDish, setSelectedDish] = useState<IDish | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const dispatch = useAppDispatch()
@@ -23,7 +26,14 @@ export const CustomerCart = () => {
                 title={'Вы уверены?'}>
                 <p>Подтвердив заказ, вы сможете только добавлять блюда</p>
                 <p>Сумма заказа - {totalCost}₽</p>
-                <Button label={'Подтвердить'} dark onClick={() => null} />
+                <Button
+                    label={'Подтвердить'}
+                    dark
+                    onClick={() => {
+                        dispatch(updateConfirmed(true))
+                        setIsModalOpen(false)
+                    }}
+                />
                 <Button label={'Назад'} onClick={() => setIsModalOpen(false)} />
             </Modal>
             <DishModal
@@ -32,15 +42,19 @@ export const CustomerCart = () => {
                 onClose={() => setSelectedDish(null)}
             />
             <section className={'container mx-auto px-3'}>
-                <div className={'flex items-center gap-5 pb-5 text-accent-800'}>
-                    <ArrowBackRounded fontSize={'large'} />
-                    <h1>Ваш заказ</h1>
+                <PageTitle title={'Ваш заказ'} />
+                {isOrderConfirmed ? (
+                    <div className={'pb-6 text-primary-700'}>
+                        <h2>Ваш заказ подтвержден и передан на кухню</h2>
+                        <p>Вы можете добавлять другие блюда в заказ</p>
+                    </div>
+                ) : (
                     <button
-                        className={'ml-auto text-primary-700'}
+                        className={'text-primary-700'}
                         onClick={() => dispatch(clearCart())}>
                         Удалить всё
                     </button>
-                </div>
+                )}
                 <ul className={'flex flex-col gap-5'}>
                     {cart.map((item) => (
                         <DishCardCart
@@ -57,11 +71,20 @@ export const CustomerCart = () => {
                     'flex max-w-lg flex-wrap items-center justify-between px-3 py-6'
                 }>
                 <h2 className={'text-primary-700'}>Всего: {totalCost}₽</h2>
-                <Button
-                    label={'Оформить заказ'}
-                    dark
-                    onClick={() => setIsModalOpen(true)}
-                />
+                {!isOrderConfirmed ? (
+                    <Button
+                        label={'Оформить заказ'}
+                        dark
+                        disabled={cart.length === 0}
+                        onClick={() => setIsModalOpen(true)}
+                    />
+                ) : (
+                    <Button
+                        label={'Запросить счёт'}
+                        dark
+                        onClick={() => navigate('/customer/payment')}
+                    />
+                )}
             </div>
         </>
     )
