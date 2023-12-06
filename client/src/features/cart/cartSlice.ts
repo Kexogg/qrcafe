@@ -3,10 +3,14 @@ import { createSlice } from '@reduxjs/toolkit'
 
 export interface CartState {
     items: IDish[]
+    confirmed: boolean
+    paid: boolean
 }
 
 const initialState: CartState = {
     items: [],
+    confirmed: false,
+    paid: false,
 }
 
 export const cartSlice = createSlice({
@@ -38,6 +42,12 @@ export const cartSlice = createSlice({
         clearCart: (state) => {
             state.items = []
         },
+        updateConfirmed: (state, action: { payload: boolean }) => {
+            state.confirmed = action.payload
+        },
+        updatePaid: (state, action: { payload: boolean }) => {
+            state.paid = action.payload
+        },
     },
 })
 
@@ -47,8 +57,13 @@ export const {
     clearCart,
     updateCartItem,
     updateCart,
+    updateConfirmed,
+    updatePaid,
 } = cartSlice.actions
 
 export const selectCartItems = (state: { cart: CartState }) => state.cart.items
+export const selectOrdered = (state: { cart: CartState }) =>
+    state.cart.confirmed
+export const selectPaid = (state: { cart: CartState }) => state.cart.paid
 
 export default cartSlice.reducer
