@@ -9,6 +9,7 @@ import { CustomerNotifications } from './pages/CustomerNotifications/CustomerNot
 import { CustomerCart } from './pages/CustomerCart/CustomerCart.tsx'
 import '@fontsource-variable/roboto-flex'
 import { CustomerPayment } from './pages/CustomerPayment/CustomerPayment.tsx'
+import { CustomerSettings } from './pages/CustomerSettings/CustomerSettings.tsx'
 
 function App() {
     return (
@@ -27,6 +28,7 @@ function App() {
                         element={<CustomerNotifications />}
                     />
                     <Route path="payment" element={<CustomerPayment />} />
+                    <Route path="settings" element={<CustomerSettings />} />
                 </Route>
             </Routes>
         </BrowserRouter>
