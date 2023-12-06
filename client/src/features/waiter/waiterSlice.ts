@@ -1,8 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {Waiter} from "../../types/Waiter.ts";
+import {IWaiter} from "../../types/IWaiter.ts";
 
 export interface WaiterState {
-    waiter: Waiter | null
+    waiter: IWaiter | null
 }
 
 const initialState: WaiterState = {
@@ -13,13 +13,13 @@ export const waiterSlice = createSlice({
     name: 'waiter',
     initialState,
     reducers: {
-        setWaiter: (state, action: {payload: Waiter}) => {
+        setWaiter: (state, action: { payload: IWaiter }) => {
             state.waiter = action.payload
         },
         clearWaiter: (state) => {
             state.waiter = null
-        }
-    }
+        },
+    },
 })
 
 export const {setWaiter, clearWaiter} = waiterSlice.actions
