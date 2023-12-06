@@ -13,7 +13,7 @@ export const CustomerHome = () => {
     ]
     return (
         <>
-            <section className={'flex justify-between'}>
+            <section className={'flex justify-between px-5 text-primary-700'}>
                 <ServedBy />
                 <Link to={'/customer/settings'}>
                     <SettingsRounded />

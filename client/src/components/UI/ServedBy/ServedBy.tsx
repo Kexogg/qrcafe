@@ -5,7 +5,7 @@ export const ServedBy = () => {
     const waiter = useAppSelector((state) => state.waiter)
     return (
         waiter && (
-            <section className={'flex gap-5 px-5'}>
+            <section className={'flex gap-5'}>
                 {waiter.image ? (
                     <img
                         src={waiter.image}

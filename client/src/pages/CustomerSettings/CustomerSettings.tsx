@@ -9,7 +9,7 @@ export const CustomerSettings = () => {
     const state = useAppSelector((state) => state)
     const [modalOpen, setModalOpen] = useState(false)
     return (
-        <section className={'flex flex-col gap-5'}>
+        <section className={'flex flex-col gap-5 px-3'}>
             <Modal
                 autoHeight
                 title={'Вы уверены, что хотите выйти?'}
@@ -40,7 +40,7 @@ export const CustomerSettings = () => {
                 />
             </span>
             <h2 className={'text-accent-800'}>Диагностические данные</h2>
-            <div className={'bg-white'}>
+            <div className={'overflow-x-scroll bg-white'}>
                 <pre>
                     QR CAFE <BuildInfo />
                 </pre>
