@@ -1,6 +1,9 @@
-import { EditRounded } from '@mui/icons-material'
+import { DeleteRounded, EditRounded } from '@mui/icons-material'
 import { CountInput } from '../CountInput/CountInput.tsx'
-import { updateCartItem } from '../../../features/cart/cartSlice.ts'
+import {
+    removeFromCart,
+    updateCartItem,
+} from '../../../features/cart/cartSlice.ts'
 import { getDishTotal, IDish } from '../../../types/IDish.ts'
 import { useAppDispatch } from '../../../hooks.ts'
 import { useEffect, useState } from 'react'
@@ -20,6 +23,15 @@ export const DishCardCart = ({
     useEffect(() => {
         setCurrentDish({ ...structuredClone(item), count: item.count ?? 1 })
     }, [item])
+    const [extras, setExtras] = useState('')
+    useEffect(() => {
+        setExtras(
+            item.extras
+                .filter((extra) => extra.applied)
+                .map((extra) => extra.name)
+                .join(', '),
+        )
+    }, [extras, item.extras])
     return (
         <li
             key={item.cartId}
@@ -36,32 +48,27 @@ export const DishCardCart = ({
             <div className={'flex h-full w-full flex-col gap-1'}>
                 <span className={'flex justify-between'}>
                     <h2 className={'text-2xl text-accent-800'}>{item.name}</h2>
-                    <button
-                        className={'mb-auto text-primary-700'}
-                        onClick={() => setSelectedDish(item)}>
-                        <EditRounded />
-                    </button>
+                    <span
+                        className={'mb-auto flex gap-3 pl-3 text-primary-700'}>
+                        <button onClick={() => setSelectedDish(item)}>
+                            <EditRounded />
+                        </button>
+                        <button
+                            onClick={() =>
+                                dispatch(
+                                    removeFromCart(
+                                        currentDish.cartId as string,
+                                    ),
+                                )
+                            }>
+                            <DeleteRounded />
+                        </button>
+                    </span>
                 </span>
                 {item.extras.filter((extra) => extra.applied).length > 0 && (
                     <div className={'flex flex-col gap-1'}>
                         <h3 className={'text-accent-800'}>Добавки</h3>
-                        <p className={'flex flex-wrap gap-1'}>
-                            {item.extras.map(
-                                (extra) =>
-                                    extra.applied && (
-                                        <span key={extra.name}>
-                                            {extra.name}
-                                            {extra !==
-                                                item.extras
-                                                    .filter(
-                                                        (extra) =>
-                                                            extra.applied,
-                                                    )
-                                                    .slice(-1)[0] && ', '}
-                                        </span>
-                                    ),
-                            )}
-                        </p>
+                        <p className={'flex flex-wrap gap-1'}>{extras}</p>
                     </div>
                 )}
                 <div className={'mt-auto flex items-center justify-between'}>
