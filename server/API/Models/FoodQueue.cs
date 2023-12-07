@@ -8,7 +8,7 @@ public partial class FoodQueue
 
     public int RestaurantId { get; set; }
 
-    public Guid FoodId { get; set; }
+    public int FoodId { get; set; }
 
     public short State { get; set; }
 

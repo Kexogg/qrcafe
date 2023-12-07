@@ -11,7 +11,7 @@ public class FoodDTO
         Description = food.Description;
         Price = food.Price;
     }
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public int RestaurantId { get; set; }
 
@@ -25,7 +25,7 @@ public class FoodDTO
 }
 public partial class Food
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public int RestaurantId { get; set; }
 

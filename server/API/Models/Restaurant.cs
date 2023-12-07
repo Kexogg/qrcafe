@@ -17,7 +17,7 @@ public class RestaurantDTO
 
     public string Address { get; set; } = null!;
 
-    public Guid OrgId { get; set; }
+    public int OrgId { get; set; }
 }
 public partial class Restaurant
 {
@@ -27,7 +27,7 @@ public partial class Restaurant
 
     public string Address { get; set; } = null!;
 
-    public Guid OrgId { get; set; }
+    public int OrgId { get; set; }
 
     public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
