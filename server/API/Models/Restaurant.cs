@@ -39,14 +39,5 @@ public partial class Restaurant
 
     public virtual Organization Org { get; set; } = null!;
 
-    public virtual ICollection<Table> Tables
-    {
-        get
-        {
-            var db = new QrCafeDbContext();
-            return db.Tables.Where(t => t.RestaurantId == Id).ToListAsync().Result;
-        }
-        set{}
-    }
-
+    public virtual ICollection<Table> Tables { get; set; } = new List<Table>();
 }

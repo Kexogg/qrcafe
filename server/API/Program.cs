@@ -25,19 +25,22 @@ app.MapPost("/api/clients", async (string name, Guid employeeId, int tableId, in
 });
 
 
-app.MapGet("/api/restaurants/{id:int}/food", async (int id, QrCafeDbContext db) =>
+app.MapGet("/api/restaurants/{id:int}/food", (int id, QrCafeDbContext db) =>
 {
-    return await db.Foods.Where(f => f.RestaurantId == id && f.IsAvailable).Select(f => new FoodDTO(f)).ToListAsync();
+    var restaurant = db.Restaurants.FirstOrDefault(r => r.Id == id);
+    if (restaurant == null) return Results.NotFound("Ресторана не существует");
+    var foodList = db.Foods.Where(f =>f.RestaurantId==id && f.IsAvailable).ToList();
+    return foodList.Count==0 ? Results.NoContent() : Results.Json(foodList.Select(f=>new FoodDTO(f)));
 });
 
-app.MapGet("/api/restaurants", async (QrCafeDbContext db) => await db.Restaurants.ToListAsync());
+app.MapGet("/api/restaurants", async (QrCafeDbContext db) => await db.Restaurants.Select(r=>new RestaurantDTO(r)).ToListAsync());
 
 //Если используешь Results, то все возвращаемые значения метода должны быть в Results
 app.MapGet("/api/restaurants/{id:int}/tables",  (int id, QrCafeDbContext db) =>
 {
     var restaurant = db.Restaurants.FirstOrDefault(r => r.Id == id);
     if (restaurant == null) return Results.NotFound("Ресторана не существует");
-    var tables = restaurant.Tables;
+    var tables = db.Tables.Where(t=> t.RestaurantId == id).ToList();
     return tables.Count == 0 ? Results.NoContent() : Results.Json(tables.Select(t=>new TableDTO(t)));
 });
 
@@ -47,7 +50,6 @@ app.MapPut("/api/restaurants/{id:int}/tables/{num:int}", async (int id, int num,
     if (table == null) return Results.NotFound("Столика не существует");
     if (table.AssignedEmployeeId != null) return Results.BadRequest(new { message = "Столик уже занят" });
     var employee = Table.AssignEmployee(db, table);
-    table.AssignedEmployee = employee;
     table.AssignedEmployeeId = employee.Id;
     await db.SaveChangesAsync();
     return Results.Json(new EmployeeDTO(employee));
