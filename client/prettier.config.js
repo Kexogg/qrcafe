@@ -1,7 +1,12 @@
-module.exports = {
-    trailingComma: "es5",
+/** @type {import("prettier").Config} */
+const config = {
+    trailingComma: 'all',
+    bracketSpacing: true,
+    bracketSameLine: true,
+    arrowParens: 'always',
     tabWidth: 4,
     semi: false,
     singleQuote: true,
-    plugins: [require('prettier-plugin-tailwindcss')],
-};
+    plugins: ['prettier-plugin-tailwindcss'],
+}
+export default config

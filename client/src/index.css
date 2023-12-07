@@ -25,4 +25,15 @@
     button, a {
         -webkit-tap-highlight-color: transparent;
     }
+    ::-webkit-scrollbar {
+        width: 0.25rem;
+    }
+
+    ::-webkit-scrollbar-track:hover {
+        @apply bg-primary-100 rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-full bg-primary-500;
+    }
 }

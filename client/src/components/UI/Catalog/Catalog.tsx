@@ -1,115 +1,216 @@
-import {Chip} from "../Chip/Chip.tsx";
-import food_placeholder from "/public/food_placeholder.jpg";
-import {Dish} from "../../../types/Dish.ts";
-import DishCard from "../DishCard/DishCard.tsx";
-import {useEffect, useRef, useState} from "react";
-import {Link} from "react-router-dom";
+import { getPlaceholderDish, IDish } from '../../../types/IDish.ts'
+import DishCard from '../DishCard/DishCard.tsx'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import DishModal from '../Modal/DishModal.tsx'
+import { Searchbar } from '../Searchbar/Searchbar.tsx'
+import { ICategory } from '../../../types/ICategory.ts'
 
 type CatalogProps = {
-    title: string;
+    title: string
 }
 
-interface Category {
-    name: string;
-    dishes: Dish[];
-}
-
-export const Catalog = ({title}: CatalogProps) => {
+const getCatalog = () => {
     const category_names: string[] = [
         'Салаты',
         'Десерты',
         'Закуски',
         'Супы',
         'Горячее',
-        'Другое'
+        'Другое',
     ]
-    const categories: Category[] = []
-    //fake data generator
-    //TODO: replace with real data
+    const categories: ICategory[] = []
     let i = 0
     for (const categoryName of category_names) {
         categories.push({
             name: categoryName,
+            id: i.toString(),
             dishes: [
-                new Dish(i, 'Dish', 1000, 'Description', '100 kg', [], food_placeholder),
-                new Dish(i + 1, 'Dish', 1000, 'Description', '100 kg', [], food_placeholder),
-                new Dish(i + 2, 'Dish', 1000, 'Description', '100 kg', [], food_placeholder),
-            ]
+                getPlaceholderDish(),
+                getPlaceholderDish(),
+                getPlaceholderDish(),
+            ],
         })
-        i += 3
+        i++
     }
+    return categories
+}
 
+export const Catalog = ({ title }: CatalogProps) => {
+    const categories = useMemo(() => getCatalog(), [])
 
-    const [activeCategory, setActiveCategory] = useState<string>(category_names[0]);
-    const categoryRefs = useRef<(HTMLLIElement | null)[]>([]);
-    const headerRef = useRef<HTMLDivElement>(null);
+    const [activeCategory, setActiveCategory] = useState<string>(
+        categories[0].name,
+    )
+    const [selectedDish, setSelectedDish] = useState<IDish | null>(null)
+    const categoryRefs = useRef<(HTMLLIElement | null)[]>([])
+    const headerRef = useRef<HTMLUListElement>(null)
+    const chipRefs = useRef<(HTMLLIElement | null)[]>([])
+
+    const [searchTerm, setSearchTerm] = useState('')
+    const [filteredCategories, setFilteredCategories] = useState(categories)
+
     useEffect(() => {
-        const refs = categoryRefs.current;
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    setActiveCategory(entry.target.id);
-                }
-            });
-        }, {threshold: 1});
+        setFilteredCategories(
+            categories
+                .map((category) => {
+                    return {
+                        ...category,
+                        dishes: category.dishes.filter((dish) =>
+                            dish.name
+                                .toLowerCase()
+                                .includes(searchTerm.toLowerCase()),
+                        ),
+                    }
+                })
+                .filter((category) => category.dishes.length > 0),
+        )
+    }, [categories, searchTerm])
+
+    useEffect(() => {
+        const refs = categoryRefs.current
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (
+                        entry.isIntersecting &&
+                        (entry.target as HTMLLIElement).dataset.categoryId
+                    ) {
+                        setActiveCategory(
+                            (entry.target as HTMLLIElement).dataset
+                                .categoryId as string,
+                        )
+                        scrollToChip(
+                            (entry.target as HTMLLIElement).dataset
+                                .categoryId as string,
+                        )
+                    }
+                })
+            },
+            {
+                threshold: 0.75,
+                rootMargin: `0px ${
+                    (headerRef.current?.offsetHeight && +1) ?? '0'
+                }px 0px 0px`,
+            },
+        )
 
         categoryRefs.current.forEach((ref) => {
-            if (ref) observer.observe(ref);
-        });
+            if (ref) observer.observe(ref)
+        })
 
         return () => {
             for (const ref of refs) {
-                if (ref) observer.unobserve(ref);
+                if (ref) observer.unobserve(ref)
             }
-        };
-    }, []);
+        }
+    }, [])
 
-    const scrollToCategory = (category: string) => {
-        const categoryRef = categoryRefs.current.find((ref) => ref?.id === category);
+    const scrollToCategory = (categoryId: string) => {
+        const categoryRef = categoryRefs.current.find(
+            (ref) => ref?.dataset.categoryId === categoryId,
+        )
         if (headerRef.current?.offsetHeight && categoryRef) {
-            window.scrollTo({top: categoryRef?.offsetTop - headerRef.current.offsetHeight, behavior: 'smooth'});
+            window.scrollTo({
+                top: categoryRef?.offsetTop - headerRef.current.offsetHeight,
+                behavior: 'smooth',
+            })
+        }
+    }
+    const scrollToChip = (categoryId: string) => {
+        const chipRef = chipRefs.current.find(
+            (ref) => ref?.dataset.categoryId === categoryId,
+        )
+        if (headerRef.current?.offsetHeight && chipRef) {
+            headerRef.current.scrollTo({
+                left:
+                    chipRef?.offsetLeft -
+                    headerRef.current.offsetWidth / 2 +
+                    chipRef.offsetWidth / 2,
+                behavior: 'smooth',
+            })
         }
     }
 
     return (
         <section>
-            <div className={'sticky top-0 bg-primary-100 z-10 py-3'} ref={headerRef}>
-                <h2 className={'text-accent-800 font-bold text-3xl ml-5 my-5 align-middle'}>{title}</h2>
-                <nav>
-                    <ul className={'flex gap-3 overflow-x-scroll pb-1 px-5 no-scrollbar'}>
-                        {categories.map((category) => {
-                            return <Chip active={category.name === activeCategory} text={category.name}
-                                         key={category.name} onClick={() => scrollToCategory(category.name)}/>
-                        })}
-                    </ul>
-                </nav>
-            </div>
-            <ul className={'mx-5 gap-5 flex flex-col mt-5'}>
-                {
-                    categories.map((category, index) => {
+            <DishModal
+                dish={selectedDish}
+                onClose={() => setSelectedDish(null)}
+            />
+            <h2
+                className={
+                    'my-5 ml-5 align-middle text-3xl font-bold text-accent-800'
+                }>
+                {title}
+            </h2>
+            <Searchbar setSearchTerm={setSearchTerm} />
+            <nav className={'sticky top-0 z-10 bg-primary-100'}>
+                <ul
+                    className={'no-scrollbar flex gap-3 overflow-x-scroll p-5'}
+                    ref={headerRef}>
+                    {filteredCategories.map((category, index) => {
                         return (
-                            <li key={category.name} id={category.name} ref={(el) => categoryRefs.current[index] = el}>
-                                <h3 className={'text-accent-800 font-bold text-2xl my-2 align-middle'}>{category.name}</h3>
-                                <ul className={'flex gap-5 flex-wrap'}>
-                                    {
-                                        category.dishes.map((dish) => {
-                                            return (
-                                                <DishCard dish={dish} key={dish.id}/>
-                                            )
-                                        })
-                                    }
-                                </ul>
+                            <li
+                                data-category-id={category.id}
+                                key={category.id}
+                                ref={(el) => (chipRefs.current[index] = el)}>
+                                <button
+                                    className={`border-2 border-primary-700 px-3 py-1 ${
+                                        category.id === activeCategory
+                                            ? ' bg-primary-700 text-primary-50'
+                                            : 'text-primary-700'
+                                    } inline-block rounded-full text-center text-lg font-medium`}
+                                    onClick={() =>
+                                        scrollToCategory(category.id)
+                                    }>
+                                    {category.name}
+                                </button>
                             </li>
                         )
-                    })
-                }
+                    })}
+                </ul>
+            </nav>
+            <ul className={'mx-5 mt-5 flex flex-col gap-5'}>
+                {filteredCategories.map((category, index) => {
+                    return (
+                        <li
+                            data-category-id={category.id}
+                            key={category.id}
+                            ref={(el) => (categoryRefs.current[index] = el)}>
+                            <h3
+                                className={
+                                    'my-2 align-middle text-2xl font-bold text-accent-800'
+                                }>
+                                {category.name}
+                            </h3>
+                            <ul className={'flex flex-wrap gap-5'}>
+                                {category.dishes.map((dish) => {
+                                    return (
+                                        <DishCard
+                                            onClick={() => {
+                                                setSelectedDish(dish)
+                                            }}
+                                            dish={dish}
+                                            key={dish.id}
+                                        />
+                                    )
+                                })}
+                            </ul>
+                        </li>
+                    )
+                })}
             </ul>
-            <section className={'text-center my-6 text-primary-700'}>
+            <section className={'my-6 text-center text-primary-700'}>
                 <h3> Похоже, что вы просмотрели все блюда </h3>
-                <p>Вы можете перейти в <Link className={'underline'} to={'/customer/cart'}>корзину</Link> и оформить
-                    заказ</p>
+                <p>
+                    Вы можете перейти в{' '}
+                    <Link className={'underline'} to={'/customer/cart'}>
+                        корзину
+                    </Link>{' '}
+                    и оформить заказ
+                </p>
             </section>
         </section>
-
-    );
-};
+    )
+}
