@@ -148,7 +148,7 @@ export const CustomerCart = () => {
             {isOrderConfirmed && (
                 <div
                     className={
-                        'flex max-w-lg flex-wrap items-center justify-between px-3 py-6'
+                        'flex max-w-lg flex-wrap items-center justify-between gap-3 py-6'
                     }>
                     <p>
                         Запросите счёт для оплаты заказа. Запросив счёт, вы
