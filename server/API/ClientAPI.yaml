@@ -1,0 +1,148 @@
+﻿openapi: 3.0.3
+info:
+  title: ClientAPI Documentation
+  version: 1.0.0
+servers:
+  - url: 'https://nyashdev.stk8s.66bit.ru'
+components: 
+  schemas: 
+    FoodDTO:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: int32
+        RestaurantID:
+          type: integer
+          format: int32
+        IsAvailable:
+          type: boolean
+        Name:
+          type: string
+        Description:
+          type: string
+        Price:
+          type: integer
+          format: int32
+    EmployeeDTO:
+      type: object
+      properties:
+        Id:
+          type: UUID
+        FullName:
+          type: string
+        RoleID:
+          type: integer
+          format: int32
+        RestaurantID:
+          type: integer
+          format: int32
+        Available:
+          type: boolean    
+paths:
+  /api/clients:
+    get: 
+      summary: Returns list of clients
+      tags:
+        - clients
+      responses:
+        404:
+          description: Clients not found
+        200:
+          description: Successful request
+    
+    post: 
+      summary: Creates new client
+      tags:
+        - clients
+      requestBody:
+        content: 
+          application/json:
+            schema: 
+              properties: 
+                name:
+                  description: Client name
+                  type: string
+                employeeId:
+                  description: UUID of the employee
+                  type: object
+                tableId:
+                  description: Id of the table
+                  type: integer
+                restaurantId:
+                  description: Id of the restaurant
+                  type: integer
+      responses: 
+        200:
+          description: Client created
+  
+  /api/restaurants/{id:int}/food:
+    get:
+      summary: Returns food list of the restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of the restaurant
+          allowEmptyValue: false
+          schema:
+            type: integer
+      responses: 
+        404:
+          description: Restaurant not found
+        204:
+          description: No food available
+        200:
+          description: Returns food list
+          
+  /api/restaurants:
+    get:
+      summary: Returns restaurants list
+      responses:
+        200:
+          description: Returns restaurants list
+        
+  /api/restaurants/{id:int}/tables:
+    get:
+      summary: Returns tables list of the restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of the restaurant
+          allowEmptyValue: false
+          schema:
+            type: integer
+      responses:
+        404:
+          description: Restaurant not found
+        204:
+          description: No tables
+        200:
+          description: Returns tables list
+          
+  /api/restaurants/{id:int}/tables/{num:int}:
+    put:
+      summary: Reserve a table
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of the restaurant
+          allowEmptyValue: false
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          description: id of the table
+          allowEmptyValue: false
+          schema:
+            type: integer
+      responses:
+        404:
+          description: Table not found
+        200:
+          description: Successful response. Returns EmployeeDTO
+
+            

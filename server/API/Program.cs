@@ -33,8 +33,11 @@ app.MapGet("/api/restaurants/{id:int}/food", (int id, QrCafeDbContext db) =>
     return foodList.Count==0 ? Results.NoContent() : Results.Json(foodList.Select(f=>new FoodDTO(f)));
 });
 
-app.MapGet("/api/restaurants", async (QrCafeDbContext db) => await db.Restaurants.Select(r=>new RestaurantDTO(r)).ToListAsync());
-
+app.MapGet("/api/restaurants", async (QrCafeDbContext db) =>
+{
+    var restaurantsList = await db.Restaurants.Select(r => new RestaurantDTO(r)).ToListAsync();
+    return Results.Json(restaurantsList);
+});
 //Если используешь Results, то все возвращаемые значения метода должны быть в Results
 app.MapGet("/api/restaurants/{id:int}/tables",  (int id, QrCafeDbContext db) =>
 {
