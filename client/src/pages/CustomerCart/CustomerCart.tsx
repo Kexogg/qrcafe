@@ -11,7 +11,7 @@ import { DishCardCart } from '../../components/UI/DishCartdCart/DishCardCart.tsx
 import { Button } from '../../components/UI/Button/Button.tsx'
 import Modal from '../../components/UI/Modal/Modal.tsx'
 import { PageTitle } from '../../components/UI/PageTitle/PageTitle.tsx'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function getFilteredCart(cart: IDish[], status: DishStatus) {
     return cart.filter((item) => item.status === status)
@@ -96,6 +96,18 @@ export const CustomerCart = () => {
                     }>
                     <h2>Ваш заказ подтвержден и передан на кухню</h2>
                     <p>Вы можете добавлять другие блюда в заказ</p>
+                </div>
+            )}
+            {cart.length === 0 && (
+                <div className={'pt-5'}>
+                    <h2>Корзина пуста</h2>
+                    <p>
+                        Перейдите на{' '}
+                        <Link className={'underline'} to={'/customer/home'}>
+                            главную
+                        </Link>{' '}
+                        и добавьте что-то в корзину
+                    </p>
                 </div>
             )}
             {getFilteredCart(cart, DishStatus.NEW).length > 0 && (
