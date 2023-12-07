@@ -116,18 +116,20 @@ const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
                                 }
                                 count={currentDish.count ?? 1}
                             />
-                            <span
-                                className={
-                                    'ml-auto mr-3 text-xl font-bold text-primary-700'
-                                }>
-                                Итого:
-                            </span>
-                            <p
-                                className={
-                                    'rounded-full bg-primary-700 px-4 py-2.5 text-lg font-semibold text-white '
-                                }>
-                                {getDishTotal(currentDish)}₽
-                            </p>
+                            <div className={'ml-auto flex items-center gap-3'}>
+                                <span
+                                    className={
+                                        'text-xl font-bold text-primary-700 max-[350px]:hidden'
+                                    }>
+                                    Итого:
+                                </span>
+                                <p
+                                    className={
+                                        'rounded-full bg-primary-700 p-3 text-lg font-semibold text-white'
+                                    }>
+                                    {getDishTotal(currentDish)}₽
+                                </p>
+                            </div>
                         </div>
                         <Button
                             label={
