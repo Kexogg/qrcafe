@@ -57,7 +57,9 @@ export const Catalog = ({ title }: CatalogProps) => {
                     return {
                         ...category,
                         dishes: category.dishes.filter((dish) =>
-                            dish.name.toLowerCase().includes(searchTerm),
+                            dish.name
+                                .toLowerCase()
+                                .includes(searchTerm.toLowerCase()),
                         ),
                     }
                 })
