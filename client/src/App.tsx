@@ -10,6 +10,7 @@ import { CustomerCart } from './pages/CustomerCart/CustomerCart.tsx'
 import '@fontsource-variable/roboto-flex'
 import { CustomerPayment } from './pages/CustomerPayment/CustomerPayment.tsx'
 import { CustomerSettings } from './pages/CustomerSettings/CustomerSettings.tsx'
+import { CustomerThankYou } from './pages/CustomerThankYou/CustomerThankYou.tsx'
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<LayoutGreen />}>
                     <Route index path="/" element={<Login />} />
+                    <Route path="thankyou" element={<CustomerThankYou />} />
                 </Route>
                 <Route path="/customer" element={<Layout />}>
                     <Route index path="home" element={<CustomerHome />} />
@@ -29,6 +31,7 @@ function App() {
                     />
                     <Route path="payment" element={<CustomerPayment />} />
                     <Route path="settings" element={<CustomerSettings />} />
+                    <Route path="*" element={<h1>404</h1>} />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -1,14 +1,12 @@
-import { useAppDispatch, useAppSelector } from '../../hooks.ts'
+import { useAppSelector } from '../../hooks.ts'
 import { useState } from 'react'
 import { Tips } from '../../components/UI/Tips/Tips.tsx'
 import { RadioButtonChecked, RadioButtonUnchecked } from '@mui/icons-material'
 import { Button } from '../../components/UI/Button/Button.tsx'
-import { updatePaid } from '../../features/cart/cartSlice.ts'
 import { PageTitle } from '../../components/UI/PageTitle/PageTitle.tsx'
 import { getDishTotal } from '../../types/IDish.ts'
 
 export const CustomerPayment = () => {
-    const dispatch = useAppDispatch()
     const total = useAppSelector((state) =>
         state.cart.items.reduce((acc, dish) => acc + getDishTotal(dish), 0),
     )
@@ -58,7 +56,7 @@ export const CustomerPayment = () => {
                     label={'Оплатить'}
                     dark
                     disabled={!paymentMethod}
-                    onClick={() => dispatch(updatePaid(true))}
+                    onClick={() => (window.location.href = '/thankyou')}
                 />
             </span>
         </section>
