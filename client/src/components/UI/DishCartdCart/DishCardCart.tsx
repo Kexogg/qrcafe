@@ -46,12 +46,17 @@ export const DishCardCart = ({
                 }
             />
             <div className={'flex h-full w-full flex-col gap-1'}>
-                <span className={'flex justify-between'}>
-                    <h2 className={'text-2xl text-accent-800'}>{item.name}</h2>
+                <span className={'flex justify-between max-[375px]:flex-col'}>
+                    <h2
+                        className={
+                            'text-2xl text-accent-800  max-[375px]:text-xl'
+                        }>
+                        {item.name}
+                    </h2>
                     {item.status === DishStatus.NEW && (
                         <span
                             className={
-                                'mb-auto flex gap-3 pl-3 text-primary-700'
+                                'mb-auto ml-auto flex gap-3 pl-3 text-primary-700'
                             }>
                             <button onClick={() => setSelectedDish(item)}>
                                 <EditRounded />
@@ -75,7 +80,10 @@ export const DishCardCart = ({
                         <p className={'flex flex-wrap gap-1'}>{extras}</p>
                     </div>
                 )}
-                <div className={'mt-auto flex items-center justify-between'}>
+                <div
+                    className={
+                        'mt-auto flex flex-wrap items-center justify-between'
+                    }>
                     <CountInput
                         disabled={item.status !== DishStatus.NEW}
                         count={currentDish.count ?? 1}
