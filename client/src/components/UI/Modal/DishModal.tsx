@@ -1,4 +1,4 @@
-import { ArrowBackRounded, FavoriteBorderOutlined } from '@mui/icons-material'
+import { ArrowBackRounded } from '@mui/icons-material'
 import Modal from './Modal.tsx'
 import { getDishTotal, IDish, toggleDishExtra } from '../../../types/IDish.ts'
 import { useEffect, useState } from 'react'
@@ -33,24 +33,14 @@ const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
                                 'absolute aspect-[3/2] w-full rounded-3xl object-cover'
                             }
                         />
-                        <nav
+
+                        <button
                             className={
-                                'relative flex h-fit w-full justify-between p-3'
-                            }>
-                            <button
-                                className={
-                                    'rounded-full bg-white/25 p-3 text-white backdrop-blur'
-                                }
-                                onClick={onClose}>
-                                <ArrowBackRounded fontSize={'large'} />
-                            </button>
-                            <button
-                                className={
-                                    'rounded-full bg-white/25 p-3 text-white backdrop-blur'
-                                }>
-                                <FavoriteBorderOutlined fontSize={'large'} />
-                            </button>
-                        </nav>
+                                'relative m-3 h-fit rounded-full bg-white/25 p-3 text-white backdrop-blur'
+                            }
+                            onClick={onClose}>
+                            <ArrowBackRounded fontSize={'large'} />
+                        </button>
                     </div>
                     <section className={'min-h-0 grow overflow-y-scroll'}>
                         <h1 className={'text-3xl font-bold text-primary-700'}>
