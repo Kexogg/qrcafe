@@ -1,4 +1,4 @@
-import { DishStatus, getDishTotal, IDish } from '../../types/IDish.ts'
+import { DishStatus, IDish } from '../../types/IDish.ts'
 import { useAppDispatch, useAppSelector } from '../../hooks.ts'
 import {
     clearCart,
@@ -12,14 +12,7 @@ import { Button } from '../../components/UI/Button/Button.tsx'
 import Modal from '../../components/UI/Modal/Modal.tsx'
 import { PageTitle } from '../../components/UI/PageTitle/PageTitle.tsx'
 import { Link, useNavigate } from 'react-router-dom'
-
-function getFilteredCart(cart: IDish[], status: DishStatus) {
-    return cart.filter((item) => item.status === status)
-}
-
-function getCartTotal(cart: IDish[]) {
-    return cart.reduce((acc, dish) => acc + getDishTotal(dish), 0)
-}
+import { getCartTotal, getFilteredCart } from '../../helpers.ts'
 
 type CustomerCartCards = {
     setSelectedDish: (dish: IDish) => void
