@@ -27,24 +27,42 @@ app.MapPost("/api/clients", async (string name, Guid employeeId, int tableId, in
 
 app.MapGet("/api/restaurants/{id:int}/food", (int id, QrCafeDbContext db) =>
 {
-    var restaurant = db.Restaurants.FirstOrDefault(r => r.Id == id);
+    var restaurant = db.Restaurants.Include(restaurant => restaurant.Foods).FirstOrDefault(r => r.Id == id);
     if (restaurant == null) return Results.NotFound("Ресторана не существует");
-    var foodList = db.Foods.Where(f =>f.RestaurantId==id && f.IsAvailable).ToList();
+    var foodList = restaurant.Foods;
     return foodList.Count==0 ? Results.NoContent() : Results.Json(foodList.Select(f=>new FoodDTO(f)));
 });
-
+app.MapPost("/api/restaurants", async (string name, string address, string fullOrgName, QrCafeDbContext db) =>
+{
+    var organization =
+        db.Organizations.Include(o => o.Restaurants).FirstOrDefault(o => o.FullName == fullOrgName);
+    if (organization == null) return Results.BadRequest("Организации не существует");
+    var restaurant = new Restaurant(name, address, organization);
+    await db.Restaurants.AddAsync(restaurant);
+    await db.SaveChangesAsync();
+    return Results.Json(new RestaurantDTO(restaurant));
+});
+    
 app.MapGet("/api/restaurants", async (QrCafeDbContext db) =>
 {
-    var restaurantsList = await db.Restaurants.Select(r => new RestaurantDTO(r)).ToListAsync();
+    var restaurantsList = await db.Restaurants.Include(r=>r.Org ).Select(r => new RestaurantDTO(r)).ToListAsync();
     return Results.Json(restaurantsList);
 });
 //Если используешь Results, то все возвращаемые значения метода должны быть в Results
 app.MapGet("/api/restaurants/{id:int}/tables",  (int id, QrCafeDbContext db) =>
 {
-    var restaurant = db.Restaurants.FirstOrDefault(r => r.Id == id);
+    var restaurant = db.Restaurants.Include(restaurant => restaurant.Tables).FirstOrDefault(r => r.Id == id);
     if (restaurant == null) return Results.NotFound("Ресторана не существует");
-    var tables = db.Tables.Where(t=> t.RestaurantId == id).ToList();
+    var tables = restaurant.Tables;
     return tables.Count == 0 ? Results.NoContent() : Results.Json(tables.Select(t=>new TableDTO(t)));
+});
+
+app.MapPost("/api/organizations", async (string fullName, string shortName, QrCafeDbContext db) =>
+{
+    var organization = new Organization(fullName, shortName, db);
+    await db.Organizations.AddAsync(organization);
+    await db.SaveChangesAsync();
+    return Results.Json(new OrganizationDTO(organization));
 });
 
 app.MapPut("/api/restaurants/{id:int}/tables/{num:int}", async (int id, int num, QrCafeDbContext db) =>

@@ -9,7 +9,7 @@ public class RestaurantDTO
         Id = restaurant.Id;
         Name = restaurant.Name;
         Address = restaurant.Address;
-        OrgId = restaurant.OrgId;
+        OrgFullName = restaurant.Org.FullName;
     }
     public int Id { get; set; }
 
@@ -17,10 +17,19 @@ public class RestaurantDTO
 
     public string Address { get; set; } = null!;
 
-    public int OrgId { get; set; }
+    public string OrgFullName { get; set; }
 }
 public partial class Restaurant
 {
+    public Restaurant(){}
+
+    public Restaurant(string name, string address, Organization org)
+    {
+        Id = org.Restaurants.Count;
+        Name = name;
+        Address = address;
+        OrgId = org.Id;
+    }
     public int Id { get; set; }
 
     public string Name { get; set; } = null!;

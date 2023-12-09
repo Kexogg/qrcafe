@@ -4,6 +4,7 @@ info:
   version: 1.0.0
 servers:
   - url: 'https://nyashdev.stk8s.66bit.ru'
+  - url: 'https://localhost:44324/'
 components: 
   schemas: 
     FoodDTO:
@@ -101,6 +102,27 @@ paths:
       responses:
         200:
           description: Returns restaurants list
+    post:
+      summary: Creates new restaurant
+      requestBody: 
+        content: 
+          application/json:
+            schema:
+              properties: 
+                name:
+                  description: Restaurant name
+                  type: string
+                address:
+                  description: Restaurant address
+                  type: string
+                fullOrgName:
+                  description: Full organization name
+                  type: string
+      responses: 
+        400:
+          description: Organization does not exist
+        200:
+          description: Returns new restaurant data
         
   /api/restaurants/{id:int}/tables:
     get:

@@ -32,7 +32,7 @@ public partial class Employee
 
     public bool Available { get; set; }
 
-    public virtual ICollection<Client> Clients { get; set; }
+    public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
     public virtual Restaurant? Restaurant { get; set; }
 
