@@ -6,10 +6,10 @@ type SearchbarProps = {
 
 export const Searchbar = ({ setSearchTerm }: SearchbarProps) => {
     return (
-        <search className={'my-5'}>
+        <search>
             <form
                 className={
-                    'mx-5 flex h-8 w-auto   max-w-md items-center justify-between border-b-2 border-primary-700 px-3 text-primary-700'
+                    'flex h-8 w-auto   max-w-md items-center justify-between border-b-2 border-primary-700 px-3 text-primary-700'
                 }>
                 <input
                     onChange={(e) => setSearchTerm(e.target.value)}
