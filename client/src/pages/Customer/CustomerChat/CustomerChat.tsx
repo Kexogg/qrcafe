@@ -1,4 +1,4 @@
-import { useAppSelector } from '../../hooks.ts'
+import { useAppSelector } from '../../../hooks.ts'
 import { useState } from 'react'
 
 enum Sender {

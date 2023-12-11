@@ -1,8 +1,8 @@
-import { BuildInfo } from '../../components/BuildInfo/BuildInfo.tsx'
-import { PageTitle } from '../../components/UI/PageTitle/PageTitle.tsx'
-import { useAppSelector } from '../../hooks.ts'
-import { Button } from '../../components/UI/Button/Button.tsx'
-import Modal from '../../components/UI/Modal/Modal.tsx'
+import { BuildInfo } from '../../../components/BuildInfo/BuildInfo.tsx'
+import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
+import { useAppSelector } from '../../../hooks.ts'
+import { Button } from '../../../components/UI/Button/Button.tsx'
+import Modal from '../../../components/UI/Modal/Modal.tsx'
 import { useState } from 'react'
 
 export const CustomerSettings = () => {

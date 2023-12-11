@@ -1,15 +1,18 @@
-import {Outlet} from "react-router-dom";
-import {CustomerNavigationMenu} from "../CustomerMenu/CustomerNavigationMenu.tsx";
+import { Outlet } from 'react-router-dom'
+import { NavigationMenu } from '../NavigationMenu/NavigationMenu.tsx'
 
-const Layout = () => {
+type LayoutProps = {
+    customer: boolean
+}
+const Layout = ({ customer }: LayoutProps) => {
     return (
-        <div className={'flex flex-col min-h-[100dvh] bg-primary-100'}>
-            <main className={'grow container mx-auto mt-5'}>
-                <Outlet/>
+        <div className={'flex min-h-[100dvh] flex-col bg-primary-100'}>
+            <main className={'container mx-auto mt-5 grow'}>
+                <Outlet />
             </main>
-            <CustomerNavigationMenu/>
+            <NavigationMenu customer={customer} />
         </div>
-    );
-};
+    )
+}
 
-export default Layout;
+export default Layout

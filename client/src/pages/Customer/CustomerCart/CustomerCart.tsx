@@ -1,18 +1,18 @@
-import { DishStatus, IDish } from '../../types/IDish.ts'
-import { useAppDispatch, useAppSelector } from '../../hooks.ts'
+import { DishStatus, IDish } from '../../../types/IDish.ts'
+import { useAppDispatch, useAppSelector } from '../../../hooks.ts'
 import {
     clearCart,
     updateCart,
     updateConfirmed,
-} from '../../features/cart/cartSlice.ts'
+} from '../../../features/cart/cartSlice.ts'
 import { useState } from 'react'
-import DishModal from '../../components/UI/Modal/DishModal.tsx'
-import { DishCardCart } from '../../components/UI/DishCartdCart/DishCardCart.tsx'
-import { Button } from '../../components/UI/Button/Button.tsx'
-import Modal from '../../components/UI/Modal/Modal.tsx'
-import { PageTitle } from '../../components/UI/PageTitle/PageTitle.tsx'
+import DishModal from '../../../components/UI/Modal/DishModal.tsx'
+import { DishCardCart } from '../../../components/UI/DishCartdCart/DishCardCart.tsx'
+import { Button } from '../../../components/UI/Button/Button.tsx'
+import Modal from '../../../components/UI/Modal/Modal.tsx'
+import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
 import { Link, useNavigate } from 'react-router-dom'
-import { getCartTotal, getFilteredCart } from '../../helpers.ts'
+import { getCartTotal, getFilteredCart } from '../../../helpers.ts'
 
 type CustomerCartCards = {
     setSelectedDish: (dish: IDish) => void
