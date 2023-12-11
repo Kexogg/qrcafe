@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    @apply text-primary-700;
+}
+
 .no-ring:focus-visible {
     @apply focus:ring-0 focus:ring-offset-0 focus:outline-none;
 }
