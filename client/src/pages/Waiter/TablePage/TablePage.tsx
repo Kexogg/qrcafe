@@ -19,7 +19,10 @@ export const TablePage = () => {
                     {table.order.map((dish) => (
                         <li key={dish.id} className={'flex justify-between'}>
                             <span>
-                                {dish.name}, {dish.count ?? 1} шт.
+                                <span className={'font-semibold'}>
+                                    {dish.name}
+                                </span>
+                                , {dish.count ?? 1} шт.
                                 {dish.extras.length > 0 && (
                                     <>
                                         <br />
@@ -41,7 +44,7 @@ export const TablePage = () => {
                     ))}
                 </ul>
                 <hr className={'border-b-1 my-2 border-primary-700'} />
-                <span className={'flex justify-between'}>
+                <span className={'flex justify-between text-lg font-bold'}>
                     <span>Сумма заказа: </span>
                     {table.order.reduce(
                         (acc, dish) => acc + getDishTotal(dish),
