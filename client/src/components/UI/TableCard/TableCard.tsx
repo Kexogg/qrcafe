@@ -15,9 +15,14 @@ export const TableCard = ({ table }: TableCardProps) => {
             }>
             <span className={'flex items-center justify-between'}>
                 <h2>{table.name}</h2>
-                {table.status === TableStatus.OPEN && 'Свободен'}
-                {table.status === TableStatus.OCCUPIED && 'Занят'}
-                {table.status === TableStatus.RESERVED && 'Забронирован'}
+                <span
+                    className={
+                        'rounded-full bg-accent-800 px-3 py-1  font-medium text-white'
+                    }>
+                    {table.status === TableStatus.OPEN && 'Свободен'}
+                    {table.status === TableStatus.OCCUPIED && 'Занят'}
+                    {table.status === TableStatus.RESERVED && 'Забронирован'}
+                </span>
             </span>
             {table.status === TableStatus.OPEN && (
                 <Button dark label={'Создать заказ'} />
@@ -70,7 +75,10 @@ export const TableCard = ({ table }: TableCardProps) => {
                 </ul>
             )}
             {table.order.length > 0 && (
-                <Link to={`/employee/table/${table.id}`} state={table}>
+                <Link
+                    className={'text-center'}
+                    to={`/employee/table/${table.id}`}
+                    state={table}>
                     Показать больше
                 </Link>
             )}
