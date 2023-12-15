@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.orderTable {
+    @apply grid overflow-scroll border-2 border-primary-700 p-4 rounded-3xl bg-primary-50 divide-y-2;
+    grid-template-columns: 2rem auto 5rem;
+}
+
+.orderItem, .orderItem summary, .orderItem .expand {
+    display: contents;
+}
+
+.orderItem summary > * {
+    @apply py-1
+}
+.orderItem .expand > * {
+    @apply pb-1
+}
+
+.orderItem button {
+    padding: 0.1rem;
+    @apply bg-primary-700 text-white rounded m-0.5;
+}
+
+.orderTable details:not(:nth-child(2)) summary > * {
+    border-top: 1px dashed;
+    @apply border-t-[1px] border-primary-500
+}
+
+.orderTableHeader {
+    display: contents;
+    font-weight: bold;
+}

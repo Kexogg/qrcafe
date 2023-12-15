@@ -1,4 +1,4 @@
-import { IDish } from './IDish.ts'
+import { DishStatus, getPlaceholderDish, IDish } from './IDish.ts'
 
 /**
  * Enum for the status of a table
@@ -30,4 +30,31 @@ export interface ITable {
     order: IDish[]
     customerName?: string
     assignedWaiter?: string
+}
+
+export function getPlaceholderTables(): ITable[] {
+    const tables: ITable[] = []
+    for (let i = 0; i < 10; i++) {
+        const isOccupied = Math.round(Math.random()) === 0
+        isOccupied
+            ? tables.push({
+                  id: Math.random().toString(),
+                  name: 'Столик ' + (i + 1),
+                  order: [
+                      { ...getPlaceholderDish(), status: DishStatus.COOKING },
+                      { ...getPlaceholderDish(), status: DishStatus.COOKED },
+                      { ...getPlaceholderDish(), status: DishStatus.SERVED },
+                      { ...getPlaceholderDish(), status: DishStatus.CANCELED },
+                  ],
+                  status: TableStatus.OCCUPIED,
+                  assignedWaiter: Math.round(Math.random()).toString(),
+              })
+            : tables.push({
+                  id: Math.random().toString(),
+                  name: 'Столик ' + (i + 1),
+                  order: [],
+                  status: TableStatus.OPEN,
+              })
+    }
+    return tables
 }

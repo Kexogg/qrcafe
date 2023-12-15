@@ -1,6 +1,7 @@
 import {
     AccountCircleRounded,
     AddRounded,
+    BookRounded,
     ChatRounded,
     HomeRounded,
     ShoppingCartRounded,
@@ -59,6 +60,11 @@ export const NavigationMenu = ({ customer }: NavigationMenuProps) => {
         {
             path: '/employee/new-order',
             icon: <AddRounded fontSize={iconSize} />,
+            isCustomerRoute: false,
+        },
+        {
+            path: '/employee/catalog',
+            icon: <BookRounded fontSize={iconSize} />,
             isCustomerRoute: false,
         },
         {

@@ -14,6 +14,7 @@ import { TablePage } from './pages/Waiter/TablePage/TablePage.tsx'
 import { WaiterChat } from './pages/Waiter/WaiterChat/WaiterChat.tsx'
 import { WaiterProfile } from './pages/Waiter/WaiterProfile/WaiterProfile.tsx'
 import { NewOrder } from './pages/Waiter/NewOrder/NewOrder.tsx'
+import { WaiterCatalog } from './pages/Waiter/WaiterCatalog/WaiterCatalog.tsx'
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
                     <Route path="new-order" element={<NewOrder />} />
                     <Route path="chat" element={<WaiterChat />} />
                     <Route path="account" element={<WaiterProfile />} />
+                    <Route path="catalog" element={<WaiterCatalog />} />
                     <Route path="table/:id" element={<TablePage />} />
                 </Route>
             </Routes>

@@ -1,36 +1,12 @@
-import { ITable, TableStatus } from '../../../types/ITable.ts'
-import { DishStatus, getPlaceholderDish } from '../../../types/IDish.ts'
+import {
+    getPlaceholderTables,
+    ITable,
+    TableStatus,
+} from '../../../types/ITable.ts'
 import { useEffect, useMemo, useState } from 'react'
 import { TablesSection } from '../../../components/UI/Waiter/TablesSection/TablesSection.tsx'
 import { Searchbar } from '../../../components/UI/Searchbar/Searchbar.tsx'
 import { TableRowsRounded } from '@mui/icons-material'
-
-function getPlaceholderTables(): ITable[] {
-    const tables: ITable[] = []
-    for (let i = 0; i < 10; i++) {
-        const isOccupied = Math.round(Math.random()) === 0
-        isOccupied
-            ? tables.push({
-                  id: Math.random().toString(),
-                  name: 'Столик ' + (i + 1),
-                  order: [
-                      { ...getPlaceholderDish(), status: DishStatus.COOKING },
-                      { ...getPlaceholderDish(), status: DishStatus.COOKED },
-                      { ...getPlaceholderDish(), status: DishStatus.SERVED },
-                      { ...getPlaceholderDish(), status: DishStatus.CANCELED },
-                  ],
-                  status: TableStatus.OCCUPIED,
-                  assignedWaiter: Math.round(Math.random()).toString(),
-              })
-            : tables.push({
-                  id: Math.random().toString(),
-                  name: 'Столик ' + (i + 1),
-                  order: [],
-                  status: TableStatus.OPEN,
-              })
-    }
-    return tables
-}
 
 export const WaiterHome = () => {
     const tables: ITable[] = useMemo(() => getPlaceholderTables(), [])
