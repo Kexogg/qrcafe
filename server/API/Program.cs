@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QrCafe;
 using QrCafe.Models;
@@ -25,28 +25,36 @@ app.MapPost("/api/clients", async (string name, Guid employeeId, int tableId, in
 });
 
 
-app.MapGet("/api/restaurants/{id:int}/food", (int id, QrCafeDbContext db) =>
+app.MapGet("/api/restaurants/{id:int}/food", async (int id, QrCafeDbContext db) =>
 {
-    var restaurant = db.Restaurants.Include(restaurant => restaurant.Foods).FirstOrDefault(r => r.Id == id);
+    var restaurant = await db.Restaurants.Include(restaurant => restaurant.Foods).FirstOrDefaultAsync(r => r.Id == id);
     if (restaurant == null) return Results.NotFound("Ресторана не существует");
     var foodList = restaurant.Foods;
     return foodList.Count==0 ? Results.NoContent() : Results.Json(foodList.Select(f=>new FoodDTO(f)));
 });
-app.MapPost("/api/restaurants", async (string name, string address, string fullOrgName, QrCafeDbContext db) =>
+
+app.MapPost("/api/organizations/{orgId:int}/restaurants", async ([FromBody]RestaurantDTO restaurantDTO, int orgId, QrCafeDbContext db) =>
 {
-    var organization =
-        db.Organizations.Include(o => o.Restaurants).FirstOrDefault(o => o.FullName == fullOrgName);
+    var organization = db.Organizations.FirstOrDefault(o => o.Id == orgId);
     if (organization == null) return Results.BadRequest("Организации не существует");
-    var restaurant = new Restaurant(name, address, organization);
+    var random = new Random();
+    var restId = random.Next(1, 1000000);
+    while (db.Restaurants.Where(r=> r.OrgId ==orgId).FirstOrDefault(r=>r.Id == restId)!=null)
+    {
+        restId = random.Next(1, 1000000);
+    }
+    var restaurant = new Restaurant(restaurantDTO, restId, orgId);
     await db.Restaurants.AddAsync(restaurant);
     await db.SaveChangesAsync();
     return Results.Json(new RestaurantDTO(restaurant));
 });
-    
-app.MapGet("/api/restaurants", async (QrCafeDbContext db) =>
+
+app.MapGet("/api/organizations/{orgId:int}/restaurants", async (int orgId,QrCafeDbContext db) =>
 {
-    var restaurantsList = await db.Restaurants.Include(r=>r.Org ).Select(r => new RestaurantDTO(r)).ToListAsync();
-    return Results.Json(restaurantsList);
+    var organization = await db.Organizations.Include(o=>o.Restaurants).FirstOrDefaultAsync(o => o.Id == orgId);
+    if (organization == null) return Results.BadRequest("Организации не существует");
+    var restaurants =organization.Restaurants.Select(r => new RestaurantDTO(r)).ToList();
+    return Results.Json(restaurants);
 });
 //Если используешь Results, то все возвращаемые значения метода должны быть в Results
 app.MapGet("/api/restaurants/{id:int}/tables",  (int id, QrCafeDbContext db) =>
@@ -57,9 +65,15 @@ app.MapGet("/api/restaurants/{id:int}/tables",  (int id, QrCafeDbContext db) =>
     return tables.Count == 0 ? Results.NoContent() : Results.Json(tables.Select(t=>new TableDTO(t)));
 });
 
-app.MapPost("/api/organizations", async (string fullName, string shortName, QrCafeDbContext db) =>
+app.MapPost("/api/organizations", async ([FromBody]OrganizationDTO organizationDto, QrCafeDbContext db) =>
 {
-    var organization = new Organization(fullName, shortName, db);
+    var random = new Random();
+    var orgId = random.Next(1, 1000000);
+    while (db.Organizations.FirstOrDefault(r=>r.Id == orgId)!=null)
+    {
+        orgId = random.Next(1, 1000000);
+    }
+    var organization = new Organization(organizationDto, orgId);
     await db.Organizations.AddAsync(organization);
     await db.SaveChangesAsync();
     return Results.Json(new OrganizationDTO(organization));

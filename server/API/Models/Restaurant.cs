@@ -4,32 +4,38 @@ namespace QrCafe.Models;
 
 public class RestaurantDTO
 {
+    public RestaurantDTO(){}
+    public RestaurantDTO(string name, string address)
+    {
+        Name = name;
+        Address = address;
+    }
     public RestaurantDTO(Restaurant restaurant)
     {
         Id = restaurant.Id;
         Name = restaurant.Name;
         Address = restaurant.Address;
-        OrgFullName = restaurant.Org.FullName;
     }
-    public int Id { get; set; }
+
+    public int? Id { get; set; }
 
     public string Name { get; set; } = null!;
 
     public string Address { get; set; } = null!;
-
-    public string OrgFullName { get; set; }
+    
 }
 public partial class Restaurant
 {
     public Restaurant(){}
 
-    public Restaurant(string name, string address, Organization org)
+    public Restaurant(RestaurantDTO restaurantDto, int id, int orgId)
     {
-        Id = org.Restaurants.Count;
-        Name = name;
-        Address = address;
-        OrgId = org.Id;
+        Id = id;
+        Name = restaurantDto.Name;
+        Address = restaurantDto.Address;
+        OrgId = orgId;
     }
+    
     public int Id { get; set; }
 
     public string Name { get; set; } = null!;
@@ -40,7 +46,7 @@ public partial class Restaurant
 
     public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
-    public virtual ICollection<Employee> Employees { get; set; }
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
     public virtual ICollection<FoodQueue> FoodQueues { get; set; } = new List<FoodQueue>();
 

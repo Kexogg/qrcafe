@@ -2,13 +2,20 @@
 
 public class OrganizationDTO
 {
+    public OrganizationDTO(){}
+
+    public OrganizationDTO(string fullName, string shortName)
+    {
+        FullName = fullName;
+        ShortName = shortName;
+    }
     public OrganizationDTO(Organization organization)
     {
         Id = organization.Id;
         FullName = organization.FullName;
         ShortName = organization.ShortName;
     }
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public string FullName { get; set; } = null!;
 
@@ -17,16 +24,10 @@ public class OrganizationDTO
 public partial class Organization
 {
     public Organization() {}
-    
-    public Organization(string fullName, string shortName, QrCafeDbContext db)
+
+    public Organization(OrganizationDTO organizationDto, int orgId)
     {
-        Id = db.Organizations.Count();
-        FullName = fullName;
-        ShortName = shortName;
-    }
-    public Organization(OrganizationDTO organizationDto)
-    {
-        Id = organizationDto.Id;
+        Id = orgId;
         FullName = organizationDto.FullName;
         ShortName = organizationDto.ShortName;
     }

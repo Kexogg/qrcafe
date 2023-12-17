@@ -102,28 +102,35 @@ paths:
       responses:
         200:
           description: Returns restaurants list
+    
+  /api/organizations/{orgId}/restaurants:
     post:
       summary: Creates new restaurant
-      requestBody: 
-        content: 
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: id of the organization
+          allowEmptyValue: false
+          schema:
+            type: integer
+      requestBody:
+        content:
           application/json:
             schema:
-              properties: 
+              properties:
                 name:
                   description: Restaurant name
                   type: string
                 address:
                   description: Restaurant address
                   type: string
-                fullOrgName:
-                  description: Full organization name
-                  type: string
-      responses: 
+      responses:
         400:
           description: Organization does not exist
         200:
           description: Returns new restaurant data
-        
+
   /api/restaurants/{id}/tables:
     get:
       summary: Returns tables list of the restaurant
@@ -166,5 +173,22 @@ paths:
           description: Table not found
         200:
           description: Successful response. Returns EmployeeDTO
-
-            
+  
+  /api/organizations:
+    post:
+      summary: Creates new organization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                fullName:
+                  description: Organization full name
+                  type: string
+                shortName:
+                  description: Organization short name
+                  type: string
+      responses: 
+        200: 
+          description: Returns new organization data
+        
