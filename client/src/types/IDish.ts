@@ -5,7 +5,7 @@ export enum DishStatus {
     NEW,
     COOKING,
     COOKED,
-    DELIVERED,
+    SERVED,
     CANCELED,
 }
 

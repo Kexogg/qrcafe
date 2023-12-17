@@ -1,6 +1,6 @@
 import { StarBorderRounded, StarRounded } from '@mui/icons-material'
 import { useState } from 'react'
-import { Button } from '../../components/UI/Button/Button.tsx'
+import { Button } from '../../../components/UI/Button/Button.tsx'
 
 export const CustomerThankYou = () => {
     const [rating, setRating] = useState(0)

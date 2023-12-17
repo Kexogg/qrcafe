@@ -33,6 +33,7 @@ export const Button = ({ label, dark, border, ...props }: ButtonProps) => {
         return (
             <Link to={props.href} className={'flex flex-col'}>
                 <button
+                    type={'button'}
                     {...props}
                     className={`${colorClass} ${borderClass} ${classes}`}>
                     {label}
@@ -42,6 +43,7 @@ export const Button = ({ label, dark, border, ...props }: ButtonProps) => {
     }
     return (
         <button
+            type={'button'}
             className={`${colorClass} ${borderClass} ${classes}`}
             {...props}>
             {label}

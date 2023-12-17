@@ -144,7 +144,9 @@ export const Catalog = ({ title }: CatalogProps) => {
                 }>
                 {title}
             </h2>
-            <Searchbar setSearchTerm={setSearchTerm} />
+            <div className={'mx-5'}>
+                <Searchbar setSearchTerm={setSearchTerm} />
+            </div>
             <nav className={'sticky top-0 z-10 bg-primary-100'}>
                 <ul
                     className={'no-scrollbar flex gap-3 overflow-x-scroll p-5'}

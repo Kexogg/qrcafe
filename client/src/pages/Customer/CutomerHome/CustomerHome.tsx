@@ -1,7 +1,7 @@
-import { ServedBy } from '../../components/UI/ServedBy/ServedBy.tsx'
-import { Showcase } from '../../components/UI/Showcase/Showcase.tsx'
-import { getPlaceholderDish } from '../../types/IDish.ts'
-import { Catalog } from '../../components/UI/Catalog/Catalog.tsx'
+import { ServedBy } from '../../../components/UI/ServedBy/ServedBy.tsx'
+import { Showcase } from '../../../components/UI/Showcase/Showcase.tsx'
+import { getPlaceholderDish } from '../../../types/IDish.ts'
+import { Catalog } from '../../../components/UI/Catalog/Catalog.tsx'
 import { SettingsRounded } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 
