@@ -103,6 +103,14 @@ namespace QrCafe.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("full_name");
 
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int?>("RestaurantId")
                         .HasColumnType("integer")
                         .HasColumnName("restaurant_id");

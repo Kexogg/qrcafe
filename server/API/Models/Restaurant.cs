@@ -28,9 +28,9 @@ public partial class Restaurant
 {
     public Restaurant(){}
 
-    public Restaurant(RestaurantDTO restaurantDto, int id, int orgId)
+    public Restaurant(RestaurantDTO restaurantDto, int restId, int orgId)
     {
-        Id = id;
+        Id = orgId*100000+restId;
         Name = restaurantDto.Name;
         Address = restaurantDto.Address;
         OrgId = orgId;

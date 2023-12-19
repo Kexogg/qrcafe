@@ -2,12 +2,10 @@
 
 public class ClientDTO
 {
-    public ClientDTO(string name, Guid employeeId, int tableId, int restaurantId)
+    public ClientDTO(){}
+    public ClientDTO(string name)
     {
         Name = name;
-        AssignedEmployeeId = employeeId;
-        TableId = tableId;
-        RestaurantId = restaurantId;
         IsActive = true;
     }
     public ClientDTO(Client client)
@@ -36,7 +34,7 @@ public class ClientDTO
 
     public bool IsActive { get; set; }
 
-    public Guid AssignedEmployeeId { get; set; }
+    public Guid? AssignedEmployeeId { get; set; }
 
     public short? PaymentType { get; set; }
 
@@ -56,14 +54,24 @@ public partial class Client
     public Client()
     {
     }
+
+    public Client(ClientDTO clientDto, int restId, int tableNum, Guid assignedEmployeeId)
+    {
+        Name = clientDto.Name;
+        Id = clientDto.Id ?? Guid.NewGuid();
+        RestaurantId = restId;
+        TableId = tableNum;
+        AssignedEmployeeId = assignedEmployeeId;
+        IsActive = clientDto.IsActive;
+    }
     public Client(ClientDTO client)
     {
         TableId = client.TableId;
         RestaurantId = client.RestaurantId;
-        Id = client.Id.HasValue ? client.Id.Value : new Guid();
+        Id = client.Id ?? new Guid();
         Name = client.Name;
         IsActive = client.IsActive;
-        AssignedEmployeeId = client.AssignedEmployeeId;
+        AssignedEmployeeId = (Guid)client.AssignedEmployeeId;
         PaymentType = client.PaymentType;
         Discount = client.Discount;
         PaymentStatus = client.PaymentStatus;
