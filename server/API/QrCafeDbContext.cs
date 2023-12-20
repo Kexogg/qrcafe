@@ -29,6 +29,10 @@ public partial class QrCafeDbContext : DbContext
     public virtual DbSet<Restaurant> Restaurants { get; set; }
 
     public virtual DbSet<Table> Tables { get; set; }
+    
+    public virtual DbSet<FoodCategory> FoodCategories { get; set; }
+    
+    public virtual DbSet<Category> Categories { get; set; }
 
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -207,6 +211,49 @@ public partial class QrCafeDbContext : DbContext
                 .HasForeignKey(d => d.RestaurantId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tables_restaurants_id_fk");
+        });
+
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("categories_pk");
+
+            entity.ToTable("categories");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name).HasMaxLength(20)
+                .HasColumnName("name");
+            entity.Property(e => e.Description).HasMaxLength(50)
+                .HasColumnName("description");
+            entity.Property(e => e.Separate)
+                .HasColumnName("separate");
+            entity.Property(e => e.RestaurantId)
+                .HasColumnName("restaurant_id");
+
+            entity.HasOne(e => e.Restaurant).WithMany(p => p.Categories)
+                .HasForeignKey(d => d.RestaurantId)
+                .HasConstraintName("categories_restaurants_fk");
+        });
+
+        modelBuilder.Entity<FoodCategory>(entity =>
+        {
+            entity.HasKey(e => new {e.FoodId, e.CategoryId}).HasName("food_categories_pk");
+            
+            entity.ToTable("food_categories");
+            
+            entity.Property(e => e.CategoryId)
+                .HasColumnName("category_id");
+            entity.Property(e => e.FoodId)
+                .HasColumnName("food_id");
+
+            entity.HasOne(d => d.Food).WithMany(p => p.FoodCategories)
+                .HasForeignKey(d => d.FoodId)
+                .HasConstraintName("food_categories_food_id_fk");
+            
+            entity.HasOne(d => d.Category).WithMany(p => p.FoodCategories)
+                .HasForeignKey(d => d.CategoryId)
+                .HasConstraintName("food_categories_categories_id_fk");
         });
 
         OnModelCreatingPartial(modelBuilder);

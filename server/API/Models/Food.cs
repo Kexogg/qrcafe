@@ -40,4 +40,6 @@ public partial class Food
     public virtual ICollection<FoodQueue> FoodQueues { get; set; } = new List<FoodQueue>();
 
     public virtual Restaurant Restaurant { get; set; } = null!;
+
+    public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();
 }

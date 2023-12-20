@@ -55,4 +55,6 @@ public partial class Restaurant
     public virtual Organization Org { get; set; } = null!;
 
     public virtual ICollection<Table> Tables { get; set; } = new List<Table>();
+
+    public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 }

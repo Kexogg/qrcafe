@@ -22,6 +22,40 @@ namespace QrCafe.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("QrCafe.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("restaurant_id");
+
+                    b.Property<bool>("Separate")
+                        .HasColumnType("boolean")
+                        .HasColumnName("separate");
+
+                    b.HasKey("Id")
+                        .HasName("categories_pk");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("categories", (string)null);
+                });
+
             modelBuilder.Entity("QrCafe.Models.Client", b =>
                 {
                     b.Property<Guid>("Id")
@@ -164,6 +198,24 @@ namespace QrCafe.Migrations
                     b.ToTable("food", (string)null);
                 });
 
+            modelBuilder.Entity("QrCafe.Models.FoodCategory", b =>
+                {
+                    b.Property<int>("FoodId")
+                        .HasColumnType("integer")
+                        .HasColumnName("food_id");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnName("category_id");
+
+                    b.HasKey("FoodId", "CategoryId")
+                        .HasName("food_categories_pk");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("food_categories", (string)null);
+                });
+
             modelBuilder.Entity("QrCafe.Models.FoodQueue", b =>
                 {
                     b.Property<Guid>("Id")
@@ -281,6 +333,18 @@ namespace QrCafe.Migrations
                     b.ToTable("tables", (string)null);
                 });
 
+            modelBuilder.Entity("QrCafe.Models.Category", b =>
+                {
+                    b.HasOne("QrCafe.Models.Restaurant", "Restaurant")
+                        .WithMany("Categories")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("categories_restaurants_fk");
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("QrCafe.Models.Client", b =>
                 {
                     b.HasOne("QrCafe.Models.Employee", "AssignedEmployee")
@@ -319,6 +383,27 @@ namespace QrCafe.Migrations
                         .HasConstraintName("food_restaurants_id_fk");
 
                     b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("QrCafe.Models.FoodCategory", b =>
+                {
+                    b.HasOne("QrCafe.Models.Category", "Category")
+                        .WithMany("FoodCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_categories_categories_id_fk");
+
+                    b.HasOne("QrCafe.Models.Food", "Food")
+                        .WithMany("FoodCategories")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_categories_food_id_fk");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Food");
                 });
 
             modelBuilder.Entity("QrCafe.Models.FoodQueue", b =>
@@ -377,6 +462,11 @@ namespace QrCafe.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("QrCafe.Models.Category", b =>
+                {
+                    b.Navigation("FoodCategories");
+                });
+
             modelBuilder.Entity("QrCafe.Models.Client", b =>
                 {
                     b.Navigation("FoodQueues");
@@ -391,6 +481,8 @@ namespace QrCafe.Migrations
 
             modelBuilder.Entity("QrCafe.Models.Food", b =>
                 {
+                    b.Navigation("FoodCategories");
+
                     b.Navigation("FoodQueues");
                 });
 
@@ -401,6 +493,8 @@ namespace QrCafe.Migrations
 
             modelBuilder.Entity("QrCafe.Models.Restaurant", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("Clients");
 
                     b.Navigation("Employees");
