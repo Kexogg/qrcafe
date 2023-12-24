@@ -2,6 +2,15 @@
 
 public class FoodDTO
 {
+    public FoodDTO(){}
+
+    public FoodDTO(string name, string description, int price, int weight)
+    {
+        Name = name;
+        Description = description;
+        Weight = weight;
+        Price = price;
+    }
     public FoodDTO(Food food)
     {
         Id = food.Id;
@@ -9,11 +18,12 @@ public class FoodDTO
         IsAvailable = food.IsAvailable;
         Name = food.Name;
         Description = food.Description;
+        Weight = food.Weight;
         Price = food.Price;
     }
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
-    public int RestaurantId { get; set; }
+    public int? RestaurantId { get; set; }
 
     public bool IsAvailable { get; set; }
 
@@ -21,10 +31,25 @@ public class FoodDTO
 
     public string Description { get; set; } = null!;
 
+    public int Weight { get; set; }
+    
     public int Price { get; set; }
 }
 public partial class Food
 {
+    public Food(){}
+
+    public Food(FoodDTO foodDto, int id, int restId)
+    {
+        Id = id;
+        RestaurantId = restId;
+        IsAvailable = true;
+        Name = foodDto.Name;
+        Description = foodDto.Description;
+        Weight = foodDto.Weight;
+        Price = foodDto.Price;
+    }
+    
     public int Id { get; set; }
 
     public int RestaurantId { get; set; }
@@ -34,6 +59,8 @@ public partial class Food
     public string Name { get; set; } = null!;
 
     public string Description { get; set; } = null!;
+
+    public int Weight { get; set; }
 
     public int Price { get; set; }
 

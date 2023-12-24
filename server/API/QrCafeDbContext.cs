@@ -113,6 +113,7 @@ public partial class QrCafeDbContext : DbContext
                 .HasColumnName("name");
             entity.Property(e => e.Price).HasColumnName("price");
             entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
+            entity.Property(e => e.Weight).HasColumnName("weight");
 
             entity.HasOne(d => d.Restaurant).WithMany(p => p.Foods)
                 .HasForeignKey(d => d.RestaurantId)
@@ -230,6 +231,8 @@ public partial class QrCafeDbContext : DbContext
                 .HasColumnName("separate");
             entity.Property(e => e.RestaurantId)
                 .HasColumnName("restaurant_id");
+            entity.Property(e => e.Order)
+                .HasColumnName("order");
 
             entity.HasOne(e => e.Restaurant).WithMany(p => p.Categories)
                 .HasForeignKey(d => d.RestaurantId)
@@ -246,7 +249,9 @@ public partial class QrCafeDbContext : DbContext
                 .HasColumnName("category_id");
             entity.Property(e => e.FoodId)
                 .HasColumnName("food_id");
-
+            entity.Property(e => e.RestaurantId)
+                .HasColumnName("restaurant_id");
+            
             entity.HasOne(d => d.Food).WithMany(p => p.FoodCategories)
                 .HasForeignKey(d => d.FoodId)
                 .HasConstraintName("food_categories_food_id_fk");
@@ -254,6 +259,10 @@ public partial class QrCafeDbContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.FoodCategories)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("food_categories_categories_id_fk");
+            
+            entity.HasOne(d => d.Restaurant).WithMany(p => p.FoodCategories)
+                .HasForeignKey(d => d.RestaurantId)
+                .HasConstraintName("food_categories_restaurants_id_fk");
         });
 
         OnModelCreatingPartial(modelBuilder);

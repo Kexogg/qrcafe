@@ -57,4 +57,6 @@ public partial class Restaurant
     public virtual ICollection<Table> Tables { get; set; } = new List<Table>();
 
     public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+
+    public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();
 }

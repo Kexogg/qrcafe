@@ -27,6 +27,8 @@ components:
           type: string
         Description:
           type: string
+        Weight:
+          type: integer
         Price:
           type: integer
           format: int32
@@ -34,7 +36,7 @@ components:
       type: object
       properties:
         Id:
-          type: UUID
+          type: string
         FullName:
           type: string
         RoleID:
@@ -97,16 +99,94 @@ paths:
         200:
           description: Successful request
     
-  
-  /api/restaurants/{id}/food:
+    
+  /api/restaurants/{restId}/categories/food/{foodId}:
+      post:
+        tags:
+          - categories
+          - food
+        security:
+          - bearerAuth: [ ]
+        summary: Adds food in a few categories
+        parameters:
+          - name: restId
+            in: path
+            required: true
+            description: id of the restaurant
+            allowEmptyValue: false
+            schema:
+              type: integer
+          - name: foodId
+            in: path
+            required: true
+            description: id of the food
+            allowEmptyValue: false
+            schema:
+              type: integer
+        requestBody:
+          content:
+            application/json:
+              schema:
+                properties:
+                  categoriesIdList:
+                    description: List of required categories id's
+                    type: array
+        responses: 
+          404:
+            description: Restaurant not found
+          200:
+            description: Returns list of categories applied to food
+      
+  /api/restaurants/{restId}/categories:
+    post:
+      tags:
+        - categories
+      security:
+        - bearerAuth: [ ]
+      summary: Creates new food category
+      parameters:
+        - name: restId
+          in: path
+          required: true
+          description: id of the restaurant
+          allowEmptyValue: false
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                num:
+                  description: Category number
+                  type: integer
+                separate:
+                  description: Is category separate
+                  type: boolean
+                name:
+                  description: Category name
+                  type: string
+                description:
+                  description: Category description
+                  type: string
+      responses: 
+        409:
+          description: Category with this num is already exists
+        404:
+          description: Restaurant not found
+        200:
+          description: returns created category
+          
+  /api/restaurants/{restId}/food:
     get:
       tags:
         - food
       security:
         - bearerAuth: [ ]
       summary: Returns food list of the restaurant
+      description: Returns list of categories and food
       parameters:
-        - name: id
+        - name: restId
           in: path
           required: true
           description: id of the restaurant
@@ -120,17 +200,43 @@ paths:
           description: No food available
         200:
           description: Returns food list
-          
-  /api/restaurants:
-    get:
+    post: 
       tags:
-        - restaurants
+        - food
       security:
         - bearerAuth: [ ]
-      summary: Returns restaurants list
-      responses:
+      summary: Creates new food
+      parameters:
+        - name: restId
+          in: path
+          required: true
+          description: id of the restaurant
+          allowEmptyValue: false
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties: 
+                name:
+                  description: Name of the food
+                  type: string
+                description:
+                  description: Description of the food
+                  type: string
+                weight:
+                  description: Weight of the food
+                  type: integer
+                price:
+                  description: Price of the food
+                  type: integer
+                  
+      responses: 
+        404:
+          description: Restaurant not found
         200:
-          description: Returns restaurants list
+          description: Returns new food object
     
   /api/organizations/{orgId}/restaurants:
     post:
@@ -163,8 +269,43 @@ paths:
           description: Organization does not exist
         200:
           description: Returns new restaurant data
-
-  /api/restaurants/{id}/tables:
+  /api/restaurants/{restId}/categories/{catId}/food:
+    post:
+      tags:
+        - categories
+        - food
+      security:
+        - bearerAuth: [ ]
+      summary: Adds few food items in a category
+      parameters:
+        - name: restId
+          in: path
+          required: true
+          description: id of the restaurant
+          allowEmptyValue: false
+          schema:
+            type: integer
+        - name: catId
+          in: path
+          required: true
+          description: id of the category
+          allowEmptyValue: false
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                categoriesIdList:
+                  description: List of required food id's
+                  type: array
+      responses:
+        404:
+          description: Restaurant not found
+        200:
+          description: Returns list of food added to category
+  /api/restaurants/{restId}/tables:
     get:
       tags:
         - tables
@@ -172,7 +313,7 @@ paths:
         - bearerAuth: [ ]
       summary: Returns tables list of the restaurant
       parameters:
-        - name: id
+        - name: restId
           in: path
           required: true
           description: id of the restaurant
@@ -193,7 +334,7 @@ paths:
         - bearerAuth: [ ]
       summary: Creates new table
       parameters:
-        - name: id
+        - name: restId
           in: path
           required: true
           description: id of the restaurant
@@ -206,7 +347,109 @@ paths:
         200:
           description: Returns new table
       
-  /api/restaurants/{restaurantId}/tables/{num}:
+      
+  /api/restaurants/{restId}/table/{tableNum}/queue:
+    post:
+      tags:
+        - food
+        - queue
+      parameters:
+        - name: restId
+          in: path
+          required: true
+          description: id of the restaurant
+          allowEmptyValue: false
+          schema:
+            type: integer
+        - name: tableNum
+          in: path
+          required: true
+          description: id of the table
+          allowEmptyValue: false
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                foodList:
+                  description: САША ВСТАВЛЯЙ В ТЕЛО ЗАПРОСА ГОЛЫЙ МАССИВ, БЕЗ НАЗВАНИЯ foodList, Я НЕ ЗНАЮ КАК ОПСИАТЬ В СВАГГЕРЕ МАССИВ БЕЗ ИМЕНИ ;(
+                  type: array
+                  items: 
+                    $ref: "#/components/schemas/FoodDTO" 
+      responses:          
+        404:
+          description: Restaurant not found
+        200:
+          description: Returns list of FoodQueue items
+          content:
+            application/json:
+              schema:
+                properties:
+                  queue:
+                    description: List of FoodQueue items
+                    type: array
+                    properties: 
+                      id:
+                        description: FoodQueue item id
+                        type: string
+                      client id:
+                        description: Client id
+                        type: string
+                      restaurant id:
+                        description: Restaurant id
+                        type: integer
+                      food id:
+                        description: Id of the Food item
+                        type: integer
+                      state:
+                        description: State of the order
+                        type: integer
+                      created at:
+                        description: Time when order was created
+                        type: object
+                        
+  /api/restaurants/{restId}/queue:
+    put:
+      tags:
+        - food
+        - queue
+      parameters:
+        - name: restId
+          in: path
+          required: true
+          description: id of the restaurant
+          allowEmptyValue: false
+          schema:
+            type: integer
+      requestBody: 
+        content: 
+          application/json:
+            schema: 
+              properties: 
+                id:
+                  description: Id of the order
+                  type: string
+                clientId:
+                  description: Id of the client
+                  type: string
+                restaurantId:
+                  description: Id of the restaurant
+                  type: integer
+                foodId:
+                  description: Id of the food
+                  type: integer
+                state:
+                  description: New state of the order
+                  type: integer
+                createdAt:
+                  description: Time of the order creation
+                  type: string
+      responses: 
+        
+                        
+  /api/restaurants/{restId}/tables/{num}:
     put:
       tags:
         - tables
@@ -214,7 +457,7 @@ paths:
         - bearerAuth: [ ]
       summary: Reserve a table
       parameters:
-        - name: restaurantId
+        - name: restId
           in: path
           required: true
           description: id of the restaurant

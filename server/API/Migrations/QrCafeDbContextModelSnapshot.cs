@@ -40,6 +40,10 @@ namespace QrCafe.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("name");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
                     b.Property<int>("RestaurantId")
                         .HasColumnType("integer")
                         .HasColumnName("restaurant_id");
@@ -190,6 +194,10 @@ namespace QrCafe.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("restaurant_id");
 
+                    b.Property<int>("Weight")
+                        .HasColumnType("integer")
+                        .HasColumnName("weight");
+
                     b.HasKey("Id")
                         .HasName("food_pk");
 
@@ -208,10 +216,16 @@ namespace QrCafe.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("category_id");
 
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("restaurant_id");
+
                     b.HasKey("FoodId", "CategoryId")
                         .HasName("food_categories_pk");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("food_categories", (string)null);
                 });
@@ -401,9 +415,18 @@ namespace QrCafe.Migrations
                         .IsRequired()
                         .HasConstraintName("food_categories_food_id_fk");
 
+                    b.HasOne("QrCafe.Models.Restaurant", "Restaurant")
+                        .WithMany("FoodCategories")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_categories_restaurants_id_fk");
+
                     b.Navigation("Category");
 
                     b.Navigation("Food");
+
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("QrCafe.Models.FoodQueue", b =>
@@ -498,6 +521,8 @@ namespace QrCafe.Migrations
                     b.Navigation("Clients");
 
                     b.Navigation("Employees");
+
+                    b.Navigation("FoodCategories");
 
                     b.Navigation("FoodQueues");
 
