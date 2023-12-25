@@ -9,7 +9,6 @@ public partial class QrCafeDbContext : DbContext
 {
     public QrCafeDbContext()
     {
-        Database.EnsureDeleted();
     }
 
     public QrCafeDbContext(DbContextOptions<QrCafeDbContext> options)
