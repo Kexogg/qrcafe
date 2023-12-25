@@ -40,8 +40,6 @@ app.UseAuthorization();
 
 app.MapPost("/api/restaurants/{restId:int}/login", (EmployeeDTO employeeLoginData, int restId, QrCafeDbContext db) =>
 {
-    try
-    {
         var restaurant = db.Restaurants.Include(r=> r.Employees).FirstOrDefault(r => r.Id == restId);
         if (restaurant == null) return Results.BadRequest(new { message = "Ресторана не существует" });
         var employee = restaurant.Employees.FirstOrDefault(e =>
@@ -52,7 +50,7 @@ app.MapPost("/api/restaurants/{restId:int}/login", (EmployeeDTO employeeLoginDat
             issuer: AuthOptions.ISSUER,
             audience: AuthOptions.AUDIENCE,
             claims: claims,
-            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(10)),
+            expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
         string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
         var response = new
@@ -60,11 +58,6 @@ app.MapPost("/api/restaurants/{restId:int}/login", (EmployeeDTO employeeLoginDat
             access_token = encodedJwt
         };
         return Results.Json(response, statusCode: 200);
-    }
-    catch (Exception e)
-    {
-       return Results.Json(e);
-    }
     
 });
 
