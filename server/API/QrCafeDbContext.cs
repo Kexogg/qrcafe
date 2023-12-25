@@ -9,7 +9,6 @@ public partial class QrCafeDbContext : DbContext
 {
     public QrCafeDbContext()
     {
-        Database.Migrate();
     }
 
     public QrCafeDbContext(DbContextOptions<QrCafeDbContext> options)
@@ -41,7 +40,6 @@ public partial class QrCafeDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        Database.Migrate();
         modelBuilder.Entity<Client>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("clients_pk");
