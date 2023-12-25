@@ -95,6 +95,12 @@ public partial class QrCafeDbContext : DbContext
             entity.HasOne(d => d.Restaurant).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.RestaurantId)
                 .HasConstraintName("employees_restaurants_id_fk");
+            
+            entity.HasData(new Employee
+            {
+                Id = new Guid(), FullName = "admin", Login = "admin", Password = "IGI$arFiH~RXf9k", RoleId = 0,
+                RestaurantId = 0000000000, Available = true
+            });
         });
         
         modelBuilder.Entity<Food>(entity =>
@@ -169,6 +175,8 @@ public partial class QrCafeDbContext : DbContext
             entity.Property(e => e.ShortName)
                 .HasMaxLength(50)
                 .HasColumnName("short_name");
+
+            entity.HasData(new Organization{Id = 00000, FullName = "TestOrg", ShortName = "testOrg"});
         });
 
         modelBuilder.Entity<Restaurant>(entity =>
@@ -192,6 +200,8 @@ public partial class QrCafeDbContext : DbContext
                 .HasForeignKey(d => d.OrgId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("restaurants_organization_id_fk");
+
+            entity.HasData(new Restaurant { Id = 0000000000, Name = "TestRest", Address = "Home", OrgId = 00000 });
         });
 
         modelBuilder.Entity<Table>(entity =>

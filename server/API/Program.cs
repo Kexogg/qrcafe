@@ -48,24 +48,24 @@ app.UseAuthorization();
 
 app.MapPost("/api/restaurants/{restId:int}/login", (EmployeeDTO employeeLoginData, int restId, QrCafeDbContext db) =>
 {
-        var restaurant = db.Restaurants.Include(r=> r.Employees).FirstOrDefault(r => r.Id == restId);
-        if (restaurant == null) return Results.BadRequest(new { message = "Ресторана не существует" });
-        var employee = restaurant.Employees.FirstOrDefault(e =>
-            e.Login == employeeLoginData.Login && e.Password == employeeLoginData.Password);
-        if (employee == null) return Results.Unauthorized();
-        var claims = new List<Claim> { new(ClaimTypes.Name, employee.Login) };
-        var jwt = new JwtSecurityToken(
-            issuer: AuthOptions.ISSUER,
-            audience: AuthOptions.AUDIENCE,
-            claims: claims,
-            expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
-            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-        string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-        var response = new
-        {
-            access_token = encodedJwt
-        };
-        return Results.Json(response, statusCode: 200);
+    var restaurant = db.Restaurants.Include(r=> r.Employees).FirstOrDefault(r => r.Id == restId);
+    if (restaurant == null) return Results.BadRequest(new { message = "Ресторана не существует" });
+    var employee = restaurant.Employees.FirstOrDefault(e =>
+        e.Login == employeeLoginData.Login && e.Password == employeeLoginData.Password);
+    if (employee == null) return Results.Unauthorized();
+    var claims = new List<Claim> { new(ClaimTypes.Name, employee.Login) };
+    var jwt = new JwtSecurityToken(
+        issuer: AuthOptions.ISSUER,
+        audience: AuthOptions.AUDIENCE,
+        claims: claims,
+        expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
+        signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+    string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+    var response = new
+    {
+        access_token = encodedJwt
+    };
+    return Results.Json(response, statusCode: 200);
     
 });
 
