@@ -9,6 +9,7 @@ public partial class QrCafeDbContext : DbContext
 {
     public QrCafeDbContext()
     {
+        Database.Migrate();
     }
 
     public QrCafeDbContext(DbContextOptions<QrCafeDbContext> options)
