@@ -34,6 +34,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<QrCafeDbContext>();
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 

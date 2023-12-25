@@ -96,7 +96,7 @@ public partial class QrCafeDbContext : DbContext
                 .HasForeignKey(d => d.RestaurantId)
                 .HasConstraintName("employees_restaurants_id_fk");
         });
-
+        
         modelBuilder.Entity<Food>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("food_pk");
