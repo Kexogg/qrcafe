@@ -4,6 +4,7 @@ variables:
 stages:
   - make_docker_image
   - deploy
+  - view_logs
 
 .before script docker registry login: &before-script-docker-registry-login
   - mkdir ~/.docker
@@ -42,6 +43,15 @@ deploy:
     - kubectl delete -f ./CI/CD/Deployment.yaml
     - kubectl apply -f ./CI/CD/persistent.yaml
     - kubectl apply -f ./CI/CD/Deployment.yaml
+  when: manual
+  only:
+    - main
+
+view_logs:
+  stage: view_logs
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl logs -n nyashdev deploy/nyashdev-qr-cafe-backend
   when: manual
   only:
     - main
