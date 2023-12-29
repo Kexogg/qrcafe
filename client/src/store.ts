@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { cartSlice } from './features/cart/cartSlice.ts'
 import { waiterSlice } from './features/waiter/waiterSlice.ts'
+import { sessionSlice } from './features/session/sessionSlice.ts'
 
 function saveToLocalStorage(state: RootState) {
     try {
@@ -27,6 +28,7 @@ const preloadedState = loadFromLocalStorage()
 const reducers = combineReducers({
     cart: cartSlice.reducer,
     waiter: waiterSlice.reducer,
+    session: sessionSlice.reducer,
 })
 
 export const store = configureStore({
