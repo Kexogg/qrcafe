@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import Modal from '../../components/UI/Modal/Modal.tsx'
 import { useAppDispatch, useAppSelector } from '../../hooks.ts'
 import { setWaiter } from '../../features/waiter/waiterSlice.ts'
+import { setToken } from '../../features/session/sessionSlice.ts'
 
 enum LOGIN_SCREEN_STATES {
     INITIAL,
@@ -17,6 +18,7 @@ enum LOGIN_SCREEN_STATES {
     NAME_INPUT,
     WAITER_INFO,
     DONE,
+    EMPLOYEE_LOGIN,
 }
 
 const buttonBoxClass = 'flex flex-col gap-3 mt-auto'
@@ -85,6 +87,14 @@ const InitialScreen = ({ setLoginScreenState }: InitialScreenProps) => {
                     border
                     onClick={() => {
                         setLoginScreenState(LOGIN_SCREEN_STATES.CODE_INPUT)
+                    }}
+                />
+                <Button
+                    label={'Войти как сотрудник'}
+                    dark
+                    border
+                    onClick={() => {
+                        setLoginScreenState(LOGIN_SCREEN_STATES.EMPLOYEE_LOGIN)
                     }}
                 />
             </div>
@@ -295,6 +305,53 @@ const WaiterInfoScreen = ({
     }
 }
 
+const WaiterLogin = () => {
+    const [login, setLogin] = useState('')
+    const [password, setPassword] = useState('')
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+
+    const fetchToken = (login: string, password: string) => {
+        fetch('/api/restaurants/0/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                login: login,
+                password: password,
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                dispatch(setToken(data.access_token))
+                navigate('/employee/home')
+            })
+    }
+
+    return (
+        <form className={'flex h-full flex-col'}>
+            <h1>Авторизация сотрудника</h1>
+            <div className={'mt-5 flex flex-col gap-3'}>
+                <TextField
+                    placeholder={'Введите логин'}
+                    onChange={(e) => setLogin(e.target.value)}
+                />
+                <TextField
+                    placeholder={'Введите пароль'}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </div>
+            <div className={'mt-auto flex w-full flex-col'}>
+                <Button
+                    onClick={() => fetchToken(login, password)}
+                    label={'Войти'}
+                />
+            </div>
+        </form>
+    )
+}
+
 export const Login = () => {
     const verifyCode = (code: string): boolean => {
         //TODO: add code verification
@@ -342,6 +399,8 @@ export const Login = () => {
                     name={name}
                 />
             )
+        case LOGIN_SCREEN_STATES.EMPLOYEE_LOGIN:
+            return <WaiterLogin />
         case LOGIN_SCREEN_STATES.DONE:
             navigate('/customer/home')
     }
