@@ -25,6 +25,9 @@ export const sessionSlice = createSlice({
         setRestaurantId: (state, action: { payload: string }) => {
             state.restaurantId = action.payload
         },
+        setSession: (state, action: { payload: SessionState }) => {
+            Object.assign(state, action.payload)
+        },
         clearToken: (state) => {
             Object.assign(state, initialState)
         },
@@ -38,6 +41,7 @@ export const sessionSlice = createSlice({
 })
 
 export const {
+    setSession,
     setToken,
     clearToken,
     setRestaurantId,

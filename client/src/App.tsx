@@ -20,6 +20,7 @@ import { resetSession } from './features/session/sessionSlice.ts'
 import { clearCart } from './features/cart/cartSlice.ts'
 import { clearWaiter } from './features/waiter/waiterSlice.ts'
 import { useEffect } from 'react'
+import { EmployeeLogin } from './pages/Login/EmployeeLogin.tsx'
 
 function App() {
     const dispatch = useAppDispatch()
@@ -36,11 +37,20 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<LayoutGreen />}>
-                    <Route index path="/" element={<Login />} />
+                <Route
+                    index
+                    path="/"
+                    element={<Navigate replace to={'/login'} />}
+                />
+                <Route path={'login'} element={<LayoutGreen />}>
+                    <Route index element={<Login />}></Route>
+                    <Route path={'employee'} element={<EmployeeLogin />} />
                 </Route>
                 {sessionType == undefined && (
-                    <Route path="*" element={<Navigate replace to={'/'} />} />
+                    <Route
+                        path="*"
+                        element={<Navigate replace to={'/login'} />}
+                    />
                 )}
                 {sessionType == 0 && (
                     <Route
