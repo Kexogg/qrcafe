@@ -9,7 +9,10 @@ import { useNavigate } from 'react-router-dom'
 import Modal from '../../components/UI/Modal/Modal.tsx'
 import { useAppDispatch, useAppSelector } from '../../hooks.ts'
 import { setWaiter } from '../../features/waiter/waiterSlice.ts'
-import { setToken } from '../../features/session/sessionSlice.ts'
+import {
+    setRestaurantId,
+    setToken,
+} from '../../features/session/sessionSlice.ts'
 
 enum LOGIN_SCREEN_STATES {
     INITIAL,
@@ -308,24 +311,45 @@ const WaiterInfoScreen = ({
 const WaiterLogin = () => {
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
+    const [restaurant, setRestaurant] = useState('')
+    const [error, setError] = useState('' as string | null)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
 
     const fetchToken = (login: string, password: string) => {
-        fetch('/api/restaurants/0/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        fetch(
+            `https://nyashdev.stk8s.66bit.ru/api/restaurants/${restaurant}/login`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    login: login,
+                    password: password,
+                }),
             },
-            body: JSON.stringify({
-                login: login,
-                password: password,
-            }),
-        })
-            .then((response) => response.json())
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    return Promise.reject(response)
+                }
+                return response.json()
+            })
             .then((data) => {
                 dispatch(setToken(data.access_token))
+                dispatch(setRestaurantId(restaurant))
+                setError('')
                 navigate('/employee/home')
+            })
+            .catch((response) => {
+                if (response.status == 401)
+                    setError('Неверный логин или пароль')
+                else if (response.status)
+                    setError(
+                        `Произошла ошибка при авторизации, код ${response.status}`,
+                    )
+                else setError('Произошла неизвестная ошибка')
             })
     }
 
@@ -334,13 +358,20 @@ const WaiterLogin = () => {
             <h1>Авторизация сотрудника</h1>
             <div className={'mt-5 flex flex-col gap-3'}>
                 <TextField
+                    placeholder={'Введите код ресторана'}
+                    onChange={(e) => setRestaurant(e.target.value)}
+                />
+                <TextField
+                    type={'text'}
                     placeholder={'Введите логин'}
                     onChange={(e) => setLogin(e.target.value)}
                 />
                 <TextField
+                    type={'password'}
                     placeholder={'Введите пароль'}
                     onChange={(e) => setPassword(e.target.value)}
                 />
+                <span>{error}</span>
             </div>
             <div className={'mt-auto flex w-full flex-col'}>
                 <Button
@@ -353,6 +384,12 @@ const WaiterLogin = () => {
 }
 
 export const Login = () => {
+    const session = useAppSelector((state) => state.session)
+    const navigate = useNavigate()
+    if (session.token) {
+        if (session.type == 0) navigate('/employee/home')
+        else navigate('/customer/home')
+    }
     const verifyCode = (code: string): boolean => {
         //TODO: add code verification
         console.log('Code verification requested: ' + code)
@@ -362,7 +399,6 @@ export const Login = () => {
         useState<LOGIN_SCREEN_STATES>(0)
     const [data, setData] = useState('')
     const [name, setName] = useState('')
-    const navigate = useNavigate()
     switch (loginScreenState) {
         case LOGIN_SCREEN_STATES.INITIAL:
             return <InitialScreen setLoginScreenState={setLoginScreenState} />
