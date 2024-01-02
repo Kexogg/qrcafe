@@ -31,11 +31,19 @@ export const sessionSlice = createSlice({
         clearRestaurantId: (state) => {
             state.restaurantId = undefined
         },
+        resetSession: (state) => {
+            Object.assign(state, initialState)
+        },
     },
 })
 
-export const { setToken, clearToken, setRestaurantId, clearRestaurantId } =
-    sessionSlice.actions
+export const {
+    setToken,
+    clearToken,
+    setRestaurantId,
+    clearRestaurantId,
+    resetSession,
+} = sessionSlice.actions
 
 export const selectWaiter = (state: SessionState) => state
 

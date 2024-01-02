@@ -1,5 +1,5 @@
 import { Button } from '../../components/UI/Button/Button.tsx'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { QrReader } from 'react-qr-reader'
 import TextField from '../../components/UI/TextField/TextField.tsx'
 import QrCodeScannerRoundedIcon from '@mui/icons-material/QrCodeScannerRounded'
@@ -386,10 +386,13 @@ const WaiterLogin = () => {
 export const Login = () => {
     const session = useAppSelector((state) => state.session)
     const navigate = useNavigate()
-    if (session.token) {
-        if (session.type == 0) navigate('/employee/home')
-        else navigate('/customer/home')
-    }
+
+    useEffect(() => {
+        if (session.token) {
+            if (session.type == 0) navigate('/employee/home')
+            else if (session.type == 1) navigate('/customer/home')
+        }
+    }, [session, navigate])
     const verifyCode = (code: string): boolean => {
         //TODO: add code verification
         console.log('Code verification requested: ' + code)
