@@ -23,15 +23,15 @@ import { useEffect } from 'react'
 
 function App() {
     const dispatch = useAppDispatch()
-    const session = useAppSelector((state) => state.session)
-
+    const token = useAppSelector((state) => state.session.token)
+    const sessionType = useAppSelector((state) => state.session.type)
     useEffect(() => {
-        if (session.token == undefined) {
+        if (token == undefined) {
             dispatch(resetSession())
             dispatch(clearCart())
             dispatch(clearWaiter())
         }
-    }, [dispatch, session.token])
+    }, [dispatch, token])
 
     return (
         <BrowserRouter>
@@ -39,10 +39,10 @@ function App() {
                 <Route path="/" element={<LayoutGreen />}>
                     <Route index path="/" element={<Login />} />
                 </Route>
-                {session.type == undefined && (
+                {sessionType == undefined && (
                     <Route path="*" element={<Navigate replace to={'/'} />} />
                 )}
-                {session.type == 0 && (
+                {sessionType == 0 && (
                     <Route
                         path="/employee"
                         element={<Layout customer={false} />}>
@@ -54,7 +54,7 @@ function App() {
                         <Route path="table/:id" element={<TablePage />} />
                     </Route>
                 )}
-                {session.type == 1 && (
+                {sessionType == 1 && (
                     <>
                         <Route
                             path="/customer"
