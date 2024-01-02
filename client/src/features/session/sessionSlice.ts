@@ -1,14 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 export interface SessionState {
-    token: string | null
-    tokenTimestamp: Date | null
+    token: string | undefined
+    restaurantId: string | undefined
+    tokenTimestamp: Date | undefined
     type: number // 0: employee, 1: customer
 }
 
 const initialState: SessionState = {
-    token: null,
-    tokenTimestamp: null,
+    token: undefined,
+    restaurantId: undefined,
+    tokenTimestamp: undefined,
     type: 0,
 }
 
@@ -20,13 +22,20 @@ export const sessionSlice = createSlice({
             state.token = action.payload
             state.tokenTimestamp = new Date()
         },
+        setRestaurantId: (state, action: { payload: string }) => {
+            state.restaurantId = action.payload
+        },
         clearToken: (state) => {
             Object.assign(state, initialState)
+        },
+        clearRestaurantId: (state) => {
+            state.restaurantId = undefined
         },
     },
 })
 
-export const { setToken, clearToken } = sessionSlice.actions
+export const { setToken, clearToken, setRestaurantId, clearRestaurantId } =
+    sessionSlice.actions
 
 export const selectWaiter = (state: SessionState) => state
 
