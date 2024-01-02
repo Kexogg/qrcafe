@@ -4,14 +4,14 @@ export interface SessionState {
     token: string | undefined
     restaurantId: string | undefined
     tokenTimestamp: Date | undefined
-    type: number // 0: employee, 1: customer
+    type: number | undefined // 0: employee, 1: customer
 }
 
 const initialState: SessionState = {
     token: undefined,
     restaurantId: undefined,
     tokenTimestamp: undefined,
-    type: 0,
+    type: undefined,
 }
 
 export const sessionSlice = createSlice({
