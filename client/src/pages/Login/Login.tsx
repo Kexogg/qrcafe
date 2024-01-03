@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import Modal from '../../components/UI/Modal/Modal.tsx'
 import { useAppDispatch, useAppSelector } from '../../hooks.ts'
 import { setWaiter } from '../../features/waiter/waiterSlice.ts'
+import { setSession, setToken } from '../../features/session/sessionSlice.ts'
 
 enum LOGIN_SCREEN_STATES {
     INITIAL,
@@ -17,7 +18,6 @@ enum LOGIN_SCREEN_STATES {
     NAME_INPUT,
     WAITER_INFO,
     DONE,
-    EMPLOYEE_LOGIN,
 }
 
 const buttonBoxClass = 'flex flex-col gap-3 mt-auto'
@@ -115,6 +115,7 @@ const QRCodeInputScreen = ({
     setData,
     data,
 }: CodeInputScreenProps) => {
+    const dispatch = useAppDispatch()
     return (
         <>
             <QrReader
@@ -145,6 +146,7 @@ const QRCodeInputScreen = ({
                 <Button
                     label={'ПРОПУСТИТЬ (DEBUG)'}
                     onClick={() => {
+                        dispatch(setToken('debug'))
                         setLoginScreenState(LOGIN_SCREEN_STATES.NAME_INPUT)
                     }}
                 />
@@ -319,6 +321,7 @@ export const Login = () => {
         console.log('Code verification requested: ' + code)
         return !!code
     }
+    const dispatch = useAppDispatch()
     const [loginScreenState, setLoginScreenState] =
         useState<LOGIN_SCREEN_STATES>(0)
     const [data, setData] = useState('')
@@ -360,6 +363,7 @@ export const Login = () => {
                 />
             )
         case LOGIN_SCREEN_STATES.DONE:
+            dispatch(setSession({ ...session, type: 1 }))
             navigate('/customer/home')
     }
 }

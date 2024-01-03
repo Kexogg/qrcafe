@@ -35,7 +35,7 @@ export const EmployeeLogin = () => {
                     setSession({
                         type: 0,
                         token: data.access_token,
-                        tokenTimestamp: new Date(),
+                        tokenTimestamp: Date.now(),
                         restaurantId: restaurant,
                     }),
                 )
