@@ -58,15 +58,18 @@ export const EmployeeLogin = () => {
             <h1>Авторизация сотрудника</h1>
             <div className={'mt-5 flex flex-col gap-3'}>
                 <TextField
+                    required
                     placeholder={'Введите код ресторана'}
                     onChange={(e) => setRestaurant(e.target.value)}
                 />
                 <TextField
+                    required
                     type={'text'}
                     placeholder={'Введите логин'}
                     onChange={(e) => setLogin(e.target.value)}
                 />
                 <TextField
+                    required
                     type={'password'}
                     placeholder={'Введите пароль'}
                     onChange={(e) => setPassword(e.target.value)}
@@ -75,6 +78,11 @@ export const EmployeeLogin = () => {
             </div>
             <div className={'mt-auto flex w-full flex-col gap-3'}>
                 <Button
+                    disabled={
+                        login.length == 0 ||
+                        password.length == 0 ||
+                        restaurant.length == 0
+                    }
                     onClick={() => fetchToken(login, password)}
                     label={'Войти'}
                 />
