@@ -37,32 +37,43 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route
-                    index
-                    path="/"
-                    element={<Navigate replace to={'/login'} />}
-                />
-                <Route path={'login'} element={<LayoutGreen />}>
-                    <Route index element={<Login />}></Route>
-                    <Route path={'employee'} element={<EmployeeLogin />} />
-                </Route>
                 {sessionType == undefined && (
-                    <Route
-                        path="*"
-                        element={<Navigate replace to={'/login'} />}
-                    />
+                    <>
+                        <Route
+                            index
+                            path="/"
+                            element={<Navigate replace to={'/login'} />}
+                        />
+                        <Route path={'login'} element={<LayoutGreen />}>
+                            <Route index element={<Login />}></Route>
+                            <Route
+                                path={'employee'}
+                                element={<EmployeeLogin />}
+                            />
+                        </Route>
+                        <Route
+                            path="*"
+                            element={<Navigate replace to={'/login'} />}
+                        />
+                    </>
                 )}
                 {sessionType == 0 && (
-                    <Route
-                        path="/employee"
-                        element={<Layout customer={false} />}>
-                        <Route index path="home" element={<WaiterHome />} />
-                        <Route path="new-order" element={<NewOrder />} />
-                        <Route path="chat" element={<WaiterChat />} />
-                        <Route path="account" element={<WaiterProfile />} />
-                        <Route path="catalog" element={<WaiterCatalog />} />
-                        <Route path="table/:id" element={<TablePage />} />
-                    </Route>
+                    <>
+                        <Route
+                            path="/employee"
+                            element={<Layout customer={false} />}>
+                            <Route index path="home" element={<WaiterHome />} />
+                            <Route path="new-order" element={<NewOrder />} />
+                            <Route path="chat" element={<WaiterChat />} />
+                            <Route path="account" element={<WaiterProfile />} />
+                            <Route path="catalog" element={<WaiterCatalog />} />
+                            <Route path="table/:id" element={<TablePage />} />
+                        </Route>
+                        <Route
+                            path="*"
+                            element={<Navigate replace to={'/employee/home'} />}
+                        />
+                    </>
                 )}
                 {sessionType == 1 && (
                     <>
@@ -92,6 +103,10 @@ function App() {
                                 element={<CustomerThankYou />}
                             />
                         </Route>
+                        <Route
+                            path="*"
+                            element={<Navigate replace to={'/customer/home'} />}
+                        />
                     </>
                 )}
             </Routes>
