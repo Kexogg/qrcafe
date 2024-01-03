@@ -30,6 +30,7 @@ interface InitialScreenProps {
 
 const InitialScreen = ({ setLoginScreenState }: InitialScreenProps) => {
     const [modalOpen, setModalOpen] = useState(false)
+    const navigate = useNavigate()
     const legalSpeak =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
     return (
@@ -92,7 +93,7 @@ const InitialScreen = ({ setLoginScreenState }: InitialScreenProps) => {
                     dark
                     border
                     onClick={() => {
-                        setLoginScreenState(LOGIN_SCREEN_STATES.EMPLOYEE_LOGIN)
+                        navigate('employee')
                     }}
                 />
             </div>
@@ -358,9 +359,6 @@ export const Login = () => {
                     name={name}
                 />
             )
-        case LOGIN_SCREEN_STATES.EMPLOYEE_LOGIN:
-            navigate('employee')
-            break
         case LOGIN_SCREEN_STATES.DONE:
             navigate('/customer/home')
     }

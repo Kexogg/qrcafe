@@ -73,10 +73,16 @@ export const EmployeeLogin = () => {
                 />
                 <span>{error}</span>
             </div>
-            <div className={'mt-auto flex w-full flex-col'}>
+            <div className={'mt-auto flex w-full flex-col gap-3'}>
                 <Button
                     onClick={() => fetchToken(login, password)}
                     label={'Войти'}
+                />
+                <Button
+                    label={'Назад'}
+                    onClick={() => navigate('/login')}
+                    dark
+                    border
                 />
             </div>
         </form>
