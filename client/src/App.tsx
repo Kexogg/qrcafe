@@ -37,7 +37,7 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                {sessionType == undefined && (
+                {(!sessionType || !token) && (
                     <>
                         <Route
                             index
@@ -57,7 +57,7 @@ function App() {
                         />
                     </>
                 )}
-                {sessionType == 0 && (
+                {token && sessionType == 0 && (
                     <>
                         <Route
                             path="/employee"
@@ -75,7 +75,7 @@ function App() {
                         />
                     </>
                 )}
-                {sessionType == 1 && (
+                {token && sessionType == 1 && (
                     <>
                         <Route
                             path="/customer"
