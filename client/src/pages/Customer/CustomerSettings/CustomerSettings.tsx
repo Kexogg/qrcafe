@@ -1,12 +1,14 @@
 import { BuildInfo } from '../../../components/BuildInfo/BuildInfo.tsx'
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
-import { useAppSelector } from '../../../hooks.ts'
+import { useAppDispatch, useAppSelector } from '../../../hooks.ts'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
 import { useState } from 'react'
+import { CLEAR_STATE } from '../../../store.ts'
 
 export const CustomerSettings = () => {
     const state = useAppSelector((state) => state)
+    const dispatch = useAppDispatch()
     const [modalOpen, setModalOpen] = useState(false)
     return (
         <section className={'flex flex-col gap-5 px-3'}>
@@ -22,8 +24,7 @@ export const CustomerSettings = () => {
                     dark
                     label={'Выйти'}
                     onClick={() => {
-                        localStorage.clear()
-                        window.location.href = '/'
+                        dispatch({ type: CLEAR_STATE })
                     }}
                 />
             </Modal>

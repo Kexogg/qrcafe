@@ -257,8 +257,8 @@ const WaiterInfoScreen = ({
     const waiter = useAppSelector((state) => state.waiter)
     //TODO: remove placeholder, fix dispatch
     const dispatch = useAppDispatch()
-    if (waiter.id == '0') {
-        dispatch(setWaiter({ name: 'Иван', id: '2134', image: null }))
+    if (!waiter.id) {
+        dispatch(setWaiter({ name: 'Иван', id: '2134', image: undefined }))
         return <></>
     } else {
         return (

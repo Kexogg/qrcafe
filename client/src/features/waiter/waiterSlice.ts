@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 export interface WaiterState {
-    name: string
-    id: string
-    image: string | null
+    id: null | string
+    name: string | undefined
+    image: string | undefined
 }
 
 const initialState: WaiterState = {
-    name: '',
-    id: '0',
-    image: null,
+    id: null,
+    name: undefined,
+    image: undefined,
 }
 
 export const waiterSlice = createSlice({

@@ -1,7 +1,11 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { cartSlice } from './features/cart/cartSlice.ts'
-import { waiterSlice } from './features/waiter/waiterSlice.ts'
-import { sessionSlice } from './features/session/sessionSlice.ts'
+import {
+    UnknownAction,
+    combineReducers,
+    configureStore,
+} from '@reduxjs/toolkit'
+import { CartState, cartSlice } from './features/cart/cartSlice.ts'
+import { WaiterState, waiterSlice } from './features/waiter/waiterSlice.ts'
+import { SessionState, sessionSlice } from './features/session/sessionSlice.ts'
 
 function saveToLocalStorage(state: RootState) {
     try {
@@ -25,14 +29,34 @@ function loadFromLocalStorage() {
 
 const preloadedState = loadFromLocalStorage()
 
-const reducers = combineReducers({
+const appReducer = combineReducers({
     cart: cartSlice.reducer,
     waiter: waiterSlice.reducer,
     session: sessionSlice.reducer,
 })
 
+export const CLEAR_STATE = 'CLEAR_STATE'
+
+const rootReducer = (
+    state:
+        | { cart: CartState; waiter: WaiterState; session: SessionState }
+        | Partial<{
+              cart: CartState | undefined
+              waiter: WaiterState | undefined
+              session: SessionState | undefined
+          }>
+        | undefined,
+    action: UnknownAction,
+) => {
+    if (action.type === CLEAR_STATE) {
+        localStorage.clear()
+        return appReducer(undefined, action)
+    }
+    return appReducer(state, action)
+}
+
 export const store = configureStore({
-    reducer: reducers,
+    reducer: rootReducer,
     preloadedState,
 })
 
