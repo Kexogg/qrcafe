@@ -92,6 +92,24 @@ export const EmployeeLogin = () => {
                     dark
                     border
                 />
+                {import.meta.env.MODE == 'development' && (
+                    <Button
+                        label={'Пропустить (DEBUG)'}
+                        onClick={() => {
+                            dispatch(
+                                setSession({
+                                    type: 0,
+                                    token: 'DEBUG',
+                                    tokenTimestamp: Date.now(),
+                                    restaurantId: '0',
+                                }),
+                            )
+                            navigate('/employee/home')
+                        }}
+                        dark
+                        border
+                    />
+                )}
             </div>
         </form>
     )
