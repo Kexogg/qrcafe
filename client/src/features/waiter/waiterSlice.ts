@@ -27,6 +27,4 @@ export const waiterSlice = createSlice({
 
 export const { setWaiter, clearWaiter } = waiterSlice.actions
 
-export const selectWaiter = (state: WaiterState) => state
-
 export default waiterSlice.reducer
