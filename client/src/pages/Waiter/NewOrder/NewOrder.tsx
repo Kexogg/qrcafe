@@ -15,14 +15,44 @@ import { useAppDispatch, useAppSelector } from '../../../hooks.ts'
 import { clearCart, removeFromCart } from '../../../features/cart/cartSlice.ts'
 import { getAppliedDishExtras } from '../../../helpers.ts'
 import { Button } from '../../../components/UI/Button/Button.tsx'
+import Modal from '../../../components/UI/Modal/Modal.tsx'
 
 export const NewOrder = () => {
     const tables: ITable[] = getPlaceholderTables()
     const cart = useAppSelector((state) => state.cart.items)
+    const [table, setTable] = useState('') //TODO: replace with ITable
+    const [clientName, setClientName] = useState('')
     const dispatch = useAppDispatch()
     const [selectedDish, setSelectedDish] = useState<IDish | null>(null)
+    const [confirmModalOpen, setConfirmModalOpen] = useState(false)
+    const createOrder = () => {
+        //TODO: create order
+        return true
+    }
     return (
         <section className={'flex flex-col gap-3 px-3 pb-3'}>
+            <Modal
+                open={confirmModalOpen}
+                title={'Подтвердите создание заказа'}>
+                <p>
+                    {clientName.length > 0 && clientName + ', '}
+                    {table}
+                </p>
+                <h2>Состав заказа</h2>
+                <ol className={'h-full list-decimal pl-5'}>
+                    {cart.map((dish) => (
+                        <li key={dish.cartId}>
+                            {dish.name}, {dish.count} шт., {getDishTotal(dish)}₽
+                        </li>
+                    ))}
+                </ol>
+                <h2>Итого: {cart.reduce((a, b) => a + getDishTotal(b), 0)}₽</h2>
+                <Button label={'Подтвердить'} onClick={createOrder} dark />
+                <Button
+                    label={'Назад'}
+                    onClick={() => setConfirmModalOpen(false)}
+                    border></Button>
+            </Modal>
             <DishModal
                 isInCart
                 dish={selectedDish}
@@ -33,7 +63,10 @@ export const NewOrder = () => {
                 <div className={'grid max-w-sm grid-cols-2 gap-y-3'}>
                     <label className={'contents'}>
                         <span className={'my-auto'}>Имя клиента</span>
-                        <TextField dark />
+                        <TextField
+                            dark
+                            onChange={(e) => setClientName(e.target.value)}
+                        />
                     </label>
                     <label className={'contents'}>
                         <span className={'my-auto'}>Стол</span>
@@ -44,6 +77,7 @@ export const NewOrder = () => {
                                 .filter((t) => t.status === TableStatus.OPEN)
                                 .map((t) => t.name)}
                             dark
+                            onChange={(e) => setTable(e.target.value)}
                         />
                     </label>
                 </div>
@@ -87,11 +121,21 @@ export const NewOrder = () => {
                             </div>
                         </details>
                     ))}
+                    <details className={styles.orderItem}>
+                        <summary>
+                            <div></div>
+                            <div className={'font-bold'}>Итого:</div>
+                            <div className={'font-bold'}>
+                                {cart.reduce((a, b) => a + getDishTotal(b), 0)}₽
+                            </div>
+                        </summary>
+                    </details>
                 </div>
                 <Button
                     label={'Создать заказ'}
+                    onClick={() => setConfirmModalOpen(true)}
                     dark
-                    disabled={cart.length == 0}
+                    disabled={cart.length == 0 || table.length == 0}
                 />
                 <Button
                     label={'Отчистить корзину'}
