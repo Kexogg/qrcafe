@@ -11,7 +11,9 @@ function App() {
     const sessionType = useAppSelector((state) => state.session.type)
     return (
         <BrowserRouter>
-            {(!sessionType || !token) && <LoginRouter />}
+            {(sessionType === undefined || token === undefined) && (
+                <LoginRouter />
+            )}
             {token && sessionType == 0 && <WaiterRouter />}
             {token && sessionType == 1 && <CustomerRouter />}
             {token && sessionType == 2 && <DashboardRouter />}
