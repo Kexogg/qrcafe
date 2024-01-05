@@ -24,6 +24,9 @@ const Modal = ({ children, title, onClose, open, autoHeight }: ModalProps) => {
             modalRef.current?.close()
             document.body.style.overflow = 'auto'
         }
+        return () => {
+            document.body.style.overflow = 'auto'
+        }
     }, [open])
 
     return (
