@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { useAppDispatch } from '../../hooks.ts'
+import { useAppDispatch } from '../../../hooks.ts'
 import { useNavigate } from 'react-router-dom'
-import { setSession } from '../../features/session/sessionSlice.ts'
-import TextField from '../../components/UI/TextField/TextField.tsx'
-import { Button } from '../../components/UI/Button/Button.tsx'
+import { setSession } from '../../../features/session/sessionSlice.ts'
+import TextField from '../../../components/UI/TextField/TextField.tsx'
+import { Button } from '../../../components/UI/Button/Button.tsx'
 
-export const EmployeeLogin = () => {
+export const LoginEmployee = () => {
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [restaurant, setRestaurant] = useState('')
