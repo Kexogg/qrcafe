@@ -5,7 +5,7 @@ import {
     TableStatus,
 } from '../../../types/ITable.ts'
 import { getDishTotal, IDish } from '../../../types/IDish.ts'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import TextField from '../../../components/UI/TextField/TextField.tsx'
 import Dropdown from '../../../components/UI/Dropdown/Dropdown.tsx'
 import styles from './NewOrder.module.css'
