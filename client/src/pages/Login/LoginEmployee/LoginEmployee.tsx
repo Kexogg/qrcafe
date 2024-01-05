@@ -93,22 +93,40 @@ export const LoginEmployee = () => {
                     border
                 />
                 {import.meta.env.MODE == 'development' && (
-                    <Button
-                        label={'Пропустить (DEBUG)'}
-                        onClick={() => {
-                            dispatch(
-                                setSession({
-                                    type: 0,
-                                    token: 'DEBUG',
-                                    tokenTimestamp: Date.now(),
-                                    restaurantId: '0',
-                                }),
-                            )
-                            navigate('/employee/home')
-                        }}
-                        dark
-                        border
-                    />
+                    <>
+                        <Button
+                            label={'Пропустить (Waiter)'}
+                            onClick={() => {
+                                dispatch(
+                                    setSession({
+                                        type: 0,
+                                        token: 'DEBUG',
+                                        tokenTimestamp: Date.now(),
+                                        restaurantId: '0',
+                                    }),
+                                )
+                                navigate('/employee/home')
+                            }}
+                            dark
+                            border
+                        />
+                        <Button
+                            label={'Пропустить (Dashboard)'}
+                            onClick={() => {
+                                dispatch(
+                                    setSession({
+                                        type: 2,
+                                        token: 'DEBUG',
+                                        tokenTimestamp: Date.now(),
+                                        restaurantId: '0',
+                                    }),
+                                )
+                                navigate('/dashboard/home')
+                            }}
+                            dark
+                            border
+                        />
+                    </>
                 )}
             </div>
         </form>
