@@ -5,7 +5,7 @@ import {
     TableStatus,
 } from '../../../types/ITable.ts'
 import { getDishTotal, IDish } from '../../../types/IDish.ts'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import TextField from '../../../components/UI/TextField/TextField.tsx'
 import Dropdown from '../../../components/UI/Dropdown/Dropdown.tsx'
 import styles from './NewOrder.module.css'
@@ -16,6 +16,7 @@ import { clearCart, removeFromCart } from '../../../features/cart/cartSlice.ts'
 import { getAppliedDishExtras } from '../../../helpers.ts'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
+import { useNavigate } from 'react-router-dom'
 
 export const NewOrder = () => {
     const tables: ITable[] = getPlaceholderTables()
@@ -25,8 +26,14 @@ export const NewOrder = () => {
     const dispatch = useAppDispatch()
     const [selectedDish, setSelectedDish] = useState<IDish | null>(null)
     const [confirmModalOpen, setConfirmModalOpen] = useState(false)
+    const navigate = useNavigate()
     const createOrder = () => {
         //TODO: create order
+        setTable('')
+        setClientName('')
+        setConfirmModalOpen(false)
+        dispatch(clearCart())
+        navigate('/employee/home')
         return true
     }
     return (
