@@ -88,11 +88,16 @@ export const NewOrder = () => {
                         </details>
                     ))}
                 </div>
-                <Button label={'Создать заказ'} dark />
+                <Button
+                    label={'Создать заказ'}
+                    dark
+                    disabled={cart.length == 0}
+                />
                 <Button
                     label={'Отчистить корзину'}
                     border
                     onClick={() => dispatch(clearCart())}
+                    disabled={cart.length == 0}
                 />
             </form>
         </section>
