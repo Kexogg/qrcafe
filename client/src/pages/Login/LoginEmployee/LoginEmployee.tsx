@@ -5,40 +5,47 @@ import { setSession } from '../../../features/session/sessionSlice.ts'
 import TextField from '../../../components/UI/TextField/TextField.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { getToken } from '../../../api/api.ts'
-
+import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
 export const LoginEmployee = () => {
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [restaurant, setRestaurant] = useState('')
     const [error, setError] = useState('' as string | null)
+    const [loading, setLoading] = useState(false)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const fetchToken = async (
         login: string,
         password: string,
         restaurant: string,
+        sessionType: number,
     ) => {
+        setLoading(true)
         getToken(login, password, restaurant)
             .then((response) => {
                 dispatch(
                     setSession({
-                        type: 0,
+                        type: sessionType,
                         token: response.data.access_token,
                         tokenTimestamp: Date.now(),
                         restaurantId: restaurant,
                     }),
                 )
                 setError('')
+                setLoading(false)
                 navigate('/employee/home')
             })
             .catch((response) => {
-                if (response.code == 401) setError('Неверный логин или пароль')
-                else if (response.code == 404) setError('Ресторан не найден')
+                setLoading(false)
+                if (response.response.status == 401)
+                    setError('Неверный логин или пароль')
+                else if (response.response.status == 404)
+                    setError('Ресторан не найден')
                 else if (response.code == 'ERR_NETWORK')
                     setError('Произошла ошибка при подключении к серверу')
-                else if (response.status)
+                else if (response.response.status)
                     setError(
-                        `Произошла ошибка при авторизации, код ${response.status}`,
+                        `Произошла ошибка при авторизации, код ${response.response.status}`,
                     )
                 else setError('Произошла неизвестная ошибка')
             })
@@ -46,6 +53,14 @@ export const LoginEmployee = () => {
 
     return (
         <form className={'flex h-full flex-col'}>
+            {loading && (
+                <div
+                    className={
+                        'absolute bottom-0 left-0 right-0 top-0 overflow-hidden bg-black/50'
+                    }>
+                    <LoadingSpinner />
+                </div>
+            )}
             <h1>Авторизация сотрудника</h1>
             <div className={'mt-5 flex flex-col gap-3'}>
                 <TextField
@@ -74,8 +89,17 @@ export const LoginEmployee = () => {
                         password.length == 0 ||
                         restaurant.length == 0
                     }
-                    onClick={() => fetchToken(login, password, restaurant)}
+                    onClick={() => fetchToken(login, password, restaurant, 0)}
                     label={'Войти'}
+                />
+                <Button
+                    disabled={
+                        login.length == 0 ||
+                        password.length == 0 ||
+                        restaurant.length == 0
+                    }
+                    onClick={() => fetchToken(login, password, restaurant, 2)}
+                    label={'Войти (личный кабинет)'}
                 />
                 <Button
                     label={'Назад'}
