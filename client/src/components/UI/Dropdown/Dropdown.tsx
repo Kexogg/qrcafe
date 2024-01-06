@@ -27,7 +27,7 @@ const Dropdown = ({
         <select
             defaultValue={selected ?? (placeholder && '')}
             {...props}
-            className={`${colorClass} no-ring border-b-2 border-primary-300 bg-transparent p-2 text-primary-200 placeholder-primary-400 transition-colors hover:border-primary-200 focus:border-primary-200`}>
+            className={`${colorClass} no-ring h-10 border-b-2 border-primary-300 bg-transparent p-2 text-primary-200 placeholder-primary-400 transition-colors hover:border-primary-200 focus:border-primary-200`}>
             {placeholder && (
                 <option value={''} disabled={true}>
                     {placeholder}

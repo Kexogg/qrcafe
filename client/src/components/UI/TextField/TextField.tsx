@@ -20,7 +20,7 @@ const TextField = ({ dark, ...props }: TextFieldProps) => {
         <input
             type={'text'}
             {...props}
-            className={`${colorClass} no-ring border-b-2 bg-transparent p-2 placeholder-primary-400 transition-colors`}></input>
+            className={`${colorClass} no-ring h-10 border-b-2 bg-transparent p-2 placeholder-primary-400 transition-colors`}></input>
     )
 }
 
