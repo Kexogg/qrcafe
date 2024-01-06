@@ -1,3 +1,7 @@
 export const DashboardCatalog = () => {
-    return <></>
+    return (
+        <section>
+            <h1>Меню</h1>
+        </section>
+    )
 }

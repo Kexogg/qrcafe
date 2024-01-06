@@ -1,3 +1,7 @@
 export const DashboardOrders = () => {
-    return <></>
+    return (
+        <section>
+            <h1>Заказы</h1>
+        </section>
+    )
 }

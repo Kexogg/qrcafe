@@ -27,12 +27,12 @@ export const Sidebar = () => {
             name: 'Столики',
         },
         {
-            path: '/dashboard/menu',
+            path: '/dashboard/catalog',
             icon: <MenuBookRounded fontSize={iconSize} />,
             name: 'Меню',
         },
         {
-            path: '/dashboard/staff',
+            path: '/dashboard/employees',
             icon: <PeopleRounded fontSize={iconSize} />,
             name: 'Сотрудники',
         },

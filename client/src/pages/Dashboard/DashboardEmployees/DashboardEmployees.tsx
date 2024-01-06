@@ -1,3 +1,7 @@
 export const DashboardEmployees = () => {
-    return <></>
+    return (
+        <section>
+            <h1>Сотрудники</h1>
+        </section>
+    )
 }
