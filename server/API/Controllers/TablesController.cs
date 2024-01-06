@@ -32,7 +32,7 @@ namespace QrCafe.Controllers
         }
 
         // GET: api/restaurants/0/Tables/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Table>> GetTable(int id, int restId)
         {
             var table = await _context.Tables.FindAsync(id);
@@ -48,11 +48,11 @@ namespace QrCafe.Controllers
         // POST: api/restaurants/0/Tables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Table>> PostTable(int restId)
+        public async Task<ActionResult<Table>> PostTable([FromQuery]string name,int restId)
         {
             var restaurant = _context.Restaurants.Include(r=> r.Tables).FirstOrDefault(r=> r.Id == restId);
             if (restaurant == null) return NotFound();
-            var table = new Table{Id = restaurant.Tables.Count+1, RestaurantId = restId};
+            var table = new Table{Id = restaurant.Tables.Count+1, Name = name, RestaurantId = restId};
             await _context.Tables.AddAsync(table);
             await _context.SaveChangesAsync();
             return Ok(new TableDTO(table));
