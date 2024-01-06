@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import DishModal from '../Modal/DishModal.tsx'
 import { Searchbar } from '../Searchbar/Searchbar.tsx'
 import { ICategory } from '../../../types/ICategory.ts'
-import { useAppSelector } from '../../../hooks.ts'
+import { useAppSelector } from '../../../hooks/hooks.ts'
 
 type CatalogProps = {
     title: string

@@ -5,7 +5,7 @@ import {
     updateCartItem,
 } from '../../../features/cart/cartSlice.ts'
 import { DishStatus, getDishTotal, IDish } from '../../../types/IDish.ts'
-import { useAppDispatch } from '../../../hooks.ts'
+import { useAppDispatch } from '../../../hooks/hooks.ts'
 import { useEffect, useState } from 'react'
 
 type DishCardCartProps = {

@@ -1,5 +1,5 @@
 import { DishStatus, IDish } from '../../../types/IDish.ts'
-import { useAppDispatch, useAppSelector } from '../../../hooks.ts'
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts'
 import {
     clearCart,
     updateCart,

@@ -4,7 +4,7 @@ import { getDishTotal, IDish, toggleDishExtra } from '../../../types/IDish.ts'
 import { useEffect, useState } from 'react'
 import { Button } from '../Button/Button.tsx'
 import { addToCart, updateCartItem } from '../../../features/cart/cartSlice.ts'
-import { useAppDispatch } from '../../../hooks.ts'
+import { useAppDispatch } from '../../../hooks/hooks.ts'
 import { CountInput } from '../CountInput/CountInput.tsx'
 
 type DishModalProps = {

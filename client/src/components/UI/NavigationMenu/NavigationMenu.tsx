@@ -9,7 +9,7 @@ import {
 import { Link, useLocation } from 'react-router-dom'
 import { OverridableStringUnion } from '@mui/types'
 import { SvgIconPropsSizeOverrides } from '@mui/material/SvgIcon/SvgIcon'
-import { useAppSelector } from '../../../hooks.ts'
+import { useAppSelector } from '../../../hooks/hooks.ts'
 import { getFilteredCart } from '../../../helpers.ts'
 import { DishStatus } from '../../../types/IDish.ts'
 import { IMenuItem } from '../../../types/IMenuItem.ts'

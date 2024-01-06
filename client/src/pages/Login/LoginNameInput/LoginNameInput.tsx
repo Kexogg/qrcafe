@@ -1,7 +1,7 @@
 import TextField from '../../../components/UI/TextField/TextField.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { useState } from 'react'
-import { useAppDispatch } from '../../../hooks.ts'
+import { useAppDispatch } from '../../../hooks/hooks.ts'
 import { useNavigate } from 'react-router-dom'
 import { setCustomer } from '../../../features/customer/customerSlice.ts'
 

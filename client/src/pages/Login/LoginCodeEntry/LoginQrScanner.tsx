@@ -1,4 +1,4 @@
-import { useAppDispatch } from '../../../hooks.ts'
+import { useAppDispatch } from '../../../hooks/hooks.ts'
 import { QrReader } from 'react-qr-reader'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { setToken } from '../../../features/session/sessionSlice.ts'

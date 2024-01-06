@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAppDispatch } from '../../../hooks.ts'
+import { useAppDispatch } from '../../../hooks/hooks.ts'
 import { useNavigate } from 'react-router-dom'
 import { setSession } from '../../../features/session/sessionSlice.ts'
 import TextField from '../../../components/UI/TextField/TextField.tsx'
@@ -12,7 +12,6 @@ export const LoginEmployee = () => {
     const [error, setError] = useState('' as string | null)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
-
     const fetchToken = (login: string, password: string) => {
         fetch(`/api/restaurants/${restaurant}/login`, {
             method: 'POST',

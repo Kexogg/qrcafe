@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
 import '@fontsource-variable/roboto-flex'
-import { useAppSelector } from './hooks.ts'
+import { useAppSelector } from './hooks/hooks.ts'
 import { CustomerRouter } from './routers/CustomerRouter.tsx'
 import { WaiterRouter } from './routers/WaiterRouter.tsx'
 import { LoginRouter } from './routers/LoginRouter.tsx'

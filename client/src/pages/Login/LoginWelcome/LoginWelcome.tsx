@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '../../../hooks.ts'
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts'
 import { setWaiter } from '../../../features/waiter/waiterSlice.ts'
 import { AccountCircle } from '@mui/icons-material'
 import { Button } from '../../../components/UI/Button/Button.tsx'
