@@ -91,6 +91,7 @@ export const DashboardTables = () => {
                                     <td>
                                         <input
                                             type={'checkbox'}
+                                            className={'cursor-pointer'}
                                             onChange={(e) => {
                                                 if (e.target.checked) {
                                                     setSelectedTables([
