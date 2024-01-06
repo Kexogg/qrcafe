@@ -1,5 +1,12 @@
 ﻿namespace QrCafe.Models;
 
+
+public struct EmployeeLoginData(string login, string password)
+{
+    public string Login { get; set; } = login;
+
+    public string Password { get; set; } = password;
+}
 public class EmployeeDTO
 {
     public EmployeeDTO(){}
@@ -27,7 +34,7 @@ public class EmployeeDTO
     }
     public Guid? Id { get; set; }
 
-    public string FullName { get; set; }
+    public string? FullName { get; set; }
 
     public string Login { get; set; }
     

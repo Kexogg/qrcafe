@@ -98,7 +98,7 @@ namespace QrCafe.Controllers
         // POST: api/restaurants/0/Employees/login
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> PostLogin(EmployeeDTO employeeLoginData, int restId)
+        public async Task<IActionResult> PostLogin(EmployeeLoginData employeeLoginData, int restId)
         {
             var restaurant = await _context.Restaurants.Include(r=> r.Employees)
                 .FirstOrDefaultAsync(r => r.Id == restId);
