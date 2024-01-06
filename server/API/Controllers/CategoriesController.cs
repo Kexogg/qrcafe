@@ -96,7 +96,7 @@ namespace QrCafe.Controllers
             return Ok(categoryDto);
         }
 
-        [HttpPost("/{id:int}/food")]
+        [HttpPost("{id:int}/food")]
         public async Task<ActionResult<IEnumerable<FoodDTO>>> PutFoodsIntoCategory(List<int> foodIdList, int restId, int id)
         {
             var restaurant = await _context.Restaurants.Include(r => r.Foods)
