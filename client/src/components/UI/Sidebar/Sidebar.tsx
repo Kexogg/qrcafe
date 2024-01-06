@@ -49,7 +49,7 @@ export const Sidebar = () => {
     ]
     return (
         <aside
-            className={`flex h-auto shrink-0 grow flex-col bg-primary-700 py-5 text-primary-50 ${
+            className={`flex h-auto shrink-0 grow-0 flex-col bg-primary-700 py-5 text-primary-50 ${
                 minimized ? 'w-16' : 'w-64'
             }`}>
             <h2 className={`ml-5 h-10 text-4xl ${minimized && 'hidden'}`}>
