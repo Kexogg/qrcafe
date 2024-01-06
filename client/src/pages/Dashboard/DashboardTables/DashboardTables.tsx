@@ -67,7 +67,7 @@ export const DashboardTables = () => {
             </Modal>
             <h1>Столики</h1>
             {error && <p>{error}</p>}
-            {loading && <LoadingSpinner screenOverlay />}
+            {loading && <LoadingSpinner elementOverlay />}
             {!error && (
                 <div
                     className={`flex flex-col gap-3 ${
