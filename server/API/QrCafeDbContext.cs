@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using QrCafe.Models;
@@ -206,14 +206,15 @@ public partial class QrCafeDbContext : DbContext
 
         modelBuilder.Entity<Table>(entity =>
         {
-            entity.HasKey(e => new { e.Num, e.RestaurantId }).HasName("tables_pk");
+            entity.HasKey(e => new { e.Id, e.RestaurantId }).HasName("tables_pk");
 
             entity.ToTable("tables");
 
-            entity.Property(e => e.Num).HasColumnName("num");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
             entity.Property(e => e.AssignedEmployeeId).HasColumnName("assigned_employee_id");
-
+            entity.Property(e => e.Name).HasColumnName("name");
+            
             entity.HasOne(d => d.AssignedEmployee).WithMany(p => p.Tables)
                 .HasForeignKey(d => d.AssignedEmployeeId)
                 .HasConstraintName("tables_employees_id_fk");
@@ -279,4 +280,6 @@ public partial class QrCafeDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+public DbSet<QrCafe.Models.CategoryDTO> CategoryDTO { get; set; } = default!;
 }

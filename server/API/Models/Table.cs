@@ -2,23 +2,19 @@
 
 namespace QrCafe.Models;
 
-public class TableDTO
+public class TableDTO(Table table)
 {
-    public TableDTO(Table table)
-    {
-        Num = table.Num;
-        RestaurantId = table.RestaurantId;
-        AssignedEmployeeId = table.AssignedEmployeeId;
-    }
-    public int Num { get; set; }
+    public int Id { get; set; } = table.Id;
 
-    public int RestaurantId { get; set; }
+    public string Name { get; set; } = table.Name;
 
-    public Guid? AssignedEmployeeId { get; set; }
+    public Guid? AssignedEmployeeId { get; set; } = table.AssignedEmployeeId;
 }
 public partial class Table
 {
-    public int Num { get; set; }
+    public int Id { get; set; }
+    
+    public string Name { get; set; }
 
     public int RestaurantId { get; set; }
 
@@ -32,7 +28,7 @@ public partial class Table
     {
         var tables = db.Tables.Where(t => t.RestaurantId == table.RestaurantId).ToListAsync().Result;
         var availableEmployees = db.Employees
-            .Where(e => e.RestaurantId == table.RestaurantId && e.Available)
+            .Where(e => e.RestaurantId == table.RestaurantId && e.Available && e.RoleId == 1)
             .ToDictionary(employee => employee, _ => 0);
         foreach (var tabl in tables.Where(tabl => tabl.AssignedEmployeeId != null))
         {

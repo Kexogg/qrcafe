@@ -483,7 +483,7 @@ paths:
         400:
           description: Organization/Restaurant/Table not found
         200:
-          description: Successful response. Returns ClientDTO
+          description: Successful response. Returns client token
   
   /api/organizations:
     post:
