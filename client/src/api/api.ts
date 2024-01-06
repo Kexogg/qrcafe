@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'https://nyashdev.stk8s.66bit.ru/api'
+const API_BASE_URL = '/api'
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -14,5 +14,13 @@ export const getToken = async (
     return api.post(`/restaurants/${restaurant}/login`, {
         login,
         password,
+    })
+}
+
+export const getTables = async (token: string, restaurantId: string) => {
+    return api.get(`/restaurants/${restaurantId}/tables`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     })
 }
