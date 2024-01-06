@@ -28,8 +28,8 @@ export const getTables = async (token: string, restaurantId: string) => {
             response.data.map(
                 (table: { num: string; assignedEmployeeId: string }) => {
                     return {
-                        id: table.num,
-                        assignedWaiter: table.assignedEmployeeId || '-',
+                        id: table.num.toString(),
+                        assignedWaiter: table.assignedEmployeeId || null,
                     }
                 },
             ),
