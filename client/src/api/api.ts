@@ -18,9 +18,33 @@ export const getToken = async (
 }
 
 export const getTables = async (token: string, restaurantId: string) => {
-    return api.get(`/restaurants/${restaurantId}/tables`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
+    return api
+        .get(`/restaurants/${restaurantId}/tables`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) =>
+            response.data.map(
+                (table: { num: string; assignedEmployeeId: string }) => {
+                    return {
+                        id: table.num,
+                        assignedWaiter: table.assignedEmployeeId || '-',
+                    }
+                },
+            ),
+        )
+}
+export const createTable = async (token: string, restaurantId: string) => {
+    return api
+        .post(
+            `/restaurants/${restaurantId}/tables`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response.data)
 }
