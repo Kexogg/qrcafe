@@ -55,12 +55,14 @@ export const LoginQrScanner = () => {
                         navigate(-1)
                     }}
                 />
-                <Button
-                    label={'ПРОПУСТИТЬ (DEBUG)'}
-                    onClick={() => {
-                        dispatch(setToken('debug'))
-                    }}
-                />
+                {import.meta.env.MODE === 'development' && (
+                    <Button
+                        label={'Пропустить (DEBUG)'}
+                        onClick={() => {
+                            dispatch(setToken('debug'))
+                        }}
+                    />
+                )}
             </div>
         </>
     )
