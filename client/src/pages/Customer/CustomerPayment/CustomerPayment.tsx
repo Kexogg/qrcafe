@@ -1,4 +1,4 @@
-import { useAppSelector } from '../../../hooks.ts'
+import { useAppSelector } from '../../../hooks/hooks.ts'
 import { useState } from 'react'
 import { Tips } from '../../../components/UI/Tips/Tips.tsx'
 import { RadioButtonChecked, RadioButtonUnchecked } from '@mui/icons-material'

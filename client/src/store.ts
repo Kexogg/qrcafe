@@ -6,6 +6,10 @@ import {
 import { CartState, cartSlice } from './features/cart/cartSlice.ts'
 import { WaiterState, waiterSlice } from './features/waiter/waiterSlice.ts'
 import { SessionState, sessionSlice } from './features/session/sessionSlice.ts'
+import {
+    customerSlice,
+    CustomerState,
+} from './features/customer/customerSlice.ts'
 
 function saveToLocalStorage(state: RootState) {
     try {
@@ -33,17 +37,24 @@ const appReducer = combineReducers({
     cart: cartSlice.reducer,
     waiter: waiterSlice.reducer,
     session: sessionSlice.reducer,
+    customer: customerSlice.reducer,
 })
 
 export const CLEAR_STATE = 'CLEAR_STATE'
 
 const rootReducer = (
     state:
-        | { cart: CartState; waiter: WaiterState; session: SessionState }
+        | {
+              cart: CartState
+              waiter: WaiterState
+              session: SessionState
+              customer: CustomerState
+          }
         | Partial<{
               cart: CartState | undefined
               waiter: WaiterState | undefined
               session: SessionState | undefined
+              customer: CustomerState | undefined
           }>
         | undefined,
     action: UnknownAction,

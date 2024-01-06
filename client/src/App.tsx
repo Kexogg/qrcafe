@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
 import '@fontsource-variable/roboto-flex'
-import { useAppSelector } from './hooks.ts'
+import { useAppSelector } from './hooks/hooks.ts'
 import { CustomerRouter } from './routers/CustomerRouter.tsx'
 import { WaiterRouter } from './routers/WaiterRouter.tsx'
 import { LoginRouter } from './routers/LoginRouter.tsx'
@@ -11,7 +11,9 @@ function App() {
     const sessionType = useAppSelector((state) => state.session.type)
     return (
         <BrowserRouter>
-            {(!sessionType || !token) && <LoginRouter />}
+            {(sessionType === undefined || token === undefined) && (
+                <LoginRouter />
+            )}
             {token && sessionType == 0 && <WaiterRouter />}
             {token && sessionType == 1 && <CustomerRouter />}
             {token && sessionType == 2 && <DashboardRouter />}

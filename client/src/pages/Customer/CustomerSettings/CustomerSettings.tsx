@@ -1,6 +1,6 @@
 import { BuildInfo } from '../../../components/BuildInfo/BuildInfo.tsx'
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
-import { useAppDispatch, useAppSelector } from '../../../hooks.ts'
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
 import { useState } from 'react'

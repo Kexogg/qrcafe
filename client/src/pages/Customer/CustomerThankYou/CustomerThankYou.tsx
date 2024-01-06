@@ -2,7 +2,7 @@ import { StarBorderRounded, StarRounded } from '@mui/icons-material'
 import { useState } from 'react'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { CLEAR_STATE } from '../../../store.ts'
-import { useAppDispatch } from '../../../hooks.ts'
+import { useAppDispatch } from '../../../hooks/hooks.ts'
 
 export const CustomerThankYou = () => {
     const [rating, setRating] = useState(0)

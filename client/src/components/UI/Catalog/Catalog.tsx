@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import DishModal from '../Modal/DishModal.tsx'
 import { Searchbar } from '../Searchbar/Searchbar.tsx'
 import { ICategory } from '../../../types/ICategory.ts'
+import { useAppSelector } from '../../../hooks/hooks.ts'
 
 type CatalogProps = {
     title: string
@@ -49,7 +50,7 @@ export const Catalog = ({ title }: CatalogProps) => {
 
     const [searchTerm, setSearchTerm] = useState('')
     const [filteredCategories, setFilteredCategories] = useState(categories)
-
+    const isCustomer = useAppSelector((state) => state.session.type === 1)
     useEffect(() => {
         setFilteredCategories(
             categories
@@ -203,16 +204,18 @@ export const Catalog = ({ title }: CatalogProps) => {
                     )
                 })}
             </ul>
-            <section className={'my-6 text-center text-primary-700'}>
-                <h3> Похоже, что вы просмотрели все блюда </h3>
-                <p>
-                    Вы можете перейти в{' '}
-                    <Link className={'underline'} to={'/customer/cart'}>
-                        корзину
-                    </Link>{' '}
-                    и оформить заказ
-                </p>
-            </section>
+            {isCustomer && (
+                <section className={'my-6 text-center text-primary-700'}>
+                    <h3> Похоже, что вы просмотрели все блюда </h3>
+                    <p>
+                        Вы можете перейти в{' '}
+                        <Link className={'underline'} to={'/customer/cart'}>
+                            корзину
+                        </Link>{' '}
+                        и оформить заказ
+                    </p>
+                </section>
+            )}
         </section>
     )
 }

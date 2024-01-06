@@ -1,5 +1,5 @@
 import { AccountCircle } from '@mui/icons-material'
-import { useAppSelector } from '../../../hooks.ts'
+import { useAppSelector } from '../../../hooks/hooks.ts'
 
 export const ServedBy = () => {
     const waiter = useAppSelector((state) => state.waiter)
