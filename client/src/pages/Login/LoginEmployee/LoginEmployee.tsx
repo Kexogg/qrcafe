@@ -53,14 +53,7 @@ export const LoginEmployee = () => {
 
     return (
         <form className={'flex h-full flex-col'}>
-            {loading && (
-                <div
-                    className={
-                        'absolute bottom-0 left-0 right-0 top-0 overflow-hidden bg-black/50'
-                    }>
-                    <LoadingSpinner />
-                </div>
-            )}
+            {loading && <LoadingSpinner screenOverlay />}
             <h1>Авторизация сотрудника</h1>
             <div className={'mt-5 flex flex-col gap-3'}>
                 <TextField

@@ -24,6 +24,7 @@
   100% { opacity: 0.5 }
 }
 .spinner {
+  @apply flex items-center justify-center h-full;
   animation: spin 2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
 
