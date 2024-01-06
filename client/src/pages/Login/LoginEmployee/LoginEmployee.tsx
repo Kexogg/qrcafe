@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { setSession } from '../../../features/session/sessionSlice.ts'
 import TextField from '../../../components/UI/TextField/TextField.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
+import { getToken } from '../../../api/api.ts'
 
 export const LoginEmployee = () => {
     const [login, setLogin] = useState('')
@@ -12,28 +13,17 @@ export const LoginEmployee = () => {
     const [error, setError] = useState('' as string | null)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
-    const fetchToken = (login: string, password: string) => {
-        fetch(`/api/restaurants/${restaurant}/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                login: login,
-                password: password,
-            }),
-        })
+    const fetchToken = async (
+        login: string,
+        password: string,
+        restaurant: string,
+    ) => {
+        getToken(login, password, restaurant)
             .then((response) => {
-                if (!response.ok) {
-                    return Promise.reject(response)
-                }
-                return response.json()
-            })
-            .then((data) => {
                 dispatch(
                     setSession({
                         type: 0,
-                        token: data.access_token,
+                        token: response.data.access_token,
                         tokenTimestamp: Date.now(),
                         restaurantId: restaurant,
                     }),
@@ -42,8 +32,10 @@ export const LoginEmployee = () => {
                 navigate('/employee/home')
             })
             .catch((response) => {
-                if (response.status == 401)
-                    setError('Неверный логин или пароль')
+                if (response.code == 401) setError('Неверный логин или пароль')
+                else if (response.code == 404) setError('Ресторан не найден')
+                else if (response.code == 'ERR_NETWORK')
+                    setError('Произошла ошибка при подключении к серверу')
                 else if (response.status)
                     setError(
                         `Произошла ошибка при авторизации, код ${response.status}`,
@@ -82,7 +74,7 @@ export const LoginEmployee = () => {
                         password.length == 0 ||
                         restaurant.length == 0
                     }
-                    onClick={() => fetchToken(login, password)}
+                    onClick={() => fetchToken(login, password, restaurant)}
                     label={'Войти'}
                 />
                 <Button
