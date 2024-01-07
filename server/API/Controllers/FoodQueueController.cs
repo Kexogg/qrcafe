@@ -32,10 +32,11 @@ namespace QrCafe.Controllers
         }
 
         // GET: /api/restaurants/0/FoodQueue/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<FoodQueue>> GetFoodQueue(Guid id, int restId)
         {
-            var foodQueue = await _context.FoodQueues.FindAsync(id);
+            var foodQueue = await _context.FoodQueues.Where(q=> q.RestaurantId == restId)
+                .FirstOrDefaultAsync(q=> q.Id == id);
 
             if (foodQueue == null)
             {
@@ -45,18 +46,36 @@ namespace QrCafe.Controllers
             return foodQueue;
         }
 
-        // PUT: /api/restaurants/0/FoodQueue
+        // PUT: /api/restaurants/0/FoodQueue/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch]
         [Authorize (Roles = "employee")]
-        public async Task<IActionResult> PutFoodQueue(FoodQueueDTO foodQueue, int restId)
+        public async Task<IActionResult> PutFoodQueue(Guid id, FoodQueue foodQueue, int restId)
         {
-            var order = await _context.FoodQueues
-                .FirstOrDefaultAsync(o => o.RestaurantId == restId && o.Id == foodQueue.Id);
-            if (order == null) return NotFound();
-            order.State = foodQueue.State;
-            await _context.SaveChangesAsync();
-            return Ok();
+            if (id != foodQueue.Id || restId!=foodQueue.RestaurantId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(foodQueue).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FoodQueueExists(id, restId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
         // POST: /api/restaurants/0/FoodQueue
@@ -65,9 +84,10 @@ namespace QrCafe.Controllers
         [Authorize (Roles = "client")]
         public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueue(List<Food> foodList, int restId)
         {
-            var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId").Value);
+            var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
             var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
-            var restaurant = await _context.Restaurants.Include(r=> r.Clients).FirstOrDefaultAsync(r=> r.Id == restId);
+            var restaurant = await _context.Restaurants.Include(r=> r.Clients)
+                .FirstOrDefaultAsync(r=> r.Id == restId);
             if (restaurantClaim != restId || restaurant == null) return BadRequest();
             var client = restaurant.Clients.FirstOrDefault(c=> c.Id == clientIdClaim);
             if (client == null) return NotFound();
@@ -83,10 +103,11 @@ namespace QrCafe.Controllers
         }
 
         // DELETE: /api/restaurants/0/FoodQueue/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteFoodQueue(Guid id, int restId)
         {
-            var foodQueue = await _context.FoodQueues.FindAsync(id);
+            var foodQueue = await _context.FoodQueues.Where(q=> q.RestaurantId == restId)
+                .FirstOrDefaultAsync(q=> q.Id == id);
             if (foodQueue == null)
             {
                 return NotFound();
@@ -98,9 +119,9 @@ namespace QrCafe.Controllers
             return NoContent();
         }
 
-        private bool FoodQueueExists(Guid id)
+        private bool FoodQueueExists(Guid id, int restId)
         {
-            return _context.FoodQueues.Any(e => e.Id == id);
+            return _context.FoodQueues.Where(q=> q.RestaurantId == restId).Any(e => e.Id == id);
         }
     }
 }

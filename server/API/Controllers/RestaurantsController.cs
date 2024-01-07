@@ -33,11 +33,11 @@ namespace QrCafe.Controllers
             return organization.Restaurants.Select(r => new RestaurantDTO(r)).ToList();
         }
 
-        // GET: /api/organizations/{orgId:int}/Restaurants/5
-        [HttpGet("{id}")]
+        // GET: /api/Restaurants/5
+        [HttpGet("/api/Restaurants/{id:int}")]
         public async Task<ActionResult<Restaurant>> GetRestaurant(int id)
         {
-            var restaurant = await _context.Restaurants.FindAsync(id);
+            var restaurant = await _context.Restaurants.FirstOrDefaultAsync(r=> r.Id == id);
 
             if (restaurant == null)
             {
@@ -49,8 +49,8 @@ namespace QrCafe.Controllers
 
         // PUT: /api/organizations/{orgId:int}/Restaurants/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRestaurant(int id, Restaurant restaurant, int orgId)
+        [HttpPatch("/api/Restaurants/{id:int}")]
+        public async Task<IActionResult> PutRestaurant(int id, Restaurant restaurant)
         {
             if (id != restaurant.Id)
             {
@@ -87,7 +87,8 @@ namespace QrCafe.Controllers
             if (organization == null) return BadRequest();
             var random = new Random();
             var restId = random.Next(10000, 100000);
-            while (await _context.Restaurants.Where(r=> r.OrgId ==orgId).FirstOrDefaultAsync(r=>r.Id == restId)!=null)
+            while (await _context.Restaurants.Where(r=> r.OrgId ==orgId)
+                       .FirstOrDefaultAsync(r=>r.Id == restId)!=null)
             {
                 restId = random.Next(10000, 100000);
             }

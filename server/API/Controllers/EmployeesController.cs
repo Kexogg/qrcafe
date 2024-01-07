@@ -35,10 +35,11 @@ namespace QrCafe.Controllers
         }
 
         // GET: api/restaurants/0/Employees/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<Employee>> GetEmployee(Guid id, int restId)
         {
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _context.Employees.Where(e=> e.RestaurantId == restId)
+                .FirstOrDefaultAsync(e=> e.Id == id);
 
             if (employee == null)
             {
@@ -50,10 +51,10 @@ namespace QrCafe.Controllers
 
         // PUT: api/restaurants/0/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(Guid id, Employee employee)
+        [HttpPatch("{id:guid}")]
+        public async Task<IActionResult> PutEmployee(Guid id, Employee employee, int restId)
         {
-            if (id != employee.Id)
+            if (id != employee.Id || restId != employee.RestaurantId)
             {
                 return BadRequest();
             }
@@ -66,7 +67,7 @@ namespace QrCafe.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EmployeeExists(id))
+                if (!EmployeeExists(id, restId))
                 {
                     return NotFound();
                 }
@@ -140,9 +141,9 @@ namespace QrCafe.Controllers
             return NoContent();
         }
 
-        private bool EmployeeExists(Guid id)
+        private bool EmployeeExists(Guid id, int restId)
         {
-            return _context.Employees.Any(e => e.Id == id);
+            return _context.Employees.Where(e=> e.RestaurantId == restId).Any(e => e.Id == id);
         }
     }
 }

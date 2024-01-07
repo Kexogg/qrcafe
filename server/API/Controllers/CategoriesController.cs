@@ -25,16 +25,18 @@ namespace QrCafe.Controllers
 
         // GET: /api/restaurants/0/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategory(int restId)
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategory(int restId)
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.Where(c=> c.RestaurantId == restId)
+                .Select(c=> new CategoryDTO(c)).ToListAsync();
         }
 
         // GET: /api/restaurants/0/Categories/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Category>> GetCategory(int? id, int restId)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories.Where(c=> c.RestaurantId == restId)
+                .FirstOrDefaultAsync(c=> c.Id == id);
 
             if (category == null)
             {
@@ -46,10 +48,10 @@ namespace QrCafe.Controllers
 
         // PUT: /api/restaurants/0/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> PutCategory(int? id, Category category, int restId)
         {
-            if (id != category.Id)
+            if (id != category.Id || restId != category.RestaurantId)
             {
                 return BadRequest();
             }

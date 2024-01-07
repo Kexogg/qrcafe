@@ -35,7 +35,8 @@ namespace QrCafe.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Table>> GetTable(int id, int restId)
         {
-            var table = await _context.Tables.FindAsync(id);
+            var table = await _context.Tables.Where(t=> t.RestaurantId==restId)
+                .FirstOrDefaultAsync(t=> t.Id == id);
 
             if (table == null)
             {
@@ -44,7 +45,36 @@ namespace QrCafe.Controllers
 
             return table;
         }
+        
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> PutTable(int id, Table table, int restId)
+        {
+            if (id != table.Id || restId!=table.RestaurantId)
+            {
+                return BadRequest();
+            }
 
+            _context.Entry(table).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TableExists(id, restId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        
         // POST: api/restaurants/0/Tables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -75,9 +105,9 @@ namespace QrCafe.Controllers
             return NoContent();
         }
 
-        private bool TableExists(int id)
+        private bool TableExists(int id, int restId)
         {
-            return _context.Tables.Any(e => e.Id == id);
+            return _context.Tables.Where(t=> t.RestaurantId == restId).Any(e => e.Id == id);
         }
     }
 }

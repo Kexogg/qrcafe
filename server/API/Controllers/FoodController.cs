@@ -24,7 +24,7 @@ namespace QrCafe.Controllers
         }
 
         // GET: /api/restaurants/0/categories/Food
-        [HttpGet("categories/")]
+        [HttpGet("/api/restaurants/{restId:int}/categories/food")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetFoodsInCategories(int restId)
         {
@@ -53,10 +53,11 @@ namespace QrCafe.Controllers
                 .Select(f => new FoodDTO(f)).ToListAsync();
         }
         // GET: /api/restaurants/0/Food/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Food>> GetFood(int id, int restId)
         {
-            var food = await _context.Foods.FindAsync(id);
+            var food = await _context.Foods.Where(f=> f.RestaurantId == restId)
+                .FirstOrDefaultAsync(f=> f.Id == id);
 
             if (food == null)
             {
@@ -68,10 +69,10 @@ namespace QrCafe.Controllers
 
         // PUT: /api/restaurants/0/Food/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPatch("{id:int}")]
         public async Task<IActionResult> PutFood(int id, Food food, int restId)
         {
-            if (id != food.Id)
+            if (id != food.Id || restId != food.RestaurantId)
             {
                 return BadRequest();
             }
@@ -84,7 +85,7 @@ namespace QrCafe.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!FoodExists(id))
+                if (!FoodExists(id, restId))
                 {
                     return NotFound();
                 }
@@ -137,10 +138,11 @@ namespace QrCafe.Controllers
         }
 
         // DELETE: /api/restaurants/0/Food/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteFood(int id, int restId)
         {
-            var food = await _context.Foods.FindAsync(id);
+            var food = await _context.Foods.Where(f=> f.RestaurantId == restId)
+                .FirstOrDefaultAsync(f=> f.Id == id);
             if (food == null)
             {
                 return NotFound();
@@ -152,9 +154,9 @@ namespace QrCafe.Controllers
             return NoContent();
         }
 
-        private bool FoodExists(int id)
+        private bool FoodExists(int id, int restId)
         {
-            return _context.Foods.Any(e => e.Id == id);
+            return _context.Foods.Where(f=> f.RestaurantId == restId).Any(e => e.Id == id);
         }
     }
 }

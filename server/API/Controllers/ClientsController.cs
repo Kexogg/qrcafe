@@ -14,7 +14,7 @@ using QrCafe.Models;
 
 namespace QrCafe.Controllers
 {
-    [Route("api/")]
+    [Route("api/restaurants/{restId:int}/[controller]")]
     [ApiController]
     public class ClientsController : ControllerBase
     {
@@ -26,7 +26,6 @@ namespace QrCafe.Controllers
         }
 
         // GET: api/restaurants/0/clients
-        [Route("restaurants/{restId:int}/clients")]
         [HttpGet]
         [Authorize(Roles = "employee")]
         public async Task<ActionResult<IEnumerable<ClientDTO>>> GetClients(int restId)
@@ -35,11 +34,13 @@ namespace QrCafe.Controllers
                 .Select(c => new ClientDTO(c)).ToListAsync();
         }
 
-        // GET: api/clients/5
-        /*[HttpGet("clients/{id}")]
-        public async Task<ActionResult<ClientDTO>> GetClient(Guid id)
+        // GET: api/restaurants/0/clients/5
+        [HttpGet("{id:guid}")]
+        [Authorize(Roles = "employee")]
+        public async Task<ActionResult<ClientDTO>> GetClient(Guid id, int restId)
         {
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _context.Clients.Where(c=> c.RestaurantId == restId)
+                .FirstOrDefaultAsync(c=> c.Id == id);
 
             if (client == null)
             {
@@ -47,11 +48,41 @@ namespace QrCafe.Controllers
             }
 
             return new ClientDTO(client);
-        }*/
+        }
+        
+        [HttpPatch("{id:guid}")]
+        [Authorize(Roles = "employee")]
+        public async Task<IActionResult> PutFood(Guid id, Client client, int restId)
+        {
+            if (id != client.Id || restId != client.RestaurantId)
+            {
+                return BadRequest();
+            }
 
-        // POST: api/Clients/restaurants/{restId:int}/tables/{tableNum:int}
+            _context.Entry(client).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ClientExists(id,restId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        
+        // POST: api/Clients/restaurants/0/tables/1
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("restaurants/{restId:int}/tables/{tableId:int}")]
+        [HttpPost("tables/{tableId:int}")]
         public async Task<IActionResult> PutClient(ClientDTO clientDto, int restId, int tableId)
         {
             var restaurant = _context.Restaurants.Include(restaurant => restaurant.Tables)
@@ -85,10 +116,13 @@ namespace QrCafe.Controllers
         }
         
 
-        // DELETE: api/Clients/5
-        /*[HttpDelete("clients/{id}")] public async Task<IActionResult> DeleteClient(Guid id)
+        // DELETE: api/restaurants/0/Clients/5
+        [HttpDelete("{id:guid}")] 
+        [Authorize(Roles = "employee")]
+        public async Task<IActionResult> DeleteClient(Guid id, int restId)
         {
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _context.Clients.Where(c=> c.RestaurantId == restId)
+                .FirstOrDefaultAsync(c=> c.Id == id);
             if (client == null)
             {
                 return NotFound();
@@ -98,11 +132,11 @@ namespace QrCafe.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }*/
+        }
 
-        private bool ClientExists(Guid id)
+        private bool ClientExists(Guid id, int restId)
         {
-            return _context.Clients.Any(e => e.Id == id);
+            return _context.Clients.Where(c=> c.RestaurantId == restId).Any(e => e.Id == id);
         }
     }
 }

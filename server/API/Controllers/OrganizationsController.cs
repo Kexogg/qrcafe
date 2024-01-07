@@ -31,7 +31,7 @@ namespace QrCafe.Controllers
         }
 
         // GET: api/Organizations/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Organization>> GetOrganization(int id)
         {
             var organization = await _context.Organizations.FindAsync(id);
@@ -46,7 +46,7 @@ namespace QrCafe.Controllers
 
         // PUT: api/Organizations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> PutOrganization(int id, Organization organization)
         {
             if (id != organization.Id)
@@ -93,7 +93,7 @@ namespace QrCafe.Controllers
         }
 
         // DELETE: api/Organizations/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteOrganization(int id)
         {
             var organization = await _context.Organizations.FindAsync(id);
