@@ -2,7 +2,7 @@ import font from '../../../assets/Roboto-Bold.ttf'
 import { useEffect } from 'react'
 
 type QRCodePDFProps = {
-    svgData: HTMLCollection
+    svgData: SVGElement
     pdf: typeof import('@react-pdf/renderer').default
 }
 export const QRCodePDF = ({ svgData, pdf }: QRCodePDFProps) => {
@@ -41,8 +41,11 @@ export const QRCodePDF = ({ svgData, pdf }: QRCodePDFProps) => {
             <Page size={'A4'} style={styles.page}>
                 <Text>Наведите камеру телефона и сделайте заказ</Text>
                 <View style={styles.qr}>
-                    <Svg height={400} width={400} viewBox="0 0 21 21">
-                        {Array.from(svgData).map((svg) => {
+                    <Svg
+                        height={400}
+                        width={400}
+                        viewBox={svgData.getAttribute('viewBox') ?? ''}>
+                        {Array.from(svgData.children).map((svg) => {
                             return (
                                 <Path
                                     key={svg.id}
