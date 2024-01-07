@@ -90,6 +90,7 @@ namespace QrCafe.Controllers
             if (restaurant == null) return BadRequest();
             if (restaurant.Employees.FirstOrDefault(e => e.Login == employee.Login) != null) 
                 return Conflict();
+            employee.RestaurantId = restId;
             await _context.Employees.AddAsync(employee);
             await _context.SaveChangesAsync();
             return Ok(new EmployeeDTO(employee));

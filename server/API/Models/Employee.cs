@@ -1,4 +1,6 @@
-﻿namespace QrCafe.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace QrCafe.Models;
 
 
 public struct EmployeeLoginData(string login, string password)
@@ -31,8 +33,7 @@ public class EmployeeDTO
 }
 public partial class Employee
 {
-    public Employee(){}
-    
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
     public string FullName { get; set; } = null!;
@@ -42,13 +43,13 @@ public partial class Employee
     public string Password { get; set; }
     public int RoleId { get; set; }
 
-    public int? RestaurantId { get; set; }
+    public int? RestaurantId { get; set; } = null;
 
     public bool Available { get; set; }
 
     public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
-    public virtual Restaurant? Restaurant { get; set; }
+    public virtual Restaurant? Restaurant { get; set; } = null;
 
-    public virtual ICollection<Table> Tables { get; set; }
+    public virtual ICollection<Table> Tables { get; set; } = new List<Table>();
 }

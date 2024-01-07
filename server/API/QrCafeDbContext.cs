@@ -83,7 +83,6 @@ public partial class QrCafeDbContext : DbContext
             entity.ToTable("employees");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Available).HasColumnName("available");
             entity.Property(e => e.FullName)
@@ -98,7 +97,7 @@ public partial class QrCafeDbContext : DbContext
             
             entity.HasData(new Employee
             {
-                Id = new Guid(), FullName = "admin", Login = "admin", Password = "IGI$arFiH~RXf9k", RoleId = 0,
+                Id = new Guid("AA249B46-CF7C-4B1E-9FF4-38053AE67677"), FullName = "admin", Login = "admin", Password = "IGI$arFiH~RXf9k", RoleId = 0,
                 RestaurantId = 0000000000, Available = true
             });
         });
