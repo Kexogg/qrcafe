@@ -92,6 +92,7 @@ public class ClientsController : ControllerBase
         if (table == null) return BadRequest();
         if (table.AssignedEmployeeId != null) return BadRequest();
         var employee = Table.AssignEmployee(_context, table);
+        if (employee == null) return Conflict();
         table.AssignedEmployee = employee;
         table.AssignedEmployeeId = employee.Id;
         var client = new Client(restId, tableId, employee.Id);

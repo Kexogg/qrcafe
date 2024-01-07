@@ -32,6 +32,7 @@ public partial class Table
         var availableEmployees = db.Employees
             .Where(e => e.RestaurantId == table.RestaurantId && e.Available && e.RoleId == 1)
             .ToDictionary(employee => employee, _ => 0);
+        if (availableEmployees.Count == 0) return null;
         foreach (var tabl in tables.Where(tabl => tabl.AssignedEmployeeId != null))
         {
             availableEmployees[availableEmployees.Keys.FirstOrDefault(employee => employee.Id==tabl.AssignedEmployeeId)] += 1;

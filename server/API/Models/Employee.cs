@@ -10,26 +10,13 @@ public struct EmployeeLoginData(string login, string password)
 public class EmployeeDTO
 {
     public EmployeeDTO(){}
-
-    public EmployeeDTO(string login, string password)
-    {
-        Login = login;
-        Password = password;
-    }
-    public EmployeeDTO(string fullName, string login, string password, int roleId)
-    {
-        FullName = fullName;
-        Login = login;
-        Password = password;
-        RoleId = roleId;
-        Available = true;
-    }
+    
     public EmployeeDTO(Employee employee)
     {
         Id = employee.Id;
+        Login = employee.Login;
         FullName = employee.FullName;
         RoleId = employee.RoleId;
-        RestaurantId = employee.RestaurantId;
         Available = employee.Available;
     }
     public Guid? Id { get; set; }
@@ -38,27 +25,14 @@ public class EmployeeDTO
 
     public string Login { get; set; }
     
-    public string Password { get; set; }
     public int RoleId { get; set; }
-
-    public int? RestaurantId { get; set; }
 
     public bool Available { get; set; }
 }
 public partial class Employee
 {
     public Employee(){}
-
-    public Employee(EmployeeDTO employeeDto, int restId)
-    {
-        Id = employeeDto.Id ?? Guid.NewGuid();
-        FullName = employeeDto.FullName;
-        Login = employeeDto.Login;
-        Password = employeeDto.Password;
-        RoleId = employeeDto.RoleId;
-        RestaurantId = employeeDto.RestaurantId ?? restId;
-        Available = true;
-    }
+    
     public Guid Id { get; set; }
 
     public string FullName { get; set; } = null!;

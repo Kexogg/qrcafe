@@ -36,7 +36,7 @@ namespace QrCafe.Controllers
 
         // GET: api/restaurants/0/Employees/5
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Employee>> GetEmployee(Guid id, int restId)
+        public async Task<ActionResult<EmployeeDTO>> GetEmployee(Guid id, int restId)
         {
             var employee = await _context.Employees.Where(e=> e.RestaurantId == restId)
                 .FirstOrDefaultAsync(e=> e.Id == id);
@@ -46,7 +46,7 @@ namespace QrCafe.Controllers
                 return NotFound();
             }
 
-            return employee;
+            return new EmployeeDTO(employee);
         }
 
         // PUT: api/restaurants/0/Employees/5
@@ -83,14 +83,13 @@ namespace QrCafe.Controllers
         // POST: api/restaurants/0/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> PostEmployee(EmployeeDTO employeeDto, int restId)
+        public async Task<IActionResult> PostEmployee(Employee employee, int restId)
         {
             var restaurant = _context.Restaurants.Include(r=> r.Employees)
                 .FirstOrDefault(r => r.Id == restId);
             if (restaurant == null) return BadRequest();
-            if (restaurant.Employees.FirstOrDefault(e => e.Login == employeeDto.Login) != null) 
+            if (restaurant.Employees.FirstOrDefault(e => e.Login == employee.Login) != null) 
                 return Conflict();
-            var employee = new Employee(employeeDto, restId);
             await _context.Employees.AddAsync(employee);
             await _context.SaveChangesAsync();
             return Ok(new EmployeeDTO(employee));
