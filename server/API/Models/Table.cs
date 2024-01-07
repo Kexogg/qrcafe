@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace QrCafe.Models;
 
@@ -12,6 +13,7 @@ public class TableDTO(Table table)
 }
 public partial class Table
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
     public int Id { get; set; }
     
     public string Name { get; set; }

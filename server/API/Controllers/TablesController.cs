@@ -52,7 +52,7 @@ namespace QrCafe.Controllers
         {
             var restaurant = _context.Restaurants.Include(r=> r.Tables).FirstOrDefault(r=> r.Id == restId);
             if (restaurant == null) return NotFound();
-            var table = new Table{Id = restaurant.Tables.Count+1, Name = name, RestaurantId = restId};
+            var table = new Table{Name = name, RestaurantId = restId};
             await _context.Tables.AddAsync(table);
             await _context.SaveChangesAsync();
             return Ok(new TableDTO(table));

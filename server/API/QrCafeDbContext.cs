@@ -280,6 +280,5 @@ public partial class QrCafeDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-public DbSet<QrCafe.Models.CategoryDTO> CategoryDTO { get; set; } = default!;
+    
 }

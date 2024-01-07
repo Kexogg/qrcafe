@@ -112,7 +112,7 @@ namespace QrCafe.Controllers
                 issuer: AuthOptions.ISSUER,
                 audience: AuthOptions.AUDIENCE,
                 claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
+                expires: DateTime.UtcNow.Add(TimeSpan.FromHours(24)),
                 signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), 
                     SecurityAlgorithms.HmacSha256));
             string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
