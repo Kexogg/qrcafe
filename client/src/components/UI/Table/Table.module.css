@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.table {
+  @apply w-full border-collapse table-auto;
+}
+.table tbody tr:nth-child(odd) {
+  @apply bg-primary-100/50;
+}
+.table tbody tr:hover {
+  @apply bg-primary-100;
+}
+
+.table > * > tr > *:first-child {
+    @apply pl-2
+}
+.table > * > tr > *:last-child {
+    @apply pr-2
+}
+.table > * > tr > * {
+    @apply border border-primary-200 p-1
+}
+.table thead tr > * {
+    @apply bg-primary-700 text-white border-y-0 border-primary-500;
+}
+.table thead tr > *:first-child {
+    @apply border-l-0
+}
+.table thead tr > *:last-child {
+    @apply border-r-0
+}
