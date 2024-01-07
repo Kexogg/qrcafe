@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { IEmployee } from '../types/IEmployee.ts'
 
 const API_BASE_URL = '/api'
 
@@ -6,7 +7,7 @@ const api = axios.create({
     baseURL: API_BASE_URL,
 })
 
-export const getToken = async (
+export const getEmployeeToken = async (
     login: string,
     password: string,
     restaurant: string,
@@ -15,6 +16,10 @@ export const getToken = async (
         login,
         password,
     })
+}
+
+export const getClientToken = async (restaurant: string, tableId: string) => {
+    return api.post(`/restaurants/${restaurant}/clients/tables/${tableId}`, {})
 }
 
 export const getTables = async (token: string, restaurantId: string) => {
@@ -66,6 +71,73 @@ export const deleteTable = async (
     tableId: string,
 ) => {
     return api.delete(`/restaurants/${restaurantId}/tables/${tableId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+}
+
+export const getEmployees = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/employees`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then(
+            (response) =>
+                response.data.map(
+                    (employee: {
+                        id: string
+                        fullName: string
+                        login: string
+                        roleId: string
+                        available: boolean
+                    }) => {
+                        return {
+                            id: employee.id,
+                            login: employee.login,
+                            fullName: employee.fullName,
+                            role: employee.roleId,
+                            available: employee.available,
+                        }
+                    },
+                ) as IEmployee[],
+        )
+}
+
+export const createEmployee = async (
+    token: string,
+    restaurantId: string,
+    fullName: string,
+    login: string,
+    password: string,
+    role: number,
+) => {
+    console.log('createEmployee', token, restaurantId, fullName, login, role)
+    return api
+        .post(
+            `/restaurants/${restaurantId}/employees`,
+            {
+                fullName,
+                login,
+                password,
+                role,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response.data)
+}
+export const deleteEmployee = async (
+    token: string,
+    restaurantId: string,
+    employeeId: string,
+) => {
+    return api.delete(`/restaurants/${restaurantId}/employees/${employeeId}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

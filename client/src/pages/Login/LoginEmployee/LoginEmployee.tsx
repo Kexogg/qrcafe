@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { setSession } from '../../../features/session/sessionSlice.ts'
 import TextField from '../../../components/UI/TextField/TextField.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
-import { getToken } from '../../../api/api.ts'
+import { getEmployeeToken } from '../../../api/api.ts'
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
 export const LoginEmployee = () => {
     const [login, setLogin] = useState('')
@@ -21,7 +21,7 @@ export const LoginEmployee = () => {
         sessionType: number,
     ) => {
         setLoading(true)
-        getToken(login, password, restaurant)
+        getEmployeeToken(login, password, restaurant)
             .then((response) => {
                 dispatch(
                     setSession({

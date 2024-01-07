@@ -52,7 +52,7 @@ const Modal = ({ children, title, onClose, open, autoHeight }: ModalProps) => {
                 {title && <h1 className={'text-center'}>{title}</h1>}
                 <div
                     className={
-                        'flex h-full flex-col gap-3 overflow-y-scroll p-3'
+                        'relative flex h-full flex-col gap-3 overflow-y-scroll p-3'
                     }>
                     {children}
                 </div>
