@@ -40,7 +40,6 @@ export const DashboardTables = () => {
     const updateTable = (table: ITable) => {
         console.log('Changing table ' + table.id)
         setSelectedTable(null)
-        //TODO
     }
     return (
         <section className={'relative'}>
@@ -95,7 +94,7 @@ export const DashboardTables = () => {
                                 <tr
                                     key={table.id}
                                     className={'hover:bg-primary-700/5'}>
-                                    <td>
+                                    <td className={'w-0'}>
                                         <input
                                             type={'checkbox'}
                                             className={'cursor-pointer'}
