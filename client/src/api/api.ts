@@ -11,7 +11,7 @@ export const getToken = async (
     password: string,
     restaurant: string,
 ) => {
-    return api.post(`/restaurants/${restaurant}/login`, {
+    return api.post(`/restaurants/${restaurant}/employees/login`, {
         login,
         password,
     })
@@ -26,16 +26,25 @@ export const getTables = async (token: string, restaurantId: string) => {
         })
         .then((response) =>
             response.data.map(
-                (table: { num: string; assignedEmployeeId: string }) => {
+                (table: {
+                    id: string
+                    name: string
+                    assignedEmployeeId: string
+                }) => {
                     return {
-                        id: table.num.toString(),
+                        id: table.id.toString(),
+                        name: table.name,
                         assignedWaiter: table.assignedEmployeeId || null,
                     }
                 },
             ),
         )
 }
-export const createTable = async (token: string, restaurantId: string) => {
+export const createTable = async (
+    token: string,
+    restaurantId: string,
+    name: string,
+) => {
     return api
         .post(
             `/restaurants/${restaurantId}/tables`,
@@ -44,7 +53,21 @@ export const createTable = async (token: string, restaurantId: string) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                params: {
+                    name,
+                },
             },
         )
         .then((response) => response.data)
+}
+export const deleteTable = async (
+    token: string,
+    restaurantId: string,
+    tableId: string,
+) => {
+    return api.delete(`/restaurants/${restaurantId}/tables/${tableId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
 }

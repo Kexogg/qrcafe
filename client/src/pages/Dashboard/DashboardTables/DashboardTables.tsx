@@ -1,4 +1,4 @@
-import { createTable, getTables } from '../../../api/api.ts'
+import { createTable, deleteTable, getTables } from '../../../api/api.ts'
 import { useAppSelector } from '../../../hooks/hooks.ts'
 import { useEffect, useState } from 'react'
 import { ITable } from '../../../types/ITable.ts'
@@ -8,13 +8,14 @@ import {
     AddRounded,
     DeleteRounded,
     EditRounded,
+    QrCodeRounded,
     RefreshRounded,
 } from '@mui/icons-material'
 import { TableButton } from '../../../components/UI/TableButton/TableButton.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
 import TextField from '../../../components/UI/TextField/TextField.tsx'
 import Dropdown from '../../../components/UI/Dropdown/Dropdown.tsx'
-
+import { TableQrModal } from './TableQrModal.tsx'
 export const DashboardTables = () => {
     const session = useAppSelector((state) => state.session)
     const [tables, setTables] = useState<ITable[]>([])
@@ -23,6 +24,7 @@ export const DashboardTables = () => {
     const [lastUpdate, setLastUpdate] = useState(Date.now())
     const [selectedTable, setSelectedTable] = useState<ITable | null>(null)
     const [selectedTables, setSelectedTables] = useState<ITable[]>([])
+    const [qrModalTable, setQrModalTable] = useState<ITable | null>(null)
     useEffect(() => {
         setLoading(true)
         getTables(session.token as string, session.restaurantId as string)
@@ -65,13 +67,17 @@ export const DashboardTables = () => {
                     onClick={() => setSelectedTable(null)}
                 />
             </Modal>
+            <TableQrModal
+                open={!!qrModalTable}
+                onClose={() => setQrModalTable(null)}
+                table={qrModalTable as ITable}></TableQrModal>
             <h1>Столики</h1>
             {error && <p>{error}</p>}
             {loading && <LoadingSpinner elementOverlay />}
             {!error && (
                 <div
                     className={`flex flex-col gap-3 ${
-                        loading && 'animate-pulse'
+                        loading && 'animate-pulse opacity-75'
                     }`}>
                     <table className={'max-w-md border border-primary-700'}>
                         <thead>
@@ -114,12 +120,24 @@ export const DashboardTables = () => {
                                     <td>{table.name ?? '-'}</td>
                                     <td>{table.assignedWaiter}</td>
                                     <td>
-                                        <TableButton
-                                            onClick={() =>
-                                                setSelectedTable(table)
-                                            }>
-                                            <EditRounded fontSize={'small'} />
-                                        </TableButton>
+                                        <div className={'flex gap-1'}>
+                                            <TableButton
+                                                onClick={() =>
+                                                    setSelectedTable(table)
+                                                }>
+                                                <EditRounded
+                                                    fontSize={'small'}
+                                                />
+                                            </TableButton>
+                                            <TableButton
+                                                onClick={() =>
+                                                    setQrModalTable(table)
+                                                }>
+                                                <QrCodeRounded
+                                                    fontSize={'small'}
+                                                />
+                                            </TableButton>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -130,7 +148,23 @@ export const DashboardTables = () => {
                         <TableButton
                             disabled={selectedTables.length === 0}
                             onClick={() => {
-                                //TODO: Delete selected
+                                setLoading(true)
+                                for (const table of selectedTables) {
+                                    console.log('Deleting table ' + table.id)
+                                    deleteTable(
+                                        session.token as string,
+                                        session.restaurantId as string,
+                                        table.id,
+                                    )
+                                        .catch((e) => {
+                                            setError(e.message)
+                                            throw e
+                                        })
+                                        .finally(() => {
+                                            setSelectedTables([])
+                                            setLastUpdate(Date.now())
+                                        })
+                                }
                             }}>
                             <DeleteRounded />
                         </TableButton>
@@ -146,7 +180,13 @@ export const DashboardTables = () => {
                                 createTable(
                                     session.token as string,
                                     session.restaurantId as string,
-                                ).then(() => setLastUpdate(Date.now()))
+                                    'Столик',
+                                )
+                                    .then(() => setLastUpdate(Date.now()))
+                                    .catch((e) => {
+                                        setError(e.message)
+                                    })
+                                    .finally(() => setLoading(false))
                             }}>
                             <AddRounded />
                         </TableButton>
