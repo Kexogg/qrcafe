@@ -112,9 +112,8 @@ export const createEmployee = async (
     fullName: string,
     login: string,
     password: string,
-    role: number,
+    roleId: string,
 ) => {
-    console.log('createEmployee', token, restaurantId, fullName, login, role)
     return api
         .post(
             `/restaurants/${restaurantId}/employees`,
@@ -122,7 +121,7 @@ export const createEmployee = async (
                 fullName,
                 login,
                 password,
-                role,
+                roleId,
             },
             {
                 headers: {
@@ -130,7 +129,7 @@ export const createEmployee = async (
                 },
             },
         )
-        .then((response) => response.data)
+        .then((response) => response)
 }
 export const deleteEmployee = async (
     token: string,

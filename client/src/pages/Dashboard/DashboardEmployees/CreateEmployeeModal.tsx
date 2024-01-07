@@ -18,7 +18,7 @@ export const CreateEmployeeModal = ({
     const [name, setName] = useState('')
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
-    const [role, setRole] = useState<number | null>(null)
+    const [role, setRole] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     const session = useAppSelector((state) => state.session)
@@ -31,7 +31,7 @@ export const CreateEmployeeModal = ({
             name,
             login,
             password,
-            role!,
+            role,
         )
             .then(onClose)
             .catch((response) => {
@@ -67,7 +67,7 @@ export const CreateEmployeeModal = ({
                 dark
                 placeholder={'Роль'}
                 options={['0', '1']}
-                onChange={(e) => setRole(Number(e.target.value))}
+                onChange={(e) => setRole(e.target.value)}
             />
 
             {error}
@@ -79,7 +79,7 @@ export const CreateEmployeeModal = ({
                     name.length === 0 ||
                     login.length === 0 ||
                     password.length === 0 ||
-                    role === null
+                    role.length === 0
                 }
             />
             <Button label={'Отмена'} border onClick={onClose} />
