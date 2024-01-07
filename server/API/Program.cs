@@ -28,6 +28,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddSwaggerGen(option =>
 {
+    option.DescribeAllParametersInCamelCase();
+    
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -54,6 +56,12 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
