@@ -1,4 +1,6 @@
-﻿namespace QrCafe.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace QrCafe.Models;
 
 public class CategoryDTO
 {
@@ -15,7 +17,6 @@ public class CategoryDTO
     public CategoryDTO(Category category)
     {
         Id = category.Id;
-        RestaurantId = category.Id;
         Order = category.Order;
         Separate = category.Separate;
         Name = category.Name;
@@ -23,9 +24,7 @@ public class CategoryDTO
     }
 
     public int? Id { get; set; }
-
-    public int? RestaurantId { get; set; }
-
+    
     public int Order { get; set; }
 
     public bool Separate { get; set; }
@@ -38,18 +37,7 @@ public class CategoryDTO
 }
 public partial class Category
 {
-    public Category(){}
-
-    public Category(CategoryDTO categoryDto, int restaurantId, int id)
-    {
-        Id = id;
-        RestaurantId = restaurantId;
-        Order = categoryDto.Order;
-        Separate = categoryDto.Separate;
-        Name = categoryDto.Name;
-        Description = categoryDto.Description;
-    }
-    
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id;
     
     public int RestaurantId;
@@ -64,5 +52,5 @@ public partial class Category
 
     public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();
 
-    public virtual Restaurant Restaurant { get; set; } = null!;
+    public virtual Restaurant? Restaurant { get; set; } = null!;
 }

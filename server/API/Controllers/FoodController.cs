@@ -72,7 +72,7 @@ namespace QrCafe.Controllers
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> PutFood(int id, Food food, int restId)
         {
-            if (id != food.Id || restId != food.RestaurantId)
+            if (id != food.Id)
             {
                 return BadRequest();
             }
@@ -101,19 +101,13 @@ namespace QrCafe.Controllers
         // POST: /api/restaurants/0/Food
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<FoodDTO>> PostFood(FoodDTO foodDto, int restId)
+        public async Task<ActionResult<FoodDTO>> PostFood(Food food, int restId)
         {
-            var restaurant = await _context.Restaurants.Include(r => r.Categories).FirstOrDefaultAsync(r => r.Id == restId);
+            var restaurant = await _context.Restaurants.FirstOrDefaultAsync(r => r.Id == restId);
             if (restaurant == null) return NotFound();
-            var random = new Random();
-            var id = random.Next(1, 1000000);
-            while (restaurant.Categories.FirstOrDefault(c => c.Id == id) != null) id = random.Next(1, 1000000);
-            var food = new Food(foodDto, id, restId);
-            foodDto.Id = id;
-            foodDto.RestaurantId = restId;
             await _context.Foods.AddAsync(food);
             await _context.SaveChangesAsync();
-            return Ok(foodDto);
+            return Ok(new FoodDTO(food));
         }
         
         [HttpPost("/api/restaurants/{restId:int}/categories/food/{id:int}")]

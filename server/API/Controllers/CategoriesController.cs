@@ -80,22 +80,15 @@ namespace QrCafe.Controllers
         // POST: /api/restaurants/0/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CategoryDTO>> PostCategory(CategoryDTO categoryDto, int restId)
+        public async Task<ActionResult<CategoryDTO>> PostCategory(Category category, int restId)
         {
             var restaurant = await _context.Restaurants.Include(r => r.Categories).FirstOrDefaultAsync(r => r.Id == restId);
             if (restaurant == null) return NotFound();
-            if (restaurant.Categories.FirstOrDefault(c => c.Order == categoryDto.Order) != null) 
+            if (restaurant.Categories.FirstOrDefault(c => c.Order == category.Order) != null) 
                 return Conflict();
-            var random = new Random();
-            var id = random.Next(1, 1000000);
-            while (restaurant.Categories.Where(c=> c.RestaurantId==restId)
-                       .FirstOrDefault(c => c.Id == id) != null) id = random.Next(1, 1000000);
-            var category = new Category(categoryDto, restId, id);
-            categoryDto.Id = id;
-            categoryDto.RestaurantId = restId;
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
-            return Ok(categoryDto);
+            return Ok(new CategoryDTO(category));
         }
 
         [HttpPost("{id:int}/food")]

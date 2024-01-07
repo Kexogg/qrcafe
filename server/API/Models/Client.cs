@@ -1,4 +1,6 @@
-﻿namespace QrCafe.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace QrCafe.Models;
 
 public class ClientDTO
 {
@@ -53,7 +55,6 @@ public partial class Client
 
     public Client( int restId, int tableNum, Guid assignedEmployeeId)
     {
-        Id = Guid.NewGuid();
         RestaurantId = restId;
         TableId = tableNum;
         AssignedEmployeeId = assignedEmployeeId;
@@ -77,7 +78,8 @@ public partial class Client
     public int TableId { get; set; }
 
     public int RestaurantId { get; set; }
-
+    
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
     public string? Name { get; set; }

@@ -109,7 +109,6 @@ public partial class QrCafeDbContext : DbContext
             entity.ToTable("food");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.IsAvailable).HasColumnName("is_available");
@@ -231,7 +230,6 @@ public partial class QrCafeDbContext : DbContext
             entity.ToTable("categories");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Name).HasMaxLength(20)
                 .HasColumnName("name");
