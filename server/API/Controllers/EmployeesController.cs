@@ -54,7 +54,7 @@ namespace QrCafe.Controllers
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> PutEmployee(Guid id, Employee employee, int restId)
         {
-            if (id != employee.Id || restId != employee.RestaurantId)
+            if (id != employee.Id)
             {
                 return BadRequest();
             }
