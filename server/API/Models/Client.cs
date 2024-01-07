@@ -3,11 +3,7 @@
 public class ClientDTO
 {
     public ClientDTO(){}
-    public ClientDTO(string name)
-    {
-        Name = name;
-        IsActive = true;
-    }
+
     public ClientDTO(Client client)
     {
         TableId = client.TableId;
@@ -55,9 +51,8 @@ public partial class Client
     {
     }
 
-    public Client(string clientName, int restId, int tableNum, Guid assignedEmployeeId)
+    public Client( int restId, int tableNum, Guid assignedEmployeeId)
     {
-        Name = clientName;
         Id = Guid.NewGuid();
         RestaurantId = restId;
         TableId = tableNum;
