@@ -83,7 +83,7 @@ namespace QrCafe.Controllers
         // POST: api/Clients/restaurants/0/tables/1
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("tables/{tableId:int}")]
-        public async Task<IActionResult> PutClient(ClientDTO clientDto, int restId, int tableId)
+        public async Task<IActionResult> PutClient([FromQuery] string clientName, int restId, int tableId)
         {
             var restaurant = _context.Restaurants.Include(restaurant => restaurant.Tables)
                 .FirstOrDefault(r => r.Id == restId);
@@ -94,7 +94,7 @@ namespace QrCafe.Controllers
             var employee = Table.AssignEmployee(_context, table);
             table.AssignedEmployee = employee;
             table.AssignedEmployeeId = employee.Id;
-            var client = new Client(clientDto, restId, tableId, employee.Id);
+            var client = new Client(clientName, restId, tableId, employee.Id);
             await _context.Clients.AddAsync(client);
             await _context.SaveChangesAsync();
             var claims = new List<Claim> { new(ClaimTypes.Role, "client"), 

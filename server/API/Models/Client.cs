@@ -55,14 +55,14 @@ public partial class Client
     {
     }
 
-    public Client(ClientDTO clientDto, int restId, int tableNum, Guid assignedEmployeeId)
+    public Client(string clientName, int restId, int tableNum, Guid assignedEmployeeId)
     {
-        Name = clientDto.Name;
-        Id = clientDto.Id ?? Guid.NewGuid();
+        Name = clientName;
+        Id = Guid.NewGuid();
         RestaurantId = restId;
         TableId = tableNum;
         AssignedEmployeeId = assignedEmployeeId;
-        IsActive = clientDto.IsActive;
+        IsActive = true;
     }
     public Client(ClientDTO client)
     {
