@@ -45,7 +45,7 @@ const Modal = ({ children, title, onClose, open, autoHeight }: ModalProps) => {
             onClose={closeModal}>
             <div
                 className={
-                    'flex h-full w-full flex-col rounded-3xl bg-primary-50 p-3 text-left'
+                    'relative flex h-full w-full flex-col rounded-3xl bg-primary-50 p-3 text-left'
                 }
                 onKeyDown={() => null}
                 onClick={(e) => e.stopPropagation()}>
