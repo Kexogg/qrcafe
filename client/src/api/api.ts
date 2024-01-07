@@ -105,3 +105,41 @@ export const getEmployees = async (token: string, restaurantId: string) => {
                 ) as IEmployee[],
         )
 }
+
+export const createEmployee = async (
+    token: string,
+    restaurantId: string,
+    fullName: string,
+    login: string,
+    password: string,
+    role: number,
+) => {
+    console.log('createEmployee', token, restaurantId, fullName, login, role)
+    return api
+        .post(
+            `/restaurants/${restaurantId}/employees`,
+            {
+                fullName,
+                login,
+                password,
+                role,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response.data)
+}
+export const deleteEmployee = async (
+    token: string,
+    restaurantId: string,
+    employeeId: string,
+) => {
+    return api.delete(`/restaurants/${restaurantId}/employees/${employeeId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+}

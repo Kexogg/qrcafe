@@ -16,6 +16,7 @@ import Modal from '../../../components/UI/Modal/Modal.tsx'
 import TextField from '../../../components/UI/TextField/TextField.tsx'
 import Dropdown from '../../../components/UI/Dropdown/Dropdown.tsx'
 import { TableQrModal } from './TableQrModal.tsx'
+import { Table } from '../../../components/UI/Table/Table.tsx'
 export const DashboardTables = () => {
     const session = useAppSelector((state) => state.session)
     const [tables, setTables] = useState<ITable[]>([])
@@ -79,7 +80,7 @@ export const DashboardTables = () => {
                     className={`flex flex-col gap-3 ${
                         loading && 'animate-pulse opacity-75'
                     }`}>
-                    <table className={'max-w-md border border-primary-700'}>
+                    <Table>
                         <thead>
                             <tr className={''}>
                                 <th></th>
@@ -119,8 +120,8 @@ export const DashboardTables = () => {
                                     <td>{table.id}</td>
                                     <td>{table.name ?? '-'}</td>
                                     <td>{table.assignedWaiter}</td>
-                                    <td>
-                                        <div className={'flex gap-1'}>
+                                    <td className={'w-0'}>
+                                        <div className={'flex w-min gap-1'}>
                                             <TableButton
                                                 onClick={() =>
                                                     setSelectedTable(table)
@@ -142,7 +143,7 @@ export const DashboardTables = () => {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </Table>
                     <div className={'flex gap-2'}>
                         {' '}
                         <TableButton
