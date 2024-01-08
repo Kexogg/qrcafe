@@ -1,7 +1,7 @@
-import {IDish} from "./IDish.ts";
+import { IDish } from './IDish.ts'
 
 export interface ICategory {
-    name: string;
-    id: string;
-    dishes: IDish[];
+    name: string
+    id: string
+    dishes: IDish[]
 }

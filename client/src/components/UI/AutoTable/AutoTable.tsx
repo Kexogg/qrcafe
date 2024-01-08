@@ -2,33 +2,32 @@ import { Table } from '../Table/Table.tsx'
 import { TableButton } from '../TableButton/TableButton.tsx'
 import { EditRounded } from '@mui/icons-material'
 import { ReactNode } from 'react'
+import { WithId } from '../../../types/types.ts'
 
-type AutoTableProps = {
-    data: never[]
+type AutoTableProps<T extends WithId> = {
+    data: T[]
     columns: {
         name: string
         key: string
-        func?: (param: string | number) => string
+        func?: (param: string) => string
     }[]
-    selected?: never[]
-    onSelected?: (rows: never[]) => void
-    onEdit?: (row: never) => void
-    rowKey?: string
+    selected?: T[]
+    onSelected?: (rows: T[]) => void
+    onEdit?: (row: T) => void
     customButtons?: {
         icon: ReactNode
-        onClick: (row: never) => void
+        onClick: (row: T) => void
     }[]
 }
 
-export const AutoTable = ({
+export const AutoTable = <T extends WithId>({
     data,
     columns,
     selected,
     onSelected,
     onEdit,
-    rowKey,
     customButtons,
-}: AutoTableProps) => {
+}: AutoTableProps<T>) => {
     return (
         <Table>
             <thead>
@@ -42,7 +41,7 @@ export const AutoTable = ({
             </thead>
             <tbody>
                 {data.map((row) => (
-                    <tr key={row[rowKey ?? 'id']}>
+                    <tr key={row.id}>
                         {selected && (
                             <td className={'w-0'}>
                                 <input
@@ -64,8 +63,8 @@ export const AutoTable = ({
                         {columns.map((column) => (
                             <td key={column.key}>
                                 {column.func
-                                    ? column.func(row[column.key])
-                                    : row[column.key]}
+                                    ? column.func(row[column.key] as string)
+                                    : (row[column.key] as string)}
                             </td>
                         ))}
                         {(onEdit || customButtons) && (

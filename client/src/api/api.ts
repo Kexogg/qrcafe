@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { IEmployee } from '../types/IEmployee.ts'
 import { IDish } from '../types/IDish.ts'
+import { ITable } from '../types/ITable.ts'
 
 const API_BASE_URL = '/api'
 
@@ -66,6 +67,28 @@ export const createTable = async (
         )
         .then((response) => response.data)
 }
+
+export const updateTable = async (
+    token: string,
+    restaurantId: string,
+    table: ITable,
+) => {
+    return api
+        .patch(
+            `/restaurants/${restaurantId}/tables/${table.id}`,
+            {
+                name: table.name,
+                assignedEmployeeId: table.assignedWaiter,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+
 export const deleteTable = async (
     token: string,
     restaurantId: string,

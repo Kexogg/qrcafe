@@ -1,8 +1,10 @@
+import { WithId } from './types.ts'
+
 export enum EmployeeRole {
     ADMIN = 0,
     WAITER = 1,
 }
-export interface IEmployee {
+export interface IEmployee extends WithId {
     id: string
     login: string
     password?: string
