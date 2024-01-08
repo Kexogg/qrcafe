@@ -4,19 +4,13 @@ import { useEffect, useState } from 'react'
 import { ITable } from '../../../types/ITable.ts'
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
-import {
-    AddRounded,
-    DeleteRounded,
-    EditRounded,
-    QrCodeRounded,
-    RefreshRounded,
-} from '@mui/icons-material'
+import { AddRounded, DeleteRounded, RefreshRounded } from '@mui/icons-material'
 import { TableButton } from '../../../components/UI/TableButton/TableButton.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
 import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
 import Dropdown from '../../../components/UI/Input/Dropdown/Dropdown.tsx'
 import { TableQrModal } from './TableQrModal.tsx'
-import { Table } from '../../../components/UI/Table/Table.tsx'
+import { AutoTable } from '../../../components/UI/AutoTable/AutoTable.tsx'
 export const DashboardTables = () => {
     const session = useAppSelector((state) => state.session)
     const [tables, setTables] = useState<ITable[]>([])
@@ -79,70 +73,22 @@ export const DashboardTables = () => {
                     className={`flex flex-col gap-3 ${
                         loading && 'animate-pulse opacity-75'
                     }`}>
-                    <Table>
-                        <thead>
-                            <tr className={''}>
-                                <th></th>
-                                <th>ID</th>
-                                <th>Имя</th>
-                                <th>Официант</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {tables.map((table) => (
-                                <tr
-                                    key={table.id}
-                                    className={'hover:bg-primary-700/5'}>
-                                    <td className={'w-0'}>
-                                        <input
-                                            type={'checkbox'}
-                                            className={'cursor-pointer'}
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    setSelectedTables([
-                                                        ...selectedTables,
-                                                        table,
-                                                    ])
-                                                } else {
-                                                    setSelectedTables((s) =>
-                                                        s.filter(
-                                                            (t) =>
-                                                                t.id !==
-                                                                table.id,
-                                                        ),
-                                                    )
-                                                }
-                                            }}
-                                        />
-                                    </td>
-                                    <td>{table.id}</td>
-                                    <td>{table.name ?? '-'}</td>
-                                    <td>{table.assignedWaiter}</td>
-                                    <td className={'w-0'}>
-                                        <div className={'flex w-min gap-1'}>
-                                            <TableButton
-                                                onClick={() =>
-                                                    setSelectedTable(table)
-                                                }>
-                                                <EditRounded
-                                                    fontSize={'small'}
-                                                />
-                                            </TableButton>
-                                            <TableButton
-                                                onClick={() =>
-                                                    setQrModalTable(table)
-                                                }>
-                                                <QrCodeRounded
-                                                    fontSize={'small'}
-                                                />
-                                            </TableButton>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+                    <AutoTable
+                        data={tables as never[]}
+                        columns={[
+                            { name: 'Номер', key: 'id' },
+                            { name: 'Название', key: 'name' },
+                            { name: 'Официант', key: 'assignedWaiter' },
+                        ]}
+                        rowKey={'id'}
+                        onEdit={(row) => {
+                            setSelectedTable(row as ITable)
+                        }}
+                        selected={selectedTables as never[]}
+                        onSelected={(rows) => {
+                            setSelectedTables(rows as ITable[])
+                        }}
+                    />
                     <div className={'flex gap-2'}>
                         {' '}
                         <TableButton

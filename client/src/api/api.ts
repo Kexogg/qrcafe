@@ -218,7 +218,7 @@ export const createFood = async (
                 description: dish.description,
                 weight: dish.weight,
                 price: dish.price,
-                available: true,
+                isAvailable: true,
             },
             {
                 headers: {
