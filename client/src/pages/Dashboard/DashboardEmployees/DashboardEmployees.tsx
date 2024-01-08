@@ -5,8 +5,8 @@ import { useAppSelector } from '../../../hooks/hooks.ts'
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
 import { TableButton } from '../../../components/UI/TableButton/TableButton.tsx'
 import { AddRounded, DeleteRounded, RefreshRounded } from '@mui/icons-material'
-import { CreateEmployeeModal } from './CreateEmployeeModal.tsx'
 import { AutoTable } from '../../../components/UI/AutoTable/AutoTable.tsx'
+import { useNavigate } from 'react-router-dom'
 
 export const DashboardEmployees = () => {
     const [employees, setEmployees] = useState<IEmployee[]>([])
@@ -14,8 +14,8 @@ export const DashboardEmployees = () => {
     const [error, setError] = useState('')
     const [lastUpdate, setLastUpdate] = useState(Date.now())
     const [selectedEmployees, setSelectedEmployees] = useState<IEmployee[]>([])
-    const [createEmployeeModal, setCreateEmployeeModal] = useState(false)
     const session = useAppSelector((state) => state.session)
+    const navigate = useNavigate()
     useEffect(() => {
         getEmployees(session.token as string, session.restaurantId as string)
             .then((response) => {
@@ -29,13 +29,6 @@ export const DashboardEmployees = () => {
     return (
         <section className={'relative'}>
             {loading && <LoadingSpinner elementOverlay />}
-            <CreateEmployeeModal
-                open={createEmployeeModal}
-                onClose={() => {
-                    setCreateEmployeeModal(false)
-                    setLastUpdate(Date.now())
-                }}
-            />
             <h1>Сотрудники</h1>
             {error}
             <div
@@ -45,8 +38,11 @@ export const DashboardEmployees = () => {
                 <AutoTable
                     data={employees as never[]}
                     selected={selectedEmployees as never[]}
-                    onSelected={(rows) => {
-                        setSelectedEmployees(rows as IEmployee[])
+                    onSelected={(rows: IEmployee[]) => {
+                        setSelectedEmployees(rows)
+                    }}
+                    onEdit={(row: IEmployee) => {
+                        navigate(`edit/${row.id}`)
                     }}
                     rowKey={'id'}
                     columns={[
@@ -94,7 +90,7 @@ export const DashboardEmployees = () => {
                     </TableButton>
                     <TableButton
                         onClick={() => {
-                            setCreateEmployeeModal(true)
+                            navigate('edit')
                         }}>
                         <AddRounded />
                     </TableButton>

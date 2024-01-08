@@ -8,6 +8,9 @@ import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
 import { TextArea } from '../../../components/UI/Input/TextArea/TextArea.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import styles from './DashboardFoodEditor.module.css'
+import { AutoTable } from '../../../components/UI/AutoTable/AutoTable.tsx'
+import { TableButton } from '../../../components/UI/TableButton/TableButton.tsx'
+import { AddRounded, DeleteRounded } from '@mui/icons-material'
 export const DashboardFoodEditor = () => {
     const navigate = useNavigate()
     const params = useParams()
@@ -28,19 +31,13 @@ export const DashboardFoodEditor = () => {
                 .finally(() => setLoading(false))
         }
     }, [params.id, session.restaurantId, session.token])
-    async function send() {
-        if (params.id) {
-            console.log('Updating food', dish)
-            updateFood(session.token!, session.restaurantId!, dish).then(
-                (r) => r,
-            )
-        } else {
-            createFood(session.token!, session.restaurantId!, dish).then(
-                (r) => r,
-            )
-        }
-    }
+
     const onSubmit = () => {
+        async function send() {
+            return params.id
+                ? await updateFood(session.token!, session.restaurantId!, dish)
+                : await createFood(session.token!, session.restaurantId!, dish)
+        }
         setLoading(true)
         send()
             .then(() => {
@@ -118,6 +115,24 @@ export const DashboardFoodEditor = () => {
                         }
                     />
                 </label>
+                <label>Добавки</label>
+                <div>
+                    <AutoTable
+                        data={dish.extras as never[]}
+                        columns={[
+                            { name: 'Название', key: 'name' },
+                            { name: 'Цена', key: 'price' },
+                        ]}
+                    />
+                    <div className={'my-3 flex gap-2'}>
+                        <TableButton>
+                            <AddRounded fontSize={'small'} />
+                        </TableButton>
+                        <TableButton>
+                            <DeleteRounded fontSize={'small'} />
+                        </TableButton>
+                    </div>
+                </div>
                 <div className={'col-span-2 flex gap-3'}>
                     <Button label={'Сохранить'} dark onClick={onSubmit} />
                     <Button

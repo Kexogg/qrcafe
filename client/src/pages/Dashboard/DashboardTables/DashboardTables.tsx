@@ -4,7 +4,12 @@ import { useEffect, useState } from 'react'
 import { ITable } from '../../../types/ITable.ts'
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
-import { AddRounded, DeleteRounded, RefreshRounded } from '@mui/icons-material'
+import {
+    AddRounded,
+    DeleteRounded,
+    QrCodeRounded,
+    RefreshRounded,
+} from '@mui/icons-material'
 import { TableButton } from '../../../components/UI/TableButton/TableButton.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
 import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
@@ -79,6 +84,15 @@ export const DashboardTables = () => {
                             { name: 'Номер', key: 'id' },
                             { name: 'Название', key: 'name' },
                             { name: 'Официант', key: 'assignedWaiter' },
+                        ]}
+                        customButtons={[
+                            {
+                                icon: <QrCodeRounded fontSize={'small'} />,
+                                onClick: (row) => {
+                                    console.log(row)
+                                    setQrModalTable(row as ITable)
+                                },
+                            },
                         ]}
                         rowKey={'id'}
                         onEdit={(row) => {
