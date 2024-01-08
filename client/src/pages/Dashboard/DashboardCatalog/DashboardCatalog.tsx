@@ -1,7 +1,25 @@
+import { DashboardPageTemplate } from '../DashboardPageTemplate/DashboardPageTemplate.tsx'
+import { deleteCategory, getCategories } from '../../../api/api.ts'
+import { useNavigate } from 'react-router-dom'
+
 export const DashboardCatalog = () => {
+    const navigate = useNavigate()
     return (
-        <section>
-            <h1>Меню</h1>
-        </section>
+        <DashboardPageTemplate
+            pageTitle={'Меню'}
+            getItems={getCategories}
+            deleteItem={deleteCategory}
+            tableColumns={[
+                {
+                    name: 'Название',
+                    key: 'name',
+                },
+                {
+                    name: 'Описание',
+                    key: 'description',
+                },
+            ]}
+            onTableRowEdit={() => navigate('edit')}
+        />
     )
 }

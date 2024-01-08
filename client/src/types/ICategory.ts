@@ -1,7 +1,10 @@
 import { IDish } from './IDish.ts'
 
 export interface ICategory {
-    name: string
     id: string
-    dishes: IDish[]
+    name: string
+    description: string
+    separate: boolean
+    order: number
+    food: IDish[]
 }

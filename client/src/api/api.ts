@@ -2,6 +2,7 @@ import axios from 'axios'
 import { IEmployee } from '../types/IEmployee.ts'
 import { IDish } from '../types/IDish.ts'
 import { ITable } from '../types/ITable.ts'
+import { ICategory } from '../types/ICategory.ts'
 
 const API_BASE_URL = '/api'
 
@@ -332,4 +333,95 @@ export const deleteFood = async (
             Authorization: `Bearer ${token}`,
         },
     })
+}
+
+export const getCategories = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/categories`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
+}
+
+export const createCategory = async (
+    token: string,
+    restaurantId: string,
+    category: ICategory,
+) => {
+    return api
+        .post(
+            `/restaurants/${restaurantId}/categories`,
+            {
+                name: category.name,
+                description: category.description,
+                separate: category.separate,
+                order: category.order,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+
+export const getCategoryById = async (
+    token: string,
+    restaurantId: string,
+    categoryId: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurantId}/categories/${categoryId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            return {
+                id: response.data.id,
+                name: response.data.name,
+                description: response.data.description,
+                separate: response.data.separate,
+                order: response.data.order,
+                food: response.data.foodList,
+            } as ICategory
+        })
+}
+
+export const deleteCategory = async (
+    token: string,
+    restaurantId: string,
+    categoryId: string,
+) => {
+    return api.delete(`/restaurants/${restaurantId}/categories/${categoryId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+}
+
+export const updateCategory = async (
+    token: string,
+    restaurantId: string,
+    category: ICategory,
+) => {
+    return api
+        .put(
+            `/restaurants/${restaurantId}/categories/${category.id}`,
+            {
+                name: category.name,
+                description: category.description,
+                separate: category.separate,
+                order: category.order,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
 }

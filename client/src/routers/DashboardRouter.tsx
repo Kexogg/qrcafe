@@ -10,6 +10,7 @@ import { DashboardCatalog } from '../pages/Dashboard/DashboardCatalog/DashboardC
 import { DashboardFood } from '../pages/Dashboard/DashboardFood/DashboardFood.tsx'
 import { DashboardFoodEditor } from '../pages/Dashboard/DashboardFood/DashboardFoodEditor.tsx'
 import { DashboardEmployeeEditor } from '../pages/Dashboard/DashboardEmployees/DashboardEmployeeEditor.tsx'
+import { DashboardCatalogEditor } from '../pages/Dashboard/DashboardCatalog/DashboardCatalogEditor.tsx'
 
 export const DashboardRouter = () => {
     return (
@@ -25,6 +26,10 @@ export const DashboardRouter = () => {
                     element={<DashboardEmployeeEditor />}
                 />
                 <Route path="catalog" element={<DashboardCatalog />} />
+                <Route
+                    path="catalog/edit/:id?"
+                    element={<DashboardCatalogEditor />}
+                />
                 <Route path="food" element={<DashboardFood />} />
                 <Route
                     path="food/edit/:id?"

@@ -26,7 +26,10 @@ const getCatalog = () => {
         categories.push({
             name: categoryName,
             id: i.toString(),
-            dishes: [
+            description: 'Описание',
+            separate: false,
+            order: 0,
+            food: [
                 getPlaceholderDish(),
                 getPlaceholderDish(),
                 getPlaceholderDish(),
@@ -57,7 +60,7 @@ export const Catalog = ({ title }: CatalogProps) => {
                 .map((category) => {
                     return {
                         ...category,
-                        dishes: category.dishes.filter((dish) =>
+                        dishes: category.food.filter((dish) =>
                             dish.name
                                 .toLowerCase()
                                 .includes(searchTerm.toLowerCase()),
@@ -188,7 +191,7 @@ export const Catalog = ({ title }: CatalogProps) => {
                                 {category.name}
                             </h3>
                             <ul className={'flex flex-wrap gap-5'}>
-                                {category.dishes.map((dish) => {
+                                {category.food.map((dish) => {
                                     return (
                                         <DishCard
                                             onClick={() => {
