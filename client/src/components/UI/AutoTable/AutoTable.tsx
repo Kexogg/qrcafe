@@ -1,14 +1,23 @@
 import { Table } from '../Table/Table.tsx'
 import { TableButton } from '../TableButton/TableButton.tsx'
 import { EditRounded } from '@mui/icons-material'
+import { ReactNode } from 'react'
 
 type AutoTableProps = {
     data: never[]
-    columns: { name: string; key: string; func?: (param: string) => string }[]
+    columns: {
+        name: string
+        key: string
+        func?: (param: string | number) => string
+    }[]
     selected?: never[]
     onSelected?: (rows: never[]) => void
     onEdit?: (row: never) => void
     rowKey?: string
+    customButtons?: {
+        icon: ReactNode
+        onClick: (row: never) => void
+    }[]
 }
 
 export const AutoTable = ({
@@ -18,6 +27,7 @@ export const AutoTable = ({
     onSelected,
     onEdit,
     rowKey,
+    customButtons,
 }: AutoTableProps) => {
     return (
         <Table>
@@ -58,11 +68,23 @@ export const AutoTable = ({
                                     : row[column.key]}
                             </td>
                         ))}
-                        {onEdit && (
-                            <td className={'w-0'}>
-                                <TableButton onClick={() => onEdit(row)}>
-                                    <EditRounded fontSize={'small'} />
-                                </TableButton>
+                        {(onEdit || customButtons) && (
+                            <td className={'w-0 whitespace-nowrap'}>
+                                <div className={'flex gap-1'}>
+                                    <TableButton onClick={() => onEdit?.(row)}>
+                                        <EditRounded fontSize={'small'} />
+                                    </TableButton>
+                                    {customButtons &&
+                                        customButtons.map((button) => (
+                                            <TableButton
+                                                key={button.icon?.toString()}
+                                                onClick={() =>
+                                                    button.onClick(row)
+                                                }>
+                                                {button.icon}
+                                            </TableButton>
+                                        ))}
+                                </div>
                             </td>
                         )}
                     </tr>
