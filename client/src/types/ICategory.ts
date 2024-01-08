@@ -1,6 +1,7 @@
 import { IDish } from './IDish.ts'
+import { WithId } from './types.ts'
 
-export interface ICategory {
+export interface ICategory extends WithId {
     id: string
     name: string
     description: string

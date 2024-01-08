@@ -226,7 +226,7 @@ export const getFood = async (token: string, restaurantId: string) => {
             response.data.map(
                 (food: {
                     id: string
-                    isAvailable: boolean
+                    available: boolean
                     name: string
                     description: string
                     weight: number
@@ -238,7 +238,7 @@ export const getFood = async (token: string, restaurantId: string) => {
                         description: food.description,
                         weight: food.weight.toString(),
                         price: food.price,
-                        available: food.isAvailable,
+                        available: food.available,
                         image: '', //TODO: remove
                         extras: [],
                         status: 0,
@@ -267,7 +267,7 @@ export const getFoodById = async (
                 description: response.data.description,
                 weight: response.data.weight.toString(),
                 price: response.data.price,
-                available: response.data.isAvailable,
+                available: response.data.available,
                 image: '', //TODO: remove
                 extras: [],
                 status: 0,
@@ -313,7 +313,7 @@ export const updateFood = async (
                 description: dish.description,
                 weight: dish.weight,
                 price: dish.price,
-                isAvailable: dish.available,
+                available: dish.available,
             },
             {
                 headers: {

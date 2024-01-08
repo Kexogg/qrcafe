@@ -1,4 +1,5 @@
 import food_placeholder from '/src/assets/food_placeholder.jpg'
+import { WithId } from './types.ts'
 
 export enum DishStatus {
     NONE,
@@ -9,7 +10,7 @@ export enum DishStatus {
     CANCELED,
 }
 
-export interface IDish {
+export interface IDish extends WithId {
     id: string
     cartId?: string
     name: string

@@ -19,7 +19,7 @@ export const DashboardCatalog = () => {
                     key: 'description',
                 },
             ]}
-            onTableRowEdit={() => navigate('edit')}
+            onTableRowEdit={(row) => navigate(`edit/${row.id}`)}
         />
     )
 }

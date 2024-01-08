@@ -1,25 +1,30 @@
 import { DashboardEditorTemplate } from '../DashboardEditorTemplate/DashboardEditorTemplate.tsx'
 import {
     createCategory,
-    getCategories,
+    getCategoryById,
     updateCategory,
 } from '../../../api/api.ts'
+import { useParams } from 'react-router-dom'
 
 export const DashboardCatalogEditor = () => {
+    const params = useParams()
     return (
         <DashboardEditorTemplate
             pageTitle={'Редактирование категории'}
             createItem={createCategory}
             updateItem={updateCategory}
-            getItem={getCategories}
+            getItem={getCategoryById}
+            id={params.id}
             properties={[
                 {
                     name: 'Название',
                     key: 'name',
+                    type: 'text',
                 },
                 {
                     name: 'Описание',
                     key: 'description',
+                    type: 'text',
                 },
             ]}
         />

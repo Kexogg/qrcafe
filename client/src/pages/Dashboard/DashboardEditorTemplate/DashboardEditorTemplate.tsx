@@ -64,8 +64,10 @@ export const DashboardEditorTemplate = <T extends WithId>({
                     setError(response.message)
                 })
                 .finally(() => setLoading(false))
+        } else {
+            setLoading(false)
         }
-    }, [getItem, session.restaurantId, session.token, lastUpdate, id])
+    }, [getItem, session.restaurantId, session.token, id])
     const onSubmit = () => {
         async function send() {
             return itemExists
@@ -83,7 +85,7 @@ export const DashboardEditorTemplate = <T extends WithId>({
             })
             .finally(() => setLoading(false))
     }
-    const PropertyEditor = ({ property }: { property: Property }) => {
+    const PropertyEditor = function ({ property }: { property: Property }) {
         const onChange = (value: unknown) => {
             setItem((item) => ({
                 ...item,
@@ -95,27 +97,25 @@ export const DashboardEditorTemplate = <T extends WithId>({
                 return (
                     <TextField
                         dark
+                        onChange={(e) => onChange(e.target.value)}
                         defaultValue={(item[property.key] as string) ?? ''}
                     />
                 )
             case 'password':
                 return <TextField dark type={'password'} />
             case 'textarea':
-                return (
-                    <TextArea
-                        defaultValue={(item[property.key] as string) ?? ''}
-                    />
-                )
+                return <TextArea value={(item[property.key] as string) ?? ''} />
             case 'dropdown':
                 return (
                     <Dropdown
                         dark
                         options={property.options ?? []}
                         selected={item[property.key] as string}
-                        onChange={onChange}
+                        onChange={(event) => onChange(event.target.value)}
                     />
                 )
             case 'checkbox':
+                //FIXME
                 return (
                     <input
                         type={'checkbox'}
@@ -160,6 +160,9 @@ export const DashboardEditorTemplate = <T extends WithId>({
                         onClick={() => navigate(-1)}
                     />
                 </div>
+                <small>
+                    Обновлено: {new Date(lastUpdate).toLocaleTimeString()}
+                </small>
             </form>
         </section>
     )
