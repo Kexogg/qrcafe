@@ -13,8 +13,8 @@ import {
 } from '@mui/icons-material'
 import { TableButton } from '../../../components/UI/TableButton/TableButton.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
-import TextField from '../../../components/UI/TextField/TextField.tsx'
-import Dropdown from '../../../components/UI/Dropdown/Dropdown.tsx'
+import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
+import Dropdown from '../../../components/UI/Input/Dropdown/Dropdown.tsx'
 import { TableQrModal } from './TableQrModal.tsx'
 import { Table } from '../../../components/UI/Table/Table.tsx'
 export const DashboardTables = () => {
@@ -40,7 +40,6 @@ export const DashboardTables = () => {
     const updateTable = (table: ITable) => {
         console.log('Changing table ' + table.id)
         setSelectedTable(null)
-        //TODO
     }
     return (
         <section className={'relative'}>
@@ -95,7 +94,7 @@ export const DashboardTables = () => {
                                 <tr
                                     key={table.id}
                                     className={'hover:bg-primary-700/5'}>
-                                    <td>
+                                    <td className={'w-0'}>
                                         <input
                                             type={'checkbox'}
                                             className={'cursor-pointer'}

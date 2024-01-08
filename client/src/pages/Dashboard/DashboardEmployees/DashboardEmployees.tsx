@@ -62,9 +62,10 @@ export const DashboardEmployees = () => {
                         {employees?.map((employee) => {
                             return (
                                 <tr key={employee.id}>
-                                    <td>
+                                    <td className={'w-0'}>
                                         <input
                                             type={'checkbox'}
+                                            className={'cursor-pointer'}
                                             onClick={() => {
                                                 if (
                                                     selectedEmployees.includes(

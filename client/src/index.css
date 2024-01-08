@@ -26,6 +26,9 @@ body {
     input[type="number"] {
         -moz-appearance: textfield;
     }
+    input[type="checkbox"] {
+        @apply accent-primary-700;
+    }
     button, a {
         -webkit-tap-highlight-color: transparent;
     }

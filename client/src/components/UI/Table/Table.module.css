@@ -13,10 +13,10 @@
 }
 
 .table > * > tr > *:first-child {
-    @apply pl-2 border-l-0
+    @apply border-l-0
 }
 .table > * > tr > *:last-child {
-    @apply pr-2 border-r-0
+    @apply border-r-0
 }
 .table > * > tr > * {
     @apply border border-primary-200 p-1
