@@ -51,13 +51,15 @@ namespace QrCafe.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutCategory(int? id, Category category, int restId)
         {
-            if (await _context.Categories.Where(c=> c.RestaurantId == restId)
-                    .FirstOrDefaultAsync(c=> c.Id == id) == null)
-            {
-                return BadRequest();
-            }
+            var categoryData = await
+                _context.Categories.Where(e => e.RestaurantId == restId)
+                    .FirstOrDefaultAsync(e=> e.Id==id);
+            categoryData.Name = category.Name;
+            categoryData.Description = category.Description;
+            categoryData.Order = category.Order;
+            categoryData.Separate = category.Separate;
 
-            _context.Entry(category).State = EntityState.Modified;
+            _context.Entry(categoryData).State = EntityState.Modified;
 
             try
             {

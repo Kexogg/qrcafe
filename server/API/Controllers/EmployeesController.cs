@@ -153,7 +153,8 @@ namespace QrCafe.Controllers
             string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             var response = new
             {
-                access_token = encodedJwt
+                token = encodedJwt,
+                roleId = employee.RoleId
             };
             return Ok(response);
         }
