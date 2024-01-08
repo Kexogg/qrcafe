@@ -48,8 +48,37 @@ namespace QrCafe.Controllers
 
             return new EmployeeDTO(employee);
         }
+        
+        [HttpGet("info")]
+        public async Task<ActionResult<EmployeeDTO>> GetEmployeeInfo(int restId)
+        {
+            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value);
+            var employee = await _context.Employees.Where(e => e.RestaurantId == restId)
+                .FirstOrDefaultAsync(e=> e.Id == employeeIdClaim);
 
-        // PUT: api/restaurants/0/Employees/5
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return new EmployeeDTO(employee);
+        }
+        
+        //PUT: api/restaurants/0/Employees
+        [HttpPut]
+        public async Task<IActionResult> ChangeShiftState([FromQuery] bool state, int restId)
+        {
+            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value);
+            var employee = await _context.Employees.Where(e => e.RestaurantId == restId)
+                .FirstOrDefaultAsync(e=> e.Id == employeeIdClaim);
+            if (employee == null) return NotFound();
+            employee.Available = state;
+            _context.Employees.Update(employee);
+            await _context.SaveChangesAsync();
+            return Ok(new EmployeeDTO(employee));
+        }
+        
+        // PATCH: api/restaurants/0/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> PutEmployee(Guid id, Employee employee, int restId)
@@ -108,7 +137,9 @@ namespace QrCafe.Controllers
                 e.Login == employeeLoginData.Login && e.Password == employeeLoginData.Password);
             if (employee == null) return Unauthorized();
             var claims = new List<Claim> { new(ClaimTypes.Name, employee.Login),
-                new(ClaimTypes.Role,"employee")};
+                new(ClaimTypes.Role,"employee"),
+                new("employeeId", employee.Id.ToString())
+            };
             var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
                 audience: AuthOptions.AUDIENCE,

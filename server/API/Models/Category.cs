@@ -6,14 +6,6 @@ public class CategoryDTO
 {
     public CategoryDTO(){}
 
-    public CategoryDTO(int order, bool separate, string name, string description)
-    {
-        Order = order;
-        Separate = separate;
-        Name = name;
-        Description = description;
-    }
-
     public CategoryDTO(Category category)
     {
         Id = category.Id;
@@ -23,7 +15,7 @@ public class CategoryDTO
         Description = category.Description;
     }
 
-    public int? Id { get; set; }
+    public int? Id { get; set; } = null!;
     
     public int Order { get; set; }
 
@@ -37,18 +29,28 @@ public class CategoryDTO
 }
 public partial class Category
 {
+    public Category(){}
+
+    public Category(CategoryDTO categoryDto)
+    {
+        Order = categoryDto.Order;
+        Separate = categoryDto.Separate;
+        Name = categoryDto.Name;
+        Description = categoryDto.Description;
+    }
+    
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id;
+    public int Id { get; set; }
     
-    public int RestaurantId;
+    public int RestaurantId { get; set; }
 
-    public int Order;
+    public int Order { get; set; }
 
-    public bool Separate;
+    public bool Separate { get; set; }
 
-    public string Name = null!;
+    public string? Name { get; set; }
     
-    public string Description = null!;
+    public string? Description { get; set; }
 
     public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();
 

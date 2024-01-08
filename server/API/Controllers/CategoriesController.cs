@@ -49,9 +49,9 @@ namespace QrCafe.Controllers
         // PUT: /api/restaurants/0/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> PutCategory(int? id, Category category, int restId)
+        public async Task<IActionResult> PutCategory(int? id, Category category)
         {
-            if (id != category.Id || restId != category.RestaurantId)
+            if (id != category.Id)
             {
                 return BadRequest();
             }
@@ -86,6 +86,7 @@ namespace QrCafe.Controllers
             if (restaurant == null) return NotFound();
             if (restaurant.Categories.FirstOrDefault(c => c.Order == category.Order) != null) 
                 return Conflict();
+            category.RestaurantId = restId;
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
             return Ok(new CategoryDTO(category));
