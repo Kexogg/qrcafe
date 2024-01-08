@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { IEmployee } from '../types/IEmployee.ts'
+import { IDish } from '../types/IDish.ts'
 
 const API_BASE_URL = '/api'
 
@@ -137,6 +138,126 @@ export const deleteEmployee = async (
     employeeId: string,
 ) => {
     return api.delete(`/restaurants/${restaurantId}/employees/${employeeId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+}
+
+export const getFood = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/food`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) =>
+            response.data.map(
+                (food: {
+                    id: string
+                    isAvailable: boolean
+                    name: string
+                    description: string
+                    weight: number
+                    price: number
+                }) => {
+                    return {
+                        id: food.id,
+                        name: food.name,
+                        description: food.description,
+                        weight: food.weight.toString(),
+                        price: food.price,
+                        available: food.isAvailable,
+                        image: '', //TODO: remove
+                        extras: [],
+                        status: 0,
+                        count: 0,
+                    } as IDish
+                },
+            ),
+        )
+}
+
+export const getFoodById = async (
+    token: string,
+    restaurantId: string,
+    foodId: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurantId}/food/${foodId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            return {
+                id: response.data.id,
+                name: response.data.name,
+                description: response.data.description,
+                weight: response.data.weight.toString(),
+                price: response.data.price,
+                available: response.data.isAvailable,
+                image: '', //TODO: remove
+                extras: [],
+                status: 0,
+                count: 0,
+            } as IDish
+        })
+}
+
+export const createFood = async (
+    token: string,
+    restaurantId: string,
+    dish: IDish,
+) => {
+    return api
+        .post(
+            `/restaurants/${restaurantId}/food`,
+            {
+                name: dish.name,
+                description: dish.description,
+                weight: dish.weight,
+                price: dish.price,
+                available: true,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+export const updateFood = async (
+    token: string,
+    restaurantId: string,
+    dish: IDish,
+) => {
+    return api
+        .patch(
+            `/restaurants/${restaurantId}/food/${dish.id}`,
+            {
+                id: dish.id,
+                name: dish.name,
+                description: dish.description,
+                weight: dish.weight,
+                price: dish.price,
+                available: true,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+export const deleteFood = async (
+    token: string,
+    restaurantId: string,
+    foodId: string,
+) => {
+    return api.delete(`/restaurants/${restaurantId}/food/${foodId}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
