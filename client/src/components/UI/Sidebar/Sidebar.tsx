@@ -1,5 +1,6 @@
 import { IMenuItem } from '../../../types/IMenuItem.ts'
 import {
+    DinnerDiningRounded,
     FirstPage,
     HomeRounded,
     LastPage,
@@ -30,6 +31,11 @@ export const Sidebar = () => {
             path: '/dashboard/catalog',
             icon: <MenuBookRounded fontSize={iconSize} />,
             name: 'Меню',
+        },
+        {
+            path: '/dashboard/food',
+            icon: <DinnerDiningRounded fontSize={iconSize} />,
+            name: 'Еда',
         },
         {
             path: '/dashboard/employees',

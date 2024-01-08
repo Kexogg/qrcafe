@@ -1,4 +1,4 @@
-import TextField from '../../../components/UI/TextField/TextField.tsx'
+import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { useState } from 'react'
 import { useAppDispatch } from '../../../hooks/hooks.ts'

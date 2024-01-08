@@ -7,6 +7,8 @@ import { DashboardSettings } from '../pages/Dashboard/DashboardSettings/Dashboar
 import { DashboardOrders } from '../pages/Dashboard/DashboardOrders/DashboardOrders.tsx'
 import { DashboardEmployees } from '../pages/Dashboard/DashboardEmployees/DashboardEmployees.tsx'
 import { DashboardCatalog } from '../pages/Dashboard/DashboardCatalog/DashboardCatalog.tsx'
+import { DashboardFood } from '../pages/Dashboard/DashboardFood/DashboardFood.tsx'
+import { DashboardFoodEditor } from '../pages/Dashboard/DashboardFood/DashboardFoodEditor.tsx'
 
 export const DashboardRouter = () => {
     return (
@@ -18,6 +20,12 @@ export const DashboardRouter = () => {
                 <Route path="orders" element={<DashboardOrders />} />
                 <Route path="employees" element={<DashboardEmployees />} />
                 <Route path="catalog" element={<DashboardCatalog />} />
+                <Route path="food" element={<DashboardFood />} />
+                <Route
+                    path="food/edit/:id?"
+                    element={<DashboardFoodEditor />}
+                />
+                <Route path="food/new" element={<DashboardFoodEditor />} />
             </Route>
             <Route
                 path="*"

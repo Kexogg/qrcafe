@@ -1,5 +1,5 @@
-import TextField from '../../../components/UI/TextField/TextField.tsx'
-import Dropdown from '../../../components/UI/Dropdown/Dropdown.tsx'
+import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
+import Dropdown from '../../../components/UI/Input/Dropdown/Dropdown.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
 import { useState } from 'react'

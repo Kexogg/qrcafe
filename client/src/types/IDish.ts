@@ -78,7 +78,19 @@ export function getPlaceholderDish(): IDish {
         status: DishStatus.NONE,
     }
 }
-
+export const getDishStub = (): IDish => {
+    return {
+        id: '',
+        name: '',
+        price: 0,
+        description: '',
+        weight: '',
+        extras: [],
+        image: '',
+        status: DishStatus.NONE,
+        count: 0,
+    }
+}
 interface IDishExtra {
     id: number
     name: string
