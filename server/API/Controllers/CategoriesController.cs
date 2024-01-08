@@ -17,7 +17,7 @@ namespace QrCafe.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly QrCafeDbContext _context;
-
+        
         public CategoriesController(QrCafeDbContext context)
         {
             _context = context;
@@ -32,6 +32,12 @@ namespace QrCafe.Controllers
         }
 
         // GET: /api/restaurants/0/Categories/5
+        /// <summary>
+        /// Получение категории по id
+        /// </summary>
+        /// <param name="id">ID категории</param>
+        /// <param name="restId">ID ресторана</param>
+        /// <returns></returns>
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Category>> GetCategory(int? id, int restId)
         {
@@ -48,6 +54,13 @@ namespace QrCafe.Controllers
 
         // PUT: /api/restaurants/0/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Изменение категории
+        /// </summary>
+        /// <param name="id">ID категории</param>
+        /// <param name="category">Категория</param>
+        /// <param name="restId">ID ресторана</param>
+        /// <returns></returns>
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutCategory(int? id, Category category, int restId)
         {
@@ -82,6 +95,12 @@ namespace QrCafe.Controllers
 
         // POST: /api/restaurants/0/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Создание категории
+        /// </summary>
+        /// <param name="category">Категория</param>
+        /// <param name="restId">ID ресторана</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<CategoryDTO>> PostCategory(Category category, int restId)
         {
@@ -95,6 +114,13 @@ namespace QrCafe.Controllers
             return Ok(new CategoryDTO(category));
         }
 
+        /// <summary>
+        /// Добавление блюд в категорию
+        /// </summary>
+        /// <param name="foodIdList">Список ID блюд</param>
+        /// <param name="restId">ID ресторана</param>
+        /// <param name="id">ID категории</param>
+        /// <returns></returns>
         [HttpPost("{id:int}/food")]
         public async Task<ActionResult<IEnumerable<FoodDTO>>> PutFoodsIntoCategory(List<int> foodIdList, int restId, int id)
         {

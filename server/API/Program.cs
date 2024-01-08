@@ -28,8 +28,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddSwaggerGen(option =>
 {
+    option.AddServer(new OpenApiServer
+        {
+            Url = "/",
+            Description = "Local server"
+        }
+    );
+    option.AddServer(new OpenApiServer
+        {
+            Url = "https://nyashdev.stk8s.66bit.ru",
+            Description = "Production server"
+        }
+    );
+    option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "API.xml"));
+    option.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "QR Cafe API",
+        Version = "v1",
+    });
     option.DescribeAllParametersInCamelCase();
-    
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
