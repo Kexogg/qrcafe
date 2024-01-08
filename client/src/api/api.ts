@@ -242,7 +242,7 @@ export const updateFood = async (
                 description: dish.description,
                 weight: dish.weight,
                 price: dish.price,
-                available: true,
+                isAvailable: dish.available,
             },
             {
                 headers: {

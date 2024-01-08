@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .form {
-    @apply grid max-w-md grid-cols-2 gap-4 items-center
+    @apply grid max-w-md grid-cols-2 gap-4 items-center justify-start
 }
 
 .form label {

@@ -58,7 +58,7 @@ export const DashboardFoodEditor = () => {
             {error}
             <form className={`${styles.form}`}>
                 <label>
-                    <span>Название:</span>
+                    <span>Название</span>
                     <TextField
                         dark
                         defaultValue={dish?.name}
@@ -68,13 +68,27 @@ export const DashboardFoodEditor = () => {
                     />
                 </label>
                 <label>
-                    <span>Описание:</span>
+                    <span>Описание</span>
                     <TextArea
                         defaultValue={dish?.description}
                         onChange={(e) =>
                             setDish((d) => ({
                                 ...d,
                                 description: e.target.value,
+                            }))
+                        }
+                    />
+                </label>
+                <label>
+                    <span>Доступно</span>
+                    <input
+                        type={'checkbox'}
+                        className={'w-fit'}
+                        checked={dish.available}
+                        onChange={(e) =>
+                            setDish((d) => ({
+                                ...d,
+                                available: e.target.checked,
                             }))
                         }
                     />
@@ -94,7 +108,7 @@ export const DashboardFoodEditor = () => {
                     />
                 </label>
                 <label>
-                    <span>Вес:</span>
+                    <span>Вес</span>
                     <TextField
                         dark
                         defaultValue={dish?.weight}

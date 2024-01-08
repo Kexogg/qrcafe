@@ -19,6 +19,7 @@ export interface IDish {
     extras: IDishExtra[]
     image: string
     status: DishStatus
+    available: boolean
     count: number | undefined //undefined means that the dish is not in the cart
 }
 
@@ -76,6 +77,7 @@ export function getPlaceholderDish(): IDish {
         image: food_placeholder,
         count: undefined,
         status: DishStatus.NONE,
+        available: true,
     }
 }
 export const getDishStub = (): IDish => {
@@ -89,6 +91,7 @@ export const getDishStub = (): IDish => {
         image: '',
         status: DishStatus.NONE,
         count: 0,
+        available: true,
     }
 }
 interface IDishExtra {
