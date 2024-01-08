@@ -111,7 +111,7 @@ public partial class QrCafeDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.IsAvailable).HasColumnName("is_available");
+            entity.Property(e => e.Available).HasColumnName("available");
             entity.Property(e => e.Name)
                 .HasMaxLength(30)
                 .HasColumnName("name");

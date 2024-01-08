@@ -39,8 +39,8 @@ public partial class Employee
     public string FullName { get; set; } = null!;
 
     public string Login { get; set; }
-    
-    public string Password { get; set; }
+
+    public string? Password { get; set; } = null;
     public int RoleId { get; set; }
 
     public int? RestaurantId { get; set; } = null;

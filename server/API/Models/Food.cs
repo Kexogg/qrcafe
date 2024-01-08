@@ -17,7 +17,7 @@ public class FoodDTO
     {
         Id = food.Id;
         RestaurantId = food.RestaurantId;
-        IsAvailable = food.IsAvailable;
+        Available = food.Available;
         Name = food.Name;
         Description = food.Description;
         Weight = food.Weight;
@@ -27,7 +27,7 @@ public class FoodDTO
 
     public int? RestaurantId { get; set; }
 
-    public bool IsAvailable { get; set; }
+    public bool Available { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -45,7 +45,7 @@ public partial class Food
 
     public int RestaurantId { get; set; }
 
-    public bool IsAvailable { get; set; }
+    public bool Available { get; set; }
 
     public string Name { get; set; } = null!;
 

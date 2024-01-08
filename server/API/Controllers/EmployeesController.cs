@@ -83,12 +83,14 @@ namespace QrCafe.Controllers
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> PutEmployee(Guid id, Employee employee, int restId)
         {
-            if (id != employee.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(employee).State = EntityState.Modified;
+            var employeeData = await
+                _context.Employees.Where(e => e.RestaurantId == restId)
+                    .FirstOrDefaultAsync(e=> e.Id==id);
+            employeeData.FullName = employee.FullName;
+            employeeData.Login = employee.Login;
+            employeeData.RoleId = employee.RoleId;
+            employeeData.Available = employee.Available;
+            _context.Entry(employeeData).State = EntityState.Modified;
 
             try
             {
@@ -119,6 +121,7 @@ namespace QrCafe.Controllers
             if (restaurant == null) return BadRequest();
             if (restaurant.Employees.FirstOrDefault(e => e.Login == employee.Login) != null) 
                 return Conflict();
+            if (employee.Password == null) return Conflict();
             employee.RestaurantId = restId;
             await _context.Employees.AddAsync(employee);
             await _context.SaveChangesAsync();

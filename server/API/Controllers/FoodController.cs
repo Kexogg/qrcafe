@@ -72,12 +72,16 @@ namespace QrCafe.Controllers
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> PutFood(int id, Food food, int restId)
         {
-            if (id != food.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(food).State = EntityState.Modified;
+            var foodData = await
+                _context.Foods.Where(e => e.RestaurantId == restId)
+                    .FirstOrDefaultAsync(e=> e.Id==id);
+            foodData.Name = food.Name;
+            foodData.Description = food.Description;
+            foodData.Weight = food.Weight;
+            foodData.Price = food.Price;
+            foodData.Available = food.Available;
+            
+            _context.Entry(foodData).State = EntityState.Modified;
 
             try
             {

@@ -49,9 +49,10 @@ namespace QrCafe.Controllers
         // PUT: /api/restaurants/0/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> PutCategory(int? id, Category category)
+        public async Task<IActionResult> PutCategory(int? id, Category category, int restId)
         {
-            if (id != category.Id)
+            if (await _context.Categories.Where(c=> c.RestaurantId == restId)
+                    .FirstOrDefaultAsync(c=> c.Id == id) == null)
             {
                 return BadRequest();
             }
