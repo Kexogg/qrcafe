@@ -107,22 +107,42 @@ export const getEmployees = async (token: string, restaurantId: string) => {
         )
 }
 
+export const getEmployeeById = async (
+    token: string,
+    restaurantId: string,
+    employeeId: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurantId}/employees/${employeeId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            return {
+                id: response.data.id,
+                login: response.data.login,
+                fullName: response.data.fullName,
+                role: response.data.roleId,
+                available: response.data.available,
+            } as IEmployee
+        })
+}
+
 export const createEmployee = async (
     token: string,
     restaurantId: string,
-    fullName: string,
-    login: string,
-    password: string,
-    roleId: string,
+    employee: IEmployee,
 ) => {
     return api
         .post(
             `/restaurants/${restaurantId}/employees`,
             {
-                fullName,
-                login,
-                password,
-                roleId,
+                fullName: employee.fullName,
+                login: employee.login,
+                password: employee.password,
+                roleId: employee.role,
+                available: employee.available,
             },
             {
                 headers: {
@@ -132,6 +152,33 @@ export const createEmployee = async (
         )
         .then((response) => response)
 }
+
+export const updateEmployee = async (
+    token: string,
+    restaurantId: string,
+    employee: IEmployee,
+) => {
+    return api
+        .patch(
+            `/restaurants/${restaurantId}/employees/${employee.id}`,
+            {
+                ...{
+                    fullName: employee.fullName,
+                    login: employee.login,
+                    roleId: employee.role,
+                    available: employee.available,
+                },
+                ...(employee.password && { password: employee.password }),
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+
 export const deleteEmployee = async (
     token: string,
     restaurantId: string,
@@ -218,7 +265,7 @@ export const createFood = async (
                 description: dish.description,
                 weight: dish.weight,
                 price: dish.price,
-                available: true,
+                isAvailable: true,
             },
             {
                 headers: {

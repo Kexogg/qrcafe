@@ -25,7 +25,7 @@ export const LoginNameInput = () => {
                     onChange={(e) => setName(e.target.value)}
                 />
             </label>
-            <div className={''}>
+            <div className={'mt-auto flex flex-col gap-3'}>
                 <Button
                     label={'Продолжить'}
                     disabled={verifyName(name)}

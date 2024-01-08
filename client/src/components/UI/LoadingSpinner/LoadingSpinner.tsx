@@ -10,7 +10,9 @@ export const LoadingSpinner = ({
 }: LoadingSpinnerProps) => {
     return (
         <div
-            className={`h-full ${elementOverlay && 'absolute w-full'} ${
+            className={`h-full ${
+                elementOverlay && 'absolute w-full overflow-hidden'
+            } ${
                 screenOverlay &&
                 'fixed bottom-0 left-0 right-0 top-0 z-50 overflow-hidden bg-primary-950/10'
             }`}>

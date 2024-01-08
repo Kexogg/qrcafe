@@ -5,6 +5,7 @@ import { LoginEmployee } from '../pages/Login/LoginEmployee/LoginEmployee.tsx'
 import { LoginQrScanner } from '../pages/Login/LoginCodeEntry/LoginQrScanner.tsx'
 import { LoginCodeEntry } from '../pages/Login/LoginCodeEntry/LoginCodeEntry.tsx'
 import { LoginWelcome } from '../pages/Login/LoginWelcome/LoginWelcome.tsx'
+import { LoginNameInput } from '../pages/Login/LoginNameInput/LoginNameInput.tsx'
 
 export const LoginRouter = () => {
     return (
@@ -18,6 +19,7 @@ export const LoginRouter = () => {
                 <Route index element={<Login />}></Route>
                 <Route path={'qr'} element={<LoginQrScanner />} />
                 <Route path={'code'} element={<LoginCodeEntry />} />
+                <Route path={'name'} element={<LoginNameInput />} />
                 <Route path={'employee'} element={<LoginEmployee />} />
                 <Route path={'welcome'} element={<LoginWelcome />} />
             </Route>
