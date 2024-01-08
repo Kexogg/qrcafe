@@ -47,7 +47,7 @@ export const LoginWelcome = () => {
                     )}
                     <p className={'col-span-1 text-2xl'}>{waiter.name}</p>
                 </section>
-                <div className={''}>
+                <div className={'mt-auto flex flex-col'}>
                     <Button
                         label={'Продолжить'}
                         onClick={() => {
