@@ -1,4 +1,9 @@
-import { getTables, updateTable } from '../../../api/api.ts'
+import {
+    createTable,
+    deleteTable,
+    getTables,
+    updateTable,
+} from '../../../api/api.ts'
 import { useAppSelector } from '../../../hooks/hooks.ts'
 import { useState } from 'react'
 import { ITable } from '../../../types/ITable.ts'
@@ -53,10 +58,21 @@ export const DashboardTables = () => {
             <DashboardPageTemplate
                 pageTitle={'Столики'}
                 getItems={getTables}
+                deleteItem={deleteTable}
+                createItem={async () => {
+                    await createTable(
+                        session.token!,
+                        session.restaurantId!,
+                        'Столик',
+                    )
+                }}
                 tableColumns={[
                     { name: 'Номер', key: 'id' },
                     { name: 'Название', key: 'name' },
-                    { name: 'Официант', key: 'assignedWaiter' },
+                    {
+                        name: 'Официант',
+                        key: 'assignedWaiter',
+                    },
                 ]}
                 tableCustomButtons={[
                     {

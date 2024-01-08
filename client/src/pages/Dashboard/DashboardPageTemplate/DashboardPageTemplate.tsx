@@ -103,6 +103,7 @@ export const DashboardPageTemplate = <T extends WithId>({
                     {createItem && (
                         <TableButton
                             onClick={() => {
+                                setLoading(true)
                                 createItem()
                                     .then(() => setLastUpdate(Date.now()))
                                     .catch((e) => {

@@ -26,6 +26,21 @@ export const DashboardCatalogEditor = () => {
                     key: 'description',
                     type: 'text',
                 },
+                {
+                    name: 'Публиковать',
+                    key: 'available',
+                    type: 'checkbox',
+                },
+                {
+                    name: 'Витрина',
+                    key: 'separate',
+                    type: 'checkbox',
+                },
+                {
+                    name: 'Позиция',
+                    key: 'order',
+                    type: 'number',
+                },
             ]}
         />
     )

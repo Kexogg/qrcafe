@@ -1,7 +1,13 @@
 import { WithId } from '../../../types/types.ts'
 import { AxiosResponse } from 'axios'
 import styles from './DashboardEditorTemplate.module.css'
-import { useEffect, useState } from 'react'
+import {
+    ComponentType,
+    Dispatch,
+    SetStateAction,
+    useEffect,
+    useState,
+} from 'react'
 import { useAppSelector } from '../../../hooks/hooks.ts'
 import { TextArea } from '../../../components/UI/Input/TextArea/TextArea.tsx'
 import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
@@ -13,8 +19,15 @@ import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpi
 interface Property {
     name: string
     key: string
-    type?: 'text' | 'password' | 'textarea' | 'dropdown' | 'checkbox' | 'custom'
-    customComponent?: React.ComponentType<{
+    type?:
+        | 'text'
+        | 'password'
+        | 'textarea'
+        | 'dropdown'
+        | 'checkbox'
+        | 'custom'
+        | 'number'
+    customComponent?: ComponentType<{
         value: unknown
         onChange: (value: unknown) => void
     }>
@@ -74,68 +87,18 @@ export const DashboardEditorTemplate = <T extends WithId>({
                 ? await updateItem(session.token!, session.restaurantId!, item)
                 : await createItem(session.token!, session.restaurantId!, item)
         }
+
         setLoading(true)
         send()
             .then(() => {
                 setLastUpdate(Date.now())
                 setItemExists(true)
+                setError('')
             })
             .catch((response) => {
                 setError(response.message)
             })
             .finally(() => setLoading(false))
-    }
-    const PropertyEditor = function ({ property }: { property: Property }) {
-        const onChange = (value: unknown) => {
-            setItem((item) => ({
-                ...item,
-                [property.key]: value,
-            }))
-        }
-        switch (property.type) {
-            case 'text':
-                return (
-                    <TextField
-                        dark
-                        onChange={(e) => onChange(e.target.value)}
-                        defaultValue={(item[property.key] as string) ?? ''}
-                    />
-                )
-            case 'password':
-                return <TextField dark type={'password'} />
-            case 'textarea':
-                return <TextArea value={(item[property.key] as string) ?? ''} />
-            case 'dropdown':
-                return (
-                    <Dropdown
-                        dark
-                        options={property.options ?? []}
-                        selected={item[property.key] as string}
-                        onChange={(event) => onChange(event.target.value)}
-                    />
-                )
-            case 'checkbox':
-                //FIXME
-                return (
-                    <input
-                        type={'checkbox'}
-                        className={'w-min'}
-                        checked={(item[property.key] as boolean) ?? false}
-                        onChange={(event) => onChange(event.target.checked)}
-                    />
-                )
-            case 'custom':
-                return (
-                    property.customComponent && (
-                        <property.customComponent
-                            value={item[property.key]}
-                            onChange={onChange}
-                        />
-                    )
-                )
-            default:
-                return <input type={'text'} />
-        }
     }
 
     return (
@@ -148,7 +111,11 @@ export const DashboardEditorTemplate = <T extends WithId>({
                     return (
                         <label key={property.name}>
                             {property.name}
-                            <PropertyEditor property={property} />
+                            <PropertyEditor
+                                setItem={setItem}
+                                item={item}
+                                property={property}
+                            />
                         </label>
                     )
                 })}
@@ -166,4 +133,67 @@ export const DashboardEditorTemplate = <T extends WithId>({
             </form>
         </section>
     )
+}
+
+type PropertyEditorProps<T extends WithId> = {
+    setItem: Dispatch<SetStateAction<T>>
+    item: WithId
+    property: Property
+}
+const PropertyEditor = <T extends WithId>({
+    setItem,
+    item,
+    property,
+}: PropertyEditorProps<T>) => {
+    const onChange = (value: unknown) => {
+        setItem((item) => ({
+            ...item,
+            [property.key]: value,
+        }))
+    }
+    switch (property.type) {
+        case 'text':
+        case 'number':
+        case 'password':
+            return (
+                <TextField
+                    type={property.type}
+                    dark
+                    onChange={(e) => onChange(e.target.value)}
+                    defaultValue={(item[property.key] as string) ?? ''}
+                />
+            )
+        case 'textarea':
+            return <TextArea value={(item[property.key] as string) ?? ''} />
+        case 'dropdown':
+            return (
+                <Dropdown
+                    dark
+                    options={property.options ?? []}
+                    selected={item[property.key] as string}
+                    onChange={(event) => onChange(event.target.value)}
+                />
+            )
+        case 'checkbox':
+            //FIXME
+            return (
+                <input
+                    type={'checkbox'}
+                    className={'w-min'}
+                    checked={(item[property.key] as boolean) ?? false}
+                    onChange={(event) => onChange(event.target.checked)}
+                />
+            )
+        case 'custom':
+            return (
+                property.customComponent && (
+                    <property.customComponent
+                        value={item[property.key]}
+                        onChange={onChange}
+                    />
+                )
+            )
+        default:
+            return <input type={'text'} />
+    }
 }

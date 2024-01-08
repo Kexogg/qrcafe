@@ -9,6 +9,7 @@ export const DashboardCatalog = () => {
             pageTitle={'Меню'}
             getItems={getCategories}
             deleteItem={deleteCategory}
+            createItem={async () => navigate('edit')}
             tableColumns={[
                 {
                     name: 'Название',
