@@ -1,6 +1,6 @@
-import { getPlaceholderDish, IDish } from '../../../types/IDish.ts'
+import { IDish } from '../../../types/IDish.ts'
 import DishCard from '../DishCard/DishCard.tsx'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import DishModal from '../Modal/DishModal.tsx'
 import { Searchbar } from '../Searchbar/Searchbar.tsx'
@@ -9,40 +9,10 @@ import { useAppSelector } from '../../../hooks/hooks.ts'
 
 type CatalogProps = {
     title: string
+    categories: ICategory[]
 }
 
-const getCatalog = () => {
-    const category_names: string[] = [
-        'Салаты',
-        'Десерты',
-        'Закуски',
-        'Супы',
-        'Горячее',
-        'Другое',
-    ]
-    const categories: ICategory[] = []
-    let i = 0
-    for (const categoryName of category_names) {
-        categories.push({
-            name: categoryName,
-            id: i.toString(),
-            description: 'Описание',
-            separate: false,
-            order: 0,
-            food: [
-                getPlaceholderDish(),
-                getPlaceholderDish(),
-                getPlaceholderDish(),
-            ],
-        })
-        i++
-    }
-    return categories
-}
-
-export const Catalog = ({ title }: CatalogProps) => {
-    const categories = useMemo(() => getCatalog(), [])
-
+export const Catalog = ({ title, categories }: CatalogProps) => {
     const [activeCategory, setActiveCategory] = useState<string>(
         categories[0].name,
     )
@@ -60,7 +30,7 @@ export const Catalog = ({ title }: CatalogProps) => {
                 .map((category) => {
                     return {
                         ...category,
-                        dishes: category.food.filter((dish) =>
+                        dishes: category.foodList.filter((dish) =>
                             dish.name
                                 .toLowerCase()
                                 .includes(searchTerm.toLowerCase()),
@@ -191,7 +161,7 @@ export const Catalog = ({ title }: CatalogProps) => {
                                 {category.name}
                             </h3>
                             <ul className={'flex flex-wrap gap-5'}>
-                                {category.food.map((dish) => {
+                                {category.foodList.map((dish) => {
                                     return (
                                         <DishCard
                                             onClick={() => {

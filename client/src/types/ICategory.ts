@@ -7,5 +7,5 @@ export interface ICategory extends WithId {
     description: string
     separate: boolean
     order: number
-    food: IDish[]
+    foodList: IDish[]
 }

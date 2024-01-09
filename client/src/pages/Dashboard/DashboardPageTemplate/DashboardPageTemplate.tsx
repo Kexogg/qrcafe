@@ -23,7 +23,7 @@ type DashboardPageTemplateProps<T extends WithId> = {
     createItem?: () => Promise<void>
     tableColumns: ComponentProps<typeof AutoTable>['columns']
     tableCustomButtons?: ComponentProps<typeof AutoTable>['customButtons']
-    onTableRowEdit: (row: T) => void
+    onTableRowEdit?: (row: T) => void
 }
 
 export const DashboardPageTemplate = <T extends WithId>({

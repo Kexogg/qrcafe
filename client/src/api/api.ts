@@ -389,7 +389,7 @@ export const getCategoryById = async (
                 description: response.data.description,
                 separate: response.data.separate,
                 order: response.data.order,
-                food: response.data.foodList ?? [],
+                foodList: response.data.foodList ?? [],
             } as ICategory
         })
 }
@@ -413,13 +413,13 @@ export const updateCategory = async (
 ) => {
     return api
         .put(
-            `/restaurants/${restaurantId}/categories/${category.id}`,
+            `/restaurants/${restaurantId}/categories/${category.id}/food`,
             {
                 name: category.name,
                 description: category.description,
                 separate: category.separate,
                 order: category.order,
-                foodList: category.food ?? [],
+                foodIdList: category.foodList.map((f) => f.id) ?? [],
             },
             {
                 headers: {
@@ -428,4 +428,40 @@ export const updateCategory = async (
             },
         )
         .then((response) => response)
+}
+
+export const getOrders = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/foodQueue`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
+}
+
+export const getOrderById = async (
+    token: string,
+    restaurantId: string,
+    orderId: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurantId}/foodQueue/${orderId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
+}
+
+//TODO: order API
+
+export const getCatalog = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/categories/food`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
 }
