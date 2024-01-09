@@ -13,6 +13,7 @@ public class CategoryDTO
         Separate = category.Separate;
         Name = category.Name;
         Description = category.Description;
+        Available = category.Available;
     }
 
     public int? Id { get; set; } = null!;
@@ -24,6 +25,8 @@ public class CategoryDTO
     public string Name { get; set; }
     
     public string Description { get; set; }
+    
+    public bool Available { get; set; }
     
     public List<FoodDTO>? FoodList { get; set; } = new();
     
@@ -53,6 +56,8 @@ public partial class Category
     public string? Name { get; set; }
     
     public string? Description { get; set; }
+    
+    public bool Available { get; set; }
 
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();

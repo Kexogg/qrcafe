@@ -85,6 +85,7 @@ namespace QrCafe.Controllers
             category.Separate = categoryDto.Separate;
             category.Name= categoryDto.Name;
             category.Description = categoryDto.Description;
+            category.Available = categoryDto.Available;
             var addedFood = new List<FoodDTO>();
             await _context.FoodCategories.Where(fc => fc.RestaurantId == restId && fc.CategoryId == id)
                 .ExecuteDeleteAsync();

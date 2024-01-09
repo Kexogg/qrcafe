@@ -245,7 +245,9 @@ public partial class QrCafeDbContext : DbContext
                 .HasColumnName("restaurant_id");
             entity.Property(e => e.Order)
                 .HasColumnName("order");
-
+            entity.Property(e => e.Available)
+                .HasColumnName("available");
+            
             entity.HasOne(e => e.Restaurant).WithMany(p => p.Categories)
                 .HasForeignKey(d => d.RestaurantId)
                 .HasConstraintName("categories_restaurants_fk");
