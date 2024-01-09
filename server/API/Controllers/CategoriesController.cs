@@ -71,7 +71,7 @@ namespace QrCafe.Controllers
         /// Изменение категории
         /// </summary>
         /// <param name="id">ID категории</param>
-        /// <param name="category">Категория</param>
+        /// <param name="categoryDto">Категория</param>
         /// <param name="restId">ID ресторана</param>
         /// <returns></returns>
         [HttpPut("{id:int}/food")]
@@ -140,7 +140,7 @@ namespace QrCafe.Controllers
         {
             var restaurant = await _context.Restaurants.Include(r => r.Foods)
                 .Include(r => r.Categories).FirstOrDefaultAsync(r => r.Id == restId);
-            if (restaurant == null) return NotFound();
+            if (restaurant?.Categories.FirstOrDefault(c=> c.Id == id) == null) return NotFound();
             var addedFood = new List<FoodDTO>();
             foreach (var foodId in foodIdList)
             {
@@ -150,7 +150,6 @@ namespace QrCafe.Controllers
                 await _context.FoodCategories.AddAsync(foodCategory);
                 addedFood.Add(new FoodDTO(food));
             }
-        
             await _context.SaveChangesAsync();
             return Ok(addedFood);
         }

@@ -36,6 +36,8 @@ public class FoodDTO
     public int Weight { get; set; }
     
     public int Price { get; set; }
+
+    public List<ExtraDTO>? ExtrasList { get; set; } = new();
 }
 public partial class Food
 {
@@ -55,6 +57,8 @@ public partial class Food
 
     public int Price { get; set; }
 
+    public virtual ICollection<FoodExtra> FoodExtras { get; set; } = new List<FoodExtra>();
+
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodQueue> FoodQueues { get; set; } = new List<FoodQueue>();
 
@@ -63,4 +67,5 @@ public partial class Food
 
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();
+    
 }
