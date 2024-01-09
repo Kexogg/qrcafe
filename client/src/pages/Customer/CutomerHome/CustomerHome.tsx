@@ -1,16 +1,25 @@
 import { ServedBy } from '../../../components/UI/ServedBy/ServedBy.tsx'
 import { Showcase } from '../../../components/UI/Showcase/Showcase.tsx'
-import { getPlaceholderDish } from '../../../types/IDish.ts'
 import { Catalog } from '../../../components/UI/Catalog/Catalog.tsx'
 import { SettingsRounded } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { getCatalog } from '../../../api/api.ts'
+import { useAppSelector } from '../../../hooks/hooks.ts'
+import { ICategory } from '../../../types/ICategory.ts'
 
 export const CustomerHome = () => {
-    const dishes = [
-        getPlaceholderDish(),
-        getPlaceholderDish(),
-        getPlaceholderDish(),
-    ]
+    const session = useAppSelector((state) => state.session)
+    const [catalog, setCatalog] = useState<ICategory[]>([])
+    useEffect(() => {
+        getCatalog(session.token!, session.restaurantId!).then((catalog) => {
+            setCatalog(catalog)
+            console.log(catalog)
+        })
+    }, [session.restaurantId, session.token])
+    if (catalog.length === 0) {
+        return <div>Загрузка...</div>
+    }
     return (
         <>
             <section className={'flex justify-between px-5 text-primary-700'}>
@@ -19,9 +28,20 @@ export const CustomerHome = () => {
                     <SettingsRounded />
                 </Link>
             </section>
-            <Showcase title={'Новинки недели'} items={dishes} />
-            <Showcase title={'Мы рекомендуем'} items={dishes} />
-            <Catalog title={'Основное меню'} />
+            {catalog
+                .filter((category) => category.separate)
+                .map((category) => (
+                    <Showcase
+                        key={category.id}
+                        title={category.name}
+                        items={category.foodList}
+                    />
+                ))}
+
+            <Catalog
+                title={'Основное меню'}
+                categories={catalog.filter((category) => !category.separate)}
+            />
         </>
     )
 }
