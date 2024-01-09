@@ -5,6 +5,8 @@ import {
     updateCategory,
 } from '../../../api/api.ts'
 import { useParams } from 'react-router-dom'
+import { IDish } from '../../../types/IDish.ts'
+import { CatalogEditorSelector } from './CatalogEditorSelector.tsx'
 
 export const DashboardCatalogEditor = () => {
     const params = useParams()
@@ -40,6 +42,17 @@ export const DashboardCatalogEditor = () => {
                     name: 'Позиция',
                     key: 'order',
                     type: 'number',
+                },
+                {
+                    name: 'Еда',
+                    key: 'food',
+                    type: 'custom',
+                    customComponent: (props) => (
+                        <CatalogEditorSelector
+                            value={props.value as IDish[]}
+                            onChange={props.onChange}
+                        />
+                    ),
                 },
             ]}
         />

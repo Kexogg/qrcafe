@@ -19,6 +19,23 @@ export const DashboardCatalog = () => {
                     name: 'Описание',
                     key: 'description',
                 },
+                {
+                    name: 'Опубликовано',
+                    key: 'available',
+                    shrink: true,
+                    func: (row) => (row ? 'Да' : 'Нет'),
+                },
+                {
+                    name: 'Витрина',
+                    key: 'separate',
+                    shrink: true,
+                    func: (row) => (row ? 'Да' : 'Нет'),
+                },
+                {
+                    name: 'Положение',
+                    key: 'position',
+                    shrink: true,
+                },
             ]}
             onTableRowEdit={(row) => navigate(`edit/${row.id}`)}
         />

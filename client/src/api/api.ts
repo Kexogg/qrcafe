@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IEmployee } from '../types/IEmployee.ts'
+import { EmployeeRole, IEmployee } from '../types/IEmployee.ts'
 import { IDish } from '../types/IDish.ts'
 import { ITable } from '../types/ITable.ts'
 import { ICategory } from '../types/ICategory.ts'
@@ -189,7 +189,10 @@ export const updateEmployee = async (
                 ...{
                     fullName: employee.fullName,
                     login: employee.login,
-                    roleId: employee.role,
+                    roleId:
+                        typeof employee.role === 'string' //TODO: fix later
+                            ? Object.values(EmployeeRole).indexOf(employee.role)
+                            : employee.role,
                     available: employee.available,
                 },
                 ...(employee.password && { password: employee.password }),
@@ -386,7 +389,7 @@ export const getCategoryById = async (
                 description: response.data.description,
                 separate: response.data.separate,
                 order: response.data.order,
-                food: response.data.foodList,
+                food: response.data.foodList ?? [],
             } as ICategory
         })
 }
@@ -416,6 +419,7 @@ export const updateCategory = async (
                 description: category.description,
                 separate: category.separate,
                 order: category.order,
+                foodList: category.food ?? [],
             },
             {
                 headers: {

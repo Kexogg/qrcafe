@@ -60,7 +60,7 @@ export const DashboardEditorTemplate = <T extends WithId>({
     id,
 }: DashboardEditorTemplateProps<T>) => {
     const [item, setItem] = useState<T>({ id: '' } as T)
-    const [itemExists, setItemExists] = useState(id !== undefined)
+    const [itemExists, setItemExists] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [lastUpdate, setLastUpdate] = useState(Date.now())
@@ -106,7 +106,10 @@ export const DashboardEditorTemplate = <T extends WithId>({
             {loading && <LoadingSpinner elementOverlay />}
             <h1>{pageTitle}</h1>
             {error}
-            <form className={styles.form}>
+            <form
+                className={`${styles.form} ${
+                    loading && 'animate-pulse opacity-75'
+                }`}>
                 {properties.map((property) => {
                     return (
                         <label key={property.name}>
@@ -164,7 +167,12 @@ const PropertyEditor = <T extends WithId>({
                 />
             )
         case 'textarea':
-            return <TextArea value={(item[property.key] as string) ?? ''} />
+            return (
+                <TextArea
+                    value={(item[property.key] as string) ?? ''}
+                    onChange={(e) => onChange(e.target.value)}
+                />
+            )
         case 'dropdown':
             return (
                 <Dropdown
@@ -175,7 +183,6 @@ const PropertyEditor = <T extends WithId>({
                 />
             )
         case 'checkbox':
-            //FIXME
             return (
                 <input
                     type={'checkbox'}
