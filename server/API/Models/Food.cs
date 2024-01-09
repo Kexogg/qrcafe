@@ -36,11 +36,24 @@ public class FoodDTO
     public int Weight { get; set; }
     
     public int Price { get; set; }
-
-    public List<ExtraDTO>? ExtrasList { get; set; } = new();
+    
+    
+    public List<int>? ExtrasId { get; set; } = new();
+    
+    public List<ExtraDTO>? Extras { get; set; } = new();
 }
 public partial class Food
 {
+    public Food(){}
+
+    public Food(FoodDTO foodDto)
+    {
+        Available = foodDto.Available;
+        Name = foodDto.Name;
+        Description = foodDto.Description;
+        Weight = foodDto.Weight;
+        Price = foodDto.Price;
+    }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }

@@ -70,48 +70,72 @@ namespace QrCafe.Controllers
         // PUT: /api/restaurants/0/Food/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id:int}")]
-        public async Task<IActionResult> PutFood(int id, Food food, int restId)
+        public async Task<IActionResult> PatchFood(int id, FoodDTO foodDto, int restId)
         {
             var foodData = await
                 _context.Foods.Where(e => e.RestaurantId == restId)
-                    .FirstOrDefaultAsync(e=> e.Id==id);
-            foodData.Name = food.Name;
-            foodData.Description = food.Description;
-            foodData.Weight = food.Weight;
-            foodData.Price = food.Price;
-            foodData.Available = food.Available;
+                    .FirstOrDefaultAsync(e=> e.Id == id);
+            if (foodData == null) return NotFound();
+            foodData.Name = foodDto.Name;
+            foodData.Description = foodDto.Description;
+            foodData.Weight = foodDto.Weight;
+            foodData.Price = foodDto.Price;
+            foodData.Available = foodDto.Available;
             
             _context.Entry(foodData).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FoodExists(id, restId))
+            
+            await _context.FoodExtras.Where(fc => fc.RestaurantId == restId && fc.FoodId == id)
+                .ExecuteDeleteAsync();
+            var extras = new List<ExtraDTO>();
+            if (foodDto.Extras != null)
+                foreach (var extraDto in foodDto.Extras)
                 {
-                    return NotFound();
+                    var extra = new Extra(extraDto);
+                    await _context.Extras.AddAsync(extra);
+                    await _context.SaveChangesAsync();
+                    var foodExtra = new FoodExtra(foodData.Id, extra.Id, restId);
+                    await _context.FoodExtras.AddAsync(foodExtra);
+                    extraDto.Id = extra.Id;
+                    extras.Add(extraDto);
                 }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            await _context.SaveChangesAsync();
+            var result = new FoodDTO(foodData)
+            {
+                Extras = extras
+            };
+            return Ok(result);
         }
 
         // POST: /api/restaurants/0/Food
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<FoodDTO>> PostFood(Food food, int restId)
+        public async Task<ActionResult<FoodDTO>> PostFood(FoodDTO foodDto, int restId)
         {
             var restaurant = await _context.Restaurants.FirstOrDefaultAsync(r => r.Id == restId);
             if (restaurant == null) return NotFound();
+            var food = new Food(foodDto)
+            {
+                RestaurantId = restId
+            };
             await _context.Foods.AddAsync(food);
+            var extras = new List<ExtraDTO>();
+            if (foodDto.Extras != null)
+                foreach (var extraDto in foodDto.Extras)
+                {
+                    var extra = new Extra(extraDto);
+                    await _context.Extras.AddAsync(extra);
+                    await _context.SaveChangesAsync();
+                    var foodExtra = new FoodExtra(food.Id, extra.Id, restId);
+                    await _context.FoodExtras.AddAsync(foodExtra);
+                    extraDto.Id = extra.Id;
+                    extras.Add(extraDto);
+                }
             await _context.SaveChangesAsync();
-            return Ok(new FoodDTO(food));
+            var result = new FoodDTO(food)
+            {
+                Extras = extras
+            };
+            return Ok(result);
         }
         
         [HttpPost("/api/restaurants/{restId:int}/categories/food/{id:int}")]

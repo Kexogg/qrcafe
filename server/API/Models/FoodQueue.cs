@@ -34,24 +34,25 @@ public class FoodQueueDTO
     public short State { get; set; }
     
     public TimeOnly? CreatedAt { get; set; }
+
+    public List<Extra> Extras { get; set; } = new List<Extra>();
 }
 public partial class FoodQueue
 {
     public FoodQueue(){}
 
-    public FoodQueue(FoodQueueDTO foodQueueDto, int restaurantId, Guid id, TimeOnly createdAt)
+    public FoodQueue(FoodQueueDTO foodQueueDto, int restaurantId, TimeOnly createdAt)
     {
+        Id = (Guid)foodQueueDto.Id;
         ClientId = foodQueueDto.ClientId;
         FoodId = foodQueueDto.FoodId;
         State = foodQueueDto.State;
         RestaurantId = restaurantId;
-        Id = id;
         CreatedAt = createdAt;
     }
 
-    public FoodQueue(Food food, Guid clientId, Guid id, TimeOnly createdAt)
+    public FoodQueue(Food food, Guid clientId, TimeOnly createdAt)
     {
-        Id = id;
         ClientId = clientId;
         RestaurantId = food.RestaurantId;
         FoodId = food.Id;
@@ -71,6 +72,9 @@ public partial class FoodQueue
     public short State { get; set; }
 
     public TimeOnly CreatedAt { get; set; }
+    
+    [System.Text.Json.Serialization.JsonIgnore]
+    public virtual ICollection<FoodQueueExtra> FoodQueueExtras { get; set; } = new List<FoodQueueExtra>();
 
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual Client Client { get; set; } = null!;

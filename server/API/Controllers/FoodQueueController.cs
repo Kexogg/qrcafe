@@ -82,21 +82,35 @@ namespace QrCafe.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize (Roles = "client")]
-        public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueue(List<Food> foodList, int restId)
+        public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueue(List<FoodDTO> foodList, int restId)
         {
             var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
             var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
-            var restaurant = await _context.Restaurants.Include(r=> r.Clients)
+            var restaurant = await _context.Restaurants.Include(r => r.Clients)
+                .Include(r => r.Foods).ThenInclude(food => food.FoodExtras)
                 .FirstOrDefaultAsync(r=> r.Id == restId);
             if (restaurantClaim != restId || restaurant == null) return BadRequest();
             var client = restaurant.Clients.FirstOrDefault(c=> c.Id == clientIdClaim);
             if (client == null) return NotFound();
             var time = TimeOnly.FromDateTime(DateTime.Now);
             var queue = new List<FoodQueueDTO>();
-            foreach (var foodQueue in foodList.Select(food => new FoodQueue(food, client.Id, Guid.NewGuid(), time)))
+            foreach (var foodItem in foodList)
             {
-                queue.Add(new FoodQueueDTO(foodQueue));
+                var food = restaurant.Foods.FirstOrDefault(f=> f.Id == foodItem.Id);
+                if (food == null) continue;
+                var foodQueue = new FoodQueue(food, client.Id, time);
                 await _context.FoodQueues.AddAsync(foodQueue);
+                var foodQueueResult = new FoodQueueDTO(foodQueue);
+                if (foodItem.ExtrasId != null)
+                    foreach (var extraId in foodItem.ExtrasId
+                                 .Where(extraId => food.FoodExtras.Any(fe => fe.ExtraId == extraId)))
+                    {
+                        var foodQueueExtra = new FoodQueueExtra(foodQueue.Id, extraId, restId);
+                        await _context.FoodQueueExtras.AddAsync(foodQueueExtra);
+                        foodQueueResult.Extras.Add(await _context.Extras.Where(e=> e.RestaurantId == restId)
+                            .FirstOrDefaultAsync(e=> e.Id == foodQueueExtra.ExtraId));
+                    }
+                queue.Add(foodQueueResult);
             }
             await _context.SaveChangesAsync();
             return Ok(queue);

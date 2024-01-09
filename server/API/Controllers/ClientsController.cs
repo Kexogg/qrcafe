@@ -123,7 +123,9 @@ public class ClientsController : ControllerBase
         await _context.SaveChangesAsync();
         var claims = new List<Claim> { new(ClaimTypes.Role, "client"), 
             new("restId", client.RestaurantId.ToString()),
-            new("clientId", client.Id.ToString())};
+            new("clientId", client.Id.ToString()),
+            new("tableId", table.Id.ToString())
+        };
         var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
             audience: AuthOptions.AUDIENCE,
