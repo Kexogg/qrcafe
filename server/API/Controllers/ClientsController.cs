@@ -26,6 +26,11 @@ public class ClientsController : ControllerBase
     }
 
     // GET: api/restaurants/0/clients
+    /// <summary>
+    /// Получение списка клиентов
+    /// </summary>
+    /// <param name="restId">ID ресторана</param>
+    /// <returns></returns>
     [HttpGet]
     [Authorize(Roles = "employee")]
     public async Task<ActionResult<IEnumerable<ClientDTO>>> GetClients(int restId)
@@ -35,6 +40,12 @@ public class ClientsController : ControllerBase
     }
 
     // GET: api/restaurants/0/clients/5
+    /// <summary>
+    /// Получение клиента
+    /// </summary>
+    /// <param name="id">ID клиента</param>
+    /// <param name="restId">ID ресторана</param>
+    /// <returns></returns>
     [HttpGet("{id:guid}")]
     [Authorize(Roles = "employee")]
     public async Task<ActionResult<ClientDTO>> GetClient(Guid id, int restId)
@@ -49,10 +60,16 @@ public class ClientsController : ControllerBase
 
         return new ClientDTO(client);
     }
-        
+    /// <summary>
+    /// Изменение параметров клиента
+    /// </summary>
+    /// <param name="id">ID клиента</param>
+    /// <param name="client">измененный клиент</param>
+    /// <param name="restId">ID ресторана</param>
+    /// <returns></returns>
     [HttpPatch("{id:guid}")]
     [Authorize(Roles = "employee")]
-    public async Task<IActionResult> PutFood(Guid id, Client client, int restId)
+    public async Task<IActionResult> PatchClient(Guid id, Client client, int restId)
     {
         if (id != client.Id || restId != client.RestaurantId)
         {
@@ -82,6 +99,12 @@ public class ClientsController : ControllerBase
         
     // POST: api/Clients/restaurants/0/tables/1
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    /// Бронирование стола (создание клиента)
+    /// </summary>
+    /// <param name="tableId">ID стола</param>
+    /// <param name="restId">ID ресторана</param>
+    /// <returns></returns>
     [HttpPost("tables/{tableId:int}")]
     public async Task<IActionResult> PutClient(int restId, int tableId)
     {
@@ -118,6 +141,12 @@ public class ClientsController : ControllerBase
         
 
     // DELETE: api/restaurants/0/Clients/5
+    /// <summary>
+    /// Удаление клиента
+    /// </summary>
+    /// <param name="id">ID клиента</param>
+    /// <param name="restId">ID ресторана</param>
+    /// <returns></returns>
     [HttpDelete("{id:guid}")] 
     [Authorize(Roles = "employee")]
     public async Task<IActionResult> DeleteClient(Guid id, int restId)
@@ -138,7 +167,11 @@ public class ClientsController : ControllerBase
 
         return NoContent();
     }
-    
+    /// <summary>
+    /// Завершение сессии клиентом
+    /// </summary>
+    /// <param name="restId">ID ресторана</param>
+    /// <returns></returns>
     [HttpDelete] 
     [Authorize(Roles = "client")]
     public async Task<IActionResult> EndSession(int restId)

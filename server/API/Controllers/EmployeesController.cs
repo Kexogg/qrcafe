@@ -81,7 +81,7 @@ namespace QrCafe.Controllers
         // PATCH: api/restaurants/0/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id:guid}")]
-        public async Task<IActionResult> PutEmployee(Guid id, Employee employee, int restId)
+        public async Task<IActionResult> PatchEmployee(Guid id, Employee employee, int restId)
         {
             var employeeData = await
                 _context.Employees.Where(e => e.RestaurantId == restId)
@@ -113,6 +113,12 @@ namespace QrCafe.Controllers
 
         // POST: api/restaurants/0/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Создание сотрудника
+        /// </summary>
+        /// <param name="employee">Сотрудник</param>
+        /// <param name="restId">ID ресторана</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> PostEmployee(Employee employee, int restId)
         {

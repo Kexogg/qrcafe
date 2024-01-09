@@ -25,6 +25,7 @@ public class CategoryDTO
     
     public string Description { get; set; }
     
+    [System.Text.Json.Serialization.JsonIgnore]
     public List<FoodDTO>? FoodList { get; set; } = new();
     
     public List<int>? FoodIdList { get; set; } 

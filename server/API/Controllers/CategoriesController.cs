@@ -24,6 +24,11 @@ namespace QrCafe.Controllers
         }
 
         // GET: /api/restaurants/0/Categories
+        /// <summary>
+        /// Получение списка категорий
+        /// </summary>
+        /// <param name="restId">ID ресторана</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategory(int restId)
         {
@@ -39,17 +44,25 @@ namespace QrCafe.Controllers
         /// <param name="restId">ID ресторана</param>
         /// <returns></returns>
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Category>> GetCategory(int? id, int restId)
+        public async Task<ActionResult<CategoryDTO>> GetCategory(int? id, int restId)
         {
-            var category = await _context.Categories.Where(c=> c.RestaurantId == restId)
-                .FirstOrDefaultAsync(c=> c.Id == id);
-
+            var restaurant = await _context.Restaurants.Include(restaurant => restaurant.Categories)
+                .ThenInclude(c=> c.FoodCategories).ThenInclude(fc=> fc.Food)
+                .FirstOrDefaultAsync(r => r.Id == restId);
+            if (restaurant == null) return NotFound();
+            var category = restaurant.Categories.FirstOrDefault(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            return category;
+            var categoryDTO = new CategoryDTO(category);
+            foreach (var foodCategory in category.FoodCategories)
+            {
+                categoryDTO.FoodList.Add(new FoodDTO(foodCategory.Food));
+            }
+            
+            return categoryDTO;
         }
 
         // PUT: /api/restaurants/0/Categories/5
@@ -122,7 +135,7 @@ namespace QrCafe.Controllers
         /// <param name="restId">ID ресторана</param>
         /// <param name="id">ID категории</param>
         /// <returns></returns>
-        [HttpPost("{id:int}/food")]
+        [HttpPost("{id:int}")]
         public async Task<ActionResult<IEnumerable<FoodDTO>>> PutFoodsIntoCategory(List<int> foodIdList, int restId, int id)
         {
             var restaurant = await _context.Restaurants.Include(r => r.Foods)
@@ -143,6 +156,12 @@ namespace QrCafe.Controllers
         }
         
         // DELETE: /api/restaurants/0/Categories/5
+        /// <summary>
+        /// Удаление категории
+        /// </summary>
+        /// <param name="id">ID категории</param>
+        /// <param name="restId">ID ресторана</param>
+        /// <returns></returns>
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCategory(int? id, int restId)
         {

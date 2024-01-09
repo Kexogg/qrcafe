@@ -1,4 +1,6 @@
-﻿namespace QrCafe.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace QrCafe.Models;
 
 public class FoodQueueDTO
 {
@@ -56,6 +58,8 @@ public partial class FoodQueue
         State = 1;
         CreatedAt = createdAt;
     }
+    
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
     public Guid ClientId { get; set; }
