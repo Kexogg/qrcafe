@@ -1,6 +1,8 @@
 import axios from 'axios'
-import { IEmployee } from '../types/IEmployee.ts'
+import { EmployeeRole, IEmployee } from '../types/IEmployee.ts'
 import { IDish } from '../types/IDish.ts'
+import { ITable } from '../types/ITable.ts'
+import { ICategory } from '../types/ICategory.ts'
 
 const API_BASE_URL = '/api'
 
@@ -66,6 +68,28 @@ export const createTable = async (
         )
         .then((response) => response.data)
 }
+
+export const updateTable = async (
+    token: string,
+    restaurantId: string,
+    table: ITable,
+) => {
+    return api
+        .patch(
+            `/restaurants/${restaurantId}/tables/${table.id}`,
+            {
+                name: table.name,
+                assignedEmployeeId: table.assignedWaiter,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+
 export const deleteTable = async (
     token: string,
     restaurantId: string,
@@ -165,7 +189,10 @@ export const updateEmployee = async (
                 ...{
                     fullName: employee.fullName,
                     login: employee.login,
-                    roleId: employee.role,
+                    roleId:
+                        typeof employee.role === 'string' //TODO: fix later
+                            ? Object.values(EmployeeRole).indexOf(employee.role)
+                            : employee.role,
                     available: employee.available,
                 },
                 ...(employee.password && { password: employee.password }),
@@ -202,7 +229,7 @@ export const getFood = async (token: string, restaurantId: string) => {
             response.data.map(
                 (food: {
                     id: string
-                    isAvailable: boolean
+                    available: boolean
                     name: string
                     description: string
                     weight: number
@@ -214,7 +241,7 @@ export const getFood = async (token: string, restaurantId: string) => {
                         description: food.description,
                         weight: food.weight.toString(),
                         price: food.price,
-                        available: food.isAvailable,
+                        available: food.available,
                         image: '', //TODO: remove
                         extras: [],
                         status: 0,
@@ -243,7 +270,7 @@ export const getFoodById = async (
                 description: response.data.description,
                 weight: response.data.weight.toString(),
                 price: response.data.price,
-                available: response.data.isAvailable,
+                available: response.data.available,
                 image: '', //TODO: remove
                 extras: [],
                 status: 0,
@@ -289,7 +316,7 @@ export const updateFood = async (
                 description: dish.description,
                 weight: dish.weight,
                 price: dish.price,
-                isAvailable: dish.available,
+                available: dish.available,
             },
             {
                 headers: {
@@ -309,4 +336,96 @@ export const deleteFood = async (
             Authorization: `Bearer ${token}`,
         },
     })
+}
+
+export const getCategories = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/categories`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
+}
+
+export const createCategory = async (
+    token: string,
+    restaurantId: string,
+    category: ICategory,
+) => {
+    return api
+        .post(
+            `/restaurants/${restaurantId}/categories`,
+            {
+                name: category.name,
+                description: category.description,
+                separate: category.separate,
+                order: category.order,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+
+export const getCategoryById = async (
+    token: string,
+    restaurantId: string,
+    categoryId: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurantId}/categories/${categoryId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            return {
+                id: response.data.id,
+                name: response.data.name,
+                description: response.data.description,
+                separate: response.data.separate,
+                order: response.data.order,
+                food: response.data.foodList ?? [],
+            } as ICategory
+        })
+}
+
+export const deleteCategory = async (
+    token: string,
+    restaurantId: string,
+    categoryId: string,
+) => {
+    return api.delete(`/restaurants/${restaurantId}/categories/${categoryId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+}
+
+export const updateCategory = async (
+    token: string,
+    restaurantId: string,
+    category: ICategory,
+) => {
+    return api
+        .put(
+            `/restaurants/${restaurantId}/categories/${category.id}`,
+            {
+                name: category.name,
+                description: category.description,
+                separate: category.separate,
+                order: category.order,
+                foodList: category.food ?? [],
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
 }

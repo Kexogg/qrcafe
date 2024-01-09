@@ -1,7 +1,11 @@
-import {IDish} from "./IDish.ts";
+import { IDish } from './IDish.ts'
+import { WithId } from './types.ts'
 
-export interface ICategory {
-    name: string;
-    id: string;
-    dishes: IDish[];
+export interface ICategory extends WithId {
+    id: string
+    name: string
+    description: string
+    separate: boolean
+    order: number
+    food: IDish[]
 }

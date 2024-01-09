@@ -1,4 +1,5 @@
 import { DishStatus, getPlaceholderDish, IDish } from './IDish.ts'
+import { WithId } from './types.ts'
 
 /**
  * Enum for the status of a table
@@ -23,7 +24,7 @@ export enum TableStatus {
  * @property {string} [customerName] - The name of the customer (optional)
  * @property {string} [assignedWaiter] - ID of the waiter assigned to the table
  */
-export interface ITable {
+export interface ITable extends WithId {
     id: string
     name: string
     status: TableStatus

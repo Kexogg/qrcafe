@@ -26,7 +26,7 @@ export const LoginEmployee = () => {
                 dispatch(
                     setSession({
                         type: sessionType,
-                        token: response.data.access_token,
+                        token: response.data.token,
                         tokenTimestamp: Date.now(),
                         restaurantId: restaurant,
                     }),

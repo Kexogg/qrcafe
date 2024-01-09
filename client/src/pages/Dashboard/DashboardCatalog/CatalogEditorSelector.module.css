@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*Make col1 cand col3 of grid grow, and col2 to be minimal size*/
+.selector {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto 1fr;
+  grid-gap: 1rem;
+  justify-items: center;
+  @apply min-h-[10rem] col-span-2
+}

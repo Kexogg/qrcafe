@@ -10,7 +10,7 @@ export const Table = ({ children, ...props }: TableProps) => {
     return (
         <div
             className={
-                'overflow-hidden rounded-xl border-2 border-primary-700 bg-primary-50'
+                'h-full w-full overflow-hidden rounded-xl border-2 border-primary-700 bg-primary-50'
             }>
             <table {...props} className={styles.table}>
                 {children}
