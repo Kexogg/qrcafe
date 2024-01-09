@@ -49,35 +49,24 @@ namespace QrCafe.Controllers
         // PUT: /api/restaurants/0/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> PutCategory(int? id, Category category, int restId)
+        public async Task<IActionResult> PutCategory(int id, List<int> foodIdList, int restId)
         {
-            var categoryData = await
-                _context.Categories.Where(e => e.RestaurantId == restId)
-                    .FirstOrDefaultAsync(e=> e.Id==id);
-            categoryData.Name = category.Name;
-            categoryData.Description = category.Description;
-            categoryData.Order = category.Order;
-            categoryData.Separate = category.Separate;
-
-            _context.Entry(categoryData).State = EntityState.Modified;
-
-            try
+            var restaurant = await _context.Restaurants.Include(r => r.Foods)
+                .Include(r => r.Categories).FirstOrDefaultAsync(r => r.Id == restId);
+            if (restaurant?.Categories.FirstOrDefault(c=> c.Id==id) == null) return NotFound();
+            var addedFood = new List<FoodDTO>();
+            await _context.FoodCategories.Where(fc => fc.RestaurantId == restId && fc.CategoryId == id)
+                .ExecuteDeleteAsync();
+            foreach (var foodId in foodIdList)
             {
-                await _context.SaveChangesAsync();
+                var food = restaurant.Foods.FirstOrDefault(f => f.Id == foodId);
+                if (food == null) continue;
+                var foodCategory = new FoodCategory(foodId, id, restId);
+                await _context.FoodCategories.AddAsync(foodCategory);
+                addedFood.Add(new FoodDTO(food));
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            await _context.SaveChangesAsync();
+            return Ok(addedFood);
         }
 
         // POST: /api/restaurants/0/Categories
