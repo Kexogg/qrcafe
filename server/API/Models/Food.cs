@@ -55,9 +55,12 @@ public partial class Food
 
     public int Price { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodQueue> FoodQueues { get; set; } = new List<FoodQueue>();
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Restaurant? Restaurant { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();
 }

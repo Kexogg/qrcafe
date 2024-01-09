@@ -68,9 +68,12 @@ public partial class FoodQueue
 
     public TimeOnly CreatedAt { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Client Client { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Food Food { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Restaurant Restaurant { get; set; } = null!;
 }

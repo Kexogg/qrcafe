@@ -47,9 +47,12 @@ public partial class Employee
 
     public bool Available { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Restaurant? Restaurant { get; set; } = null;
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<Table> Tables { get; set; } = new List<Table>();
 }

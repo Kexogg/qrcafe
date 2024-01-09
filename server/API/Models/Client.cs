@@ -100,9 +100,12 @@ public partial class Client
 
     public short? PaymentMethod { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Employee AssignedEmployee { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodQueue> FoodQueues { get; set; } = new List<FoodQueue>();
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Restaurant Restaurant { get; set; } = null!;
 }

@@ -22,8 +22,10 @@ public partial class Table
 
     public Guid? AssignedEmployeeId { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Employee? AssignedEmployee { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Restaurant Restaurant { get; set; } = null!;
     
     public static Employee AssignEmployee(QrCafeDbContext db, Table table)

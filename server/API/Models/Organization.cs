@@ -38,5 +38,6 @@ public partial class Organization
 
     public string? ShortName { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<Restaurant> Restaurants { get; set; } = new List<Restaurant>();
 }

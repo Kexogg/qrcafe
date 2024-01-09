@@ -18,9 +18,12 @@ public partial class FoodCategory
 
     public int RestaurantId;
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Food Food { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Category Category { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Restaurant Restaurant { get; set; } = null!;
 }

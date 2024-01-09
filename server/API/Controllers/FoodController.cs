@@ -38,7 +38,7 @@ namespace QrCafe.Controllers
                 var categoryDTO = new CategoryDTO(category);
                 foreach (var foodCategory in category.FoodCategories)
                 {
-                    categoryDTO.foodList.Add(new FoodDTO(foodCategory.Food));
+                    categoryDTO.FoodList.Add(new FoodDTO(foodCategory.Food));
                 }
                 result.Add(categoryDTO);
             }

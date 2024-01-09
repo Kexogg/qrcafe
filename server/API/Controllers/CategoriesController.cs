@@ -61,25 +61,37 @@ namespace QrCafe.Controllers
         /// <param name="category">Категория</param>
         /// <param name="restId">ID ресторана</param>
         /// <returns></returns>
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> PutCategory(int id, List<int> foodIdList, int restId)
+        [HttpPut("{id:int}/food")]
+        public async Task<IActionResult> PutCategory(int id, CategoryDTO categoryDto, int restId)
         {
             var restaurant = await _context.Restaurants.Include(r => r.Foods)
                 .Include(r => r.Categories).FirstOrDefaultAsync(r => r.Id == restId);
-            if (restaurant?.Categories.FirstOrDefault(c=> c.Id==id) == null) return NotFound();
+            var category = restaurant?.Categories.FirstOrDefault(c => c.Id == id);
+            if (restaurant == null || category == null) return NotFound();
+            category.Order = categoryDto.Order;
+            category.Separate = categoryDto.Separate;
+            category.Name= categoryDto.Name;
+            category.Description = categoryDto.Description;
             var addedFood = new List<FoodDTO>();
             await _context.FoodCategories.Where(fc => fc.RestaurantId == restId && fc.CategoryId == id)
                 .ExecuteDeleteAsync();
-            foreach (var foodId in foodIdList)
-            {
-                var food = restaurant.Foods.FirstOrDefault(f => f.Id == foodId);
-                if (food == null) continue;
-                var foodCategory = new FoodCategory(foodId, id, restId);
-                await _context.FoodCategories.AddAsync(foodCategory);
-                addedFood.Add(new FoodDTO(food));
-            }
+            if (categoryDto.FoodIdList != null)
+                foreach (var foodId in categoryDto.FoodIdList)
+                {
+                    var food = restaurant.Foods.FirstOrDefault(f => f.Id == foodId);
+                    if (food == null) continue;
+                    var foodCategory = new FoodCategory(foodId, id, restId);
+                    await _context.FoodCategories.AddAsync(foodCategory);
+                    addedFood.Add(new FoodDTO(food));
+                }
+
             await _context.SaveChangesAsync();
-            return Ok(addedFood);
+            var result = new
+            {
+                category,
+                addedFood
+            };
+            return Ok(result);
         }
 
         // POST: /api/restaurants/0/Categories

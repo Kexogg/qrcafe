@@ -24,8 +24,10 @@ public class CategoryDTO
     public string Name { get; set; }
     
     public string Description { get; set; }
-
-    public List<FoodDTO>? foodList { get; set; } = new();
+    
+    public List<FoodDTO>? FoodList { get; set; } = new();
+    
+    public List<int>? FoodIdList { get; set; } 
 }
 public partial class Category
 {
@@ -52,7 +54,9 @@ public partial class Category
     
     public string? Description { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Restaurant? Restaurant { get; set; } = null!;
 }
