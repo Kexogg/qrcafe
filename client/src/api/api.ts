@@ -419,7 +419,7 @@ export const updateCategory = async (
                 description: category.description,
                 separate: category.separate,
                 order: category.order,
-                foodList: category.food ?? [],
+                foodList: category.food.map((f) => f.id) ?? [],
             },
             {
                 headers: {
@@ -428,4 +428,28 @@ export const updateCategory = async (
             },
         )
         .then((response) => response)
+}
+
+export const getOrders = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/foodQueue`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
+}
+
+export const getOrderById = async (
+    token: string,
+    restaurantId: string,
+    orderId: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurantId}/foodQueue/${orderId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
 }
