@@ -14,3 +14,11 @@ export function getAppliedDishExtras(dish: IDish) {
         .map((extra) => extra.name)
         .join(', ')
 }
+
+export const getQRValue = (restaurantId: string, id: string) => {
+    const params = new URLSearchParams({
+        id: restaurantId as string,
+        table: id,
+    })
+    return `https://${window.location.hostname}/login?${params.toString()}`
+}

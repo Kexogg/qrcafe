@@ -2,7 +2,7 @@ type DropdownProps = React.DetailedHTMLProps<
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
 > & {
-    options: string[]
+    options: { name: string; value: string }[] | string[]
     placeholder?: string
     selected?: string
     dark?: boolean
@@ -33,11 +33,21 @@ const Dropdown = ({
                     {placeholder}
                 </option>
             )}
-            {options.map((option) => (
-                <option key={option} value={option}>
-                    {option}
-                </option>
-            ))}
+            {options.map((option) => {
+                if (typeof option === 'string') {
+                    return (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    )
+                } else {
+                    return (
+                        <option key={option.value} value={option.value}>
+                            {option.name}
+                        </option>
+                    )
+                }
+            })}
         </select>
     )
 }

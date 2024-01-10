@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { getCatalog } from '../../../api/api.ts'
 import { useAppSelector } from '../../../hooks/hooks.ts'
 import { ICategory } from '../../../types/ICategory.ts'
+import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
 
 export const CustomerHome = () => {
     const session = useAppSelector((state) => state.session)
@@ -18,7 +19,7 @@ export const CustomerHome = () => {
         })
     }, [session.restaurantId, session.token])
     if (catalog.length === 0) {
-        return <div>Загрузка...</div>
+        return <LoadingSpinner screenOverlay/>
     }
     return (
         <>

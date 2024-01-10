@@ -36,6 +36,11 @@ export const DashboardFoodEditor = () => {
                     key: 'weight',
                     type: 'text',
                 },
+                {
+                    name: 'Картинка',
+                    key: 'image',
+                    type: 'image',
+                },
             ]}
             id={params.id}
         />

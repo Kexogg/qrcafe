@@ -11,6 +11,7 @@ import { DashboardFood } from '../pages/Dashboard/DashboardFood/DashboardFood.ts
 import { DashboardFoodEditor } from '../pages/Dashboard/DashboardFood/DashboardFoodEditor.tsx'
 import { DashboardEmployeeEditor } from '../pages/Dashboard/DashboardEmployees/DashboardEmployeeEditor.tsx'
 import { DashboardCatalogEditor } from '../pages/Dashboard/DashboardCatalog/DashboardCatalogEditor.tsx'
+import { DashboardTableEditor } from '../pages/Dashboard/DashboardTables/DashboardTableEditor.tsx'
 
 export const DashboardRouter = () => {
     return (
@@ -18,6 +19,10 @@ export const DashboardRouter = () => {
             <Route path="/dashboard" element={<LayoutDashboard />}>
                 <Route index path="home" element={<DashboardHome />} />
                 <Route path="tables" element={<DashboardTables />} />
+                <Route
+                    path="tables/edit/:id?"
+                    element={<DashboardTableEditor />}
+                />
                 <Route path="settings" element={<DashboardSettings />} />
                 <Route path="orders" element={<DashboardOrders />} />
                 <Route path="employees" element={<DashboardEmployees />} />

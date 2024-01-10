@@ -48,10 +48,31 @@ export const getTables = async (token: string, restaurantId: string) => {
             ),
         )
 }
+
+export const getTableById = async (
+    token: string,
+    restaurantId: string,
+    tableId: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurantId}/tables/${tableId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            return {
+                id: response.data.id,
+                name: response.data.name,
+                assignedWaiter: response.data.assignedEmployeeId || null,
+            } as ITable
+        })
+}
+
 export const createTable = async (
     token: string,
     restaurantId: string,
-    name: string,
+    table: ITable,
 ) => {
     return api
         .post(
@@ -62,7 +83,7 @@ export const createTable = async (
                     Authorization: `Bearer ${token}`,
                 },
                 params: {
-                    name,
+                    name: table.name,
                 },
             },
         )
@@ -292,7 +313,7 @@ export const createFood = async (
                 description: dish.description,
                 weight: dish.weight,
                 price: dish.price,
-                isAvailable: true,
+                available: dish.available,
             },
             {
                 headers: {
@@ -361,6 +382,7 @@ export const createCategory = async (
                 description: category.description,
                 separate: category.separate,
                 order: category.order,
+                available: category.available,
             },
             {
                 headers: {
@@ -389,6 +411,7 @@ export const getCategoryById = async (
                 description: response.data.description,
                 separate: response.data.separate,
                 order: response.data.order,
+                available: response.data.available,
                 foodList: response.data.foodList ?? [],
             } as ICategory
         })
@@ -419,6 +442,7 @@ export const updateCategory = async (
                 description: category.description,
                 separate: category.separate,
                 order: category.order,
+                available: category.available,
                 foodIdList: category.foodList.map((f) => f.id) ?? [],
             },
             {
