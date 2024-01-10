@@ -3,16 +3,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace QrCafe.Models;
 
-public class TableDTO(Table table)
+public class TableDTO
 {
-    public int Id { get; set; } = table.Id;
+    public TableDTO(Table table)
+    {
+        Id = table.Id;
+        Name = table.Name;
+        AssignedEmployee = table.AssignedEmployee == null ? null : new EmployeeDTO(table.AssignedEmployee);
+    }
+    
+    public int Id { get; set; }
 
-    public string Name { get; set; } = table.Name;
+    public string Name { get; set; }
 
-    public Guid? AssignedEmployeeId { get; set; } = table.AssignedEmployeeId;
+    public EmployeeDTO? AssignedEmployee { get; set; }
 }
 public partial class Table
 {
+    public Table(){}
+    
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
     public int Id { get; set; }
     
@@ -26,7 +35,7 @@ public partial class Table
     public virtual Employee? AssignedEmployee { get; set; }
 
     [System.Text.Json.Serialization.JsonIgnore]
-    public virtual Restaurant Restaurant { get; set; } = null!;
+    public virtual Restaurant? Restaurant { get; set; } = null!;
     
     public static Employee AssignEmployee(QrCafeDbContext db, Table table)
     {

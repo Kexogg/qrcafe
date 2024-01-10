@@ -28,14 +28,16 @@ namespace QrCafe.Controllers
         public async Task<ActionResult<IEnumerable<TableDTO>>> GetTables(int restId)
         {
             return await _context.Tables.Where(t=> t.RestaurantId == restId)
+                .Include(t=> t.AssignedEmployee)
                 .Select(t=> new TableDTO(t)).ToListAsync();
         }
 
         // GET: api/restaurants/0/Tables/5
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Table>> GetTable(int id, int restId)
+        public async Task<ActionResult<TableDTO>> GetTable(int id, int restId)
         {
             var table = await _context.Tables.Where(t=> t.RestaurantId==restId)
+                .Include(t=> t.AssignedEmployee)
                 .FirstOrDefaultAsync(t=> t.Id == id);
 
             if (table == null)
@@ -43,18 +45,22 @@ namespace QrCafe.Controllers
                 return NotFound();
             }
 
-            return table;
+            return new TableDTO(table);
         }
         
         [HttpPatch("{id:int}")]
-        public async Task<IActionResult> PutTable(int id, Table table, int restId)
+        public async Task<IActionResult> PatchTable(int id, Table table, int restId)
         {
-            if (id != table.Id || restId!=table.RestaurantId)
+            var tableData = await _context.Tables.Where(t => t.RestaurantId == restId)
+                .FirstOrDefaultAsync(t => t.Id == id);
+            if (tableData == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(table).State = EntityState.Modified;
+            tableData.Name = table.Name;
+            if(table.AssignedEmployeeId != null)
+                tableData.AssignedEmployeeId = table.AssignedEmployeeId;
 
             try
             {
