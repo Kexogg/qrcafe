@@ -6,6 +6,7 @@ public class FoodDTO
 {
     public FoodDTO(){}
 
+/*
     public FoodDTO(string name, string description, int price, int weight)
     {
         Name = name;
@@ -13,6 +14,7 @@ public class FoodDTO
         Weight = weight;
         Price = price;
     }
+*/
     public FoodDTO(Food food)
     {
         Id = food.Id;
@@ -36,7 +38,6 @@ public class FoodDTO
     public int Weight { get; set; }
     
     public int Price { get; set; }
-    
     
     public List<int>? ExtrasId { get; set; } = new();
     

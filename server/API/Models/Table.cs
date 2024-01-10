@@ -10,6 +10,7 @@ public class TableDTO
         Id = table.Id;
         Name = table.Name;
         AssignedEmployee = table.AssignedEmployee == null ? null : new EmployeeDTO(table.AssignedEmployee);
+        Client = table.Client == null ? null : new ClientDTO(table.Client);
     }
     
     public int Id { get; set; }
@@ -17,6 +18,8 @@ public class TableDTO
     public string Name { get; set; }
 
     public EmployeeDTO? AssignedEmployee { get; set; }
+    
+    public ClientDTO? Client { get; set; }
 }
 public partial class Table
 {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging;
 using QrCafe;
 using QrCafe.Models;
 
@@ -31,22 +32,13 @@ namespace QrCafe.Controllers
         {
             var result = new List<FoodQueueDTO>();
             if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value == "employee")
-            { 
-                var foodQueueList = await _context.FoodQueues.Where(q => q.RestaurantId == restId)
-                    .Include(fq=> fq.FoodQueueExtras)
-                    .ThenInclude(fqe=> fqe.Extra)
-                    .ToListAsync();
-                foreach (var foodQueue in foodQueueList)
+            {
+                var tables = await _context.Tables
+                    .Where(t => t.RestaurantId == restId && t.ClientId != null).ToListAsync();
+                foreach (var item in tables)
                 {
-                    var resultItem = new FoodQueueDTO(foodQueue);
-                    var foodQueueExtras = foodQueue.FoodQueueExtras.ToList();
-                    foreach (var extra in foodQueueExtras)
-                    {
-                        resultItem.Extras.Add(extra.Extra);
-                    }
-                    result.Add(resultItem);
+                    result.AddRange(GetFoodQueueList(restId, item.Id).Result);
                 }
-
                 return result;
             }
             var restaurantIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
@@ -146,6 +138,7 @@ namespace QrCafe.Controllers
                 return NotFound();
             }
 
+            await _context.FoodQueueExtras.Where(fqe => fqe.FoodQueueId == foodQueue.Id).ExecuteDeleteAsync();
             _context.FoodQueues.Remove(foodQueue);
             await _context.SaveChangesAsync();
 
@@ -161,22 +154,13 @@ namespace QrCafe.Controllers
         {
             var table  = await _context.Tables.Where(t => t.RestaurantId == restId).Include(t => t.Client)
                 .ThenInclude(c => c.FoodQueues).ThenInclude(fq => fq.FoodQueueExtras)
-                .ThenInclude(fqe => fqe.Extra).FirstOrDefaultAsync(t => t.Id == tableId);
-            if (table?.Client == null) return null;
-            var result = new List<FoodQueueDTO>();
-            var foodQueueItems = table.Client.FoodQueues.ToList();
-            foreach (var item in foodQueueItems)
-            {
-                var resultItem = new FoodQueueDTO(item);
-                var foodQueueExtras = item.FoodQueueExtras.ToList();
-                foreach (var extra in foodQueueExtras)
-                {
-                    resultItem.Extras.Add(extra.Extra);
-                }
-                result.Add(resultItem);
-            }
+                .ThenInclude(fqe => fqe.Extra)
+                .Include(t=>t.Client.FoodQueues)
+                .ThenInclude(fq=> fq.Food)
+                .FirstOrDefaultAsync(t => t.Id == tableId);
+            var foodQueueItems = table?.Client?.FoodQueues.ToList();
 
-            return result;
+            return foodQueueItems?.Select(item => new FoodQueueDTO(item)).ToList();
         }
     }
 }

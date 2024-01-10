@@ -20,6 +20,7 @@ public class ClientDTO
         Tip = client.Tip;
         Total = client.Total;
         PaymentMethod = client.PaymentMethod;
+        FoodQueue = client.FoodQueues.Select(fq => new FoodQueueDTO(fq)).ToList();
     }
 
     public int TableId { get; set; }
@@ -45,7 +46,9 @@ public class ClientDTO
     public double? Total { get; set; }
 
     public short? PaymentMethod { get; set; }
-    
+
+    public ICollection<FoodQueueDTO> FoodQueue = new List<FoodQueueDTO>();
+
 }
 public partial class Client
 {

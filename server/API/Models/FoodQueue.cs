@@ -10,18 +10,26 @@ public class FoodQueueDTO
     {
         Id = foodQueue.Id;
         ClientId = foodQueue.ClientId;
+        TableId = foodQueue.Client.TableId;
         RestaurantId = foodQueue.RestaurantId;
         FoodId = foodQueue.FoodId;
         State = foodQueue.State;
         CreatedAt = foodQueue.CreatedAt;
+        Food = new FoodDTO(foodQueue.Food);
+        foreach (var item in foodQueue.FoodQueueExtras)
+        {
+            Food.Extras.Add(new ExtraDTO(item.Extra));
+        }
     }
 
+/*
     public FoodQueueDTO(Guid clientId, int foodId, short state)
     {
         ClientId = clientId;
         FoodId = foodId;
         State = state;
     }
+*/
     
     public Guid? Id { get; set; }
 
@@ -33,9 +41,11 @@ public class FoodQueueDTO
 
     public short State { get; set; }
     
+    public FoodDTO? Food { get; set; }
+    
+    public int? TableId { get; set; }
+    
     public TimeOnly? CreatedAt { get; set; }
-
-    public List<Extra?> Extras { get; set; } = new List<Extra?>();
 }
 public partial class FoodQueue
 {

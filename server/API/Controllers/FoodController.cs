@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.S3;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,11 @@ namespace QrCafe.Controllers
     {
         private readonly QrCafeDbContext _context;
 
+        public IAmazonS3 client;
         public FoodController(QrCafeDbContext context)
         {
             _context = context;
+            //client = new AmazonS3Client("nyashdev", "nyashdev");
         }
 
         // GET: /api/restaurants/0/categories/Food

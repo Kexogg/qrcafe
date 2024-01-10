@@ -31,7 +31,20 @@ namespace QrCafe.Controllers
                 .Include(t=> t.AssignedEmployee)
                 .Select(t=> new TableDTO(t)).ToListAsync();
         }
-
+        
+        [HttpGet("getall")]
+        public async Task<ActionResult<IEnumerable<TableDTO>>> GetAllTablesInfo(int restId)
+        {
+            return await _context.Tables.Where(t => t.RestaurantId == restId)
+                .Include(t=> t.AssignedEmployee)
+                .Include(t => t.Client)
+                .ThenInclude(c => c.FoodQueues).ThenInclude(fq => fq.FoodQueueExtras)
+                .ThenInclude(fqe => fqe.Extra)
+                .Include(t=>t.Client.FoodQueues)
+                .ThenInclude(fq=> fq.Food).Select(t=> new TableDTO(t))
+                .ToListAsync();
+        }
+        
         // GET: api/restaurants/0/Tables/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<TableDTO>> GetTable(int id, int restId)
