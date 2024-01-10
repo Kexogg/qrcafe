@@ -35,7 +35,7 @@ public class FoodQueueDTO
     
     public TimeOnly? CreatedAt { get; set; }
 
-    public List<Extra> Extras { get; set; } = new List<Extra>();
+    public List<Extra?> Extras { get; set; } = new List<Extra?>();
 }
 public partial class FoodQueue
 {

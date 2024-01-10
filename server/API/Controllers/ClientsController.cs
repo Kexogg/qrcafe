@@ -116,10 +116,11 @@ public class ClientsController : ControllerBase
         if (table.AssignedEmployeeId != null) return BadRequest();
         var employee = Table.AssignEmployee(_context, table);
         if (employee == null) return Conflict();
-        table.AssignedEmployee = employee;
         table.AssignedEmployeeId = employee.Id;
         var client = new Client(restId, tableId, employee.Id);
         await _context.Clients.AddAsync(client);
+        await _context.SaveChangesAsync();
+        table.ClientId = client.Id;
         await _context.SaveChangesAsync();
         var claims = new List<Claim> { new(ClaimTypes.Role, "client"), 
             new("restId", client.RestaurantId.ToString()),
@@ -136,7 +137,7 @@ public class ClientsController : ControllerBase
         string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
         var response = new
         {
-            access_token = encodedJwt
+            token = encodedJwt
         };
         return Ok(response);
     }

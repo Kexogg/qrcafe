@@ -75,6 +75,11 @@ public partial class QrCafeDbContext : DbContext
                 .HasForeignKey(d => d.AssignedEmployeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("clients_employees_id_fk");
+            
+            entity.HasOne(d => d.Table).WithOne(p => p.Client)
+                .HasForeignKey<Client>(d => d.TableId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("clients_tables_id_fk");
 
             entity.HasOne(d => d.Restaurant).WithMany(p => p.Clients)
                 .HasForeignKey(d => d.RestaurantId)
@@ -217,6 +222,12 @@ public partial class QrCafeDbContext : DbContext
             entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
             entity.Property(e => e.AssignedEmployeeId).HasColumnName("assigned_employee_id");
             entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.ClientId).HasColumnName("client_id");
+
+            entity.HasOne(d => d.Client).WithOne(p => p.Table)
+                .HasForeignKey<Table>(d => d.ClientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tables_clients_id_fk");
             
             entity.HasOne(d => d.AssignedEmployee).WithMany(p => p.Tables)
                 .HasForeignKey(d => d.AssignedEmployeeId)

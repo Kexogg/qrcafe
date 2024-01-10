@@ -29,6 +29,11 @@ public partial class Table
 
     public int RestaurantId { get; set; }
 
+    public Guid? ClientId { get; set; }
+    
+    [System.Text.Json.Serialization.JsonIgnore]
+    public virtual Client? Client { get; set; }
+    
     public Guid? AssignedEmployeeId { get; set; }
 
     [System.Text.Json.Serialization.JsonIgnore]

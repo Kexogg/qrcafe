@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,36 +22,57 @@ namespace QrCafe.Controllers
         {
             _context = context;
         }
+        
 
         // GET: /api/restaurants/0/FoodQueue
         [HttpGet]
-        [Authorize (Roles = "employee")]
-        public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> GetFoodQueues(int restId)
+        [Authorize(Roles = "client, employee")]
+        public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> GetFoodQueue(int restId)
         {
-            return await _context.FoodQueues.Where(q=> q.RestaurantId==restId)
-                .Select(q=> new FoodQueueDTO(q)).ToListAsync();
-        }
+            var result = new List<FoodQueueDTO>();
+            if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value == "employee")
+            { 
+                var foodQueueList = await _context.FoodQueues.Where(q => q.RestaurantId == restId)
+                    .Include(fq=> fq.FoodQueueExtras)
+                    .ThenInclude(fqe=> fqe.Extra)
+                    .ToListAsync();
+                foreach (var foodQueue in foodQueueList)
+                {
+                    var resultItem = new FoodQueueDTO(foodQueue);
+                    var foodQueueExtras = foodQueue.FoodQueueExtras.ToList();
+                    foreach (var extra in foodQueueExtras)
+                    {
+                        resultItem.Extras.Add(extra.Extra);
+                    }
+                    result.Add(resultItem);
+                }
 
-        // GET: /api/restaurants/0/FoodQueue/5
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<FoodQueue>> GetFoodQueue(Guid id, int restId)
-        {
-            var foodQueue = await _context.FoodQueues.Where(q=> q.RestaurantId == restId)
-                .FirstOrDefaultAsync(q=> q.Id == id);
-
-            if (foodQueue == null)
-            {
-                return NotFound();
+                return result;
             }
+            var restaurantIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
+            var tableIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "tableId")?.Value);
+            var table = await _context.Tables.Where(t=> t.RestaurantId == restId)
+                .FirstOrDefaultAsync(r=> r.Id == tableIdClaim);
+            if (restaurantIdClaim != restId || table == null) return BadRequest();
+            var list  = await GetFoodQueueList(restId, tableIdClaim);
+            result = list.ToList();
+            return result;
+        }
+        
+        [HttpGet("{tableId:int}")]
+        [Authorize(Roles = "employee")]
+        public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> GetFoodQueueByTableId(int tableId, int restId)
+        {
+            var foodQueue = await GetFoodQueueList(restId, tableId);
 
-            return foodQueue;
+            return foodQueue.ToList();
         }
 
         // PUT: /api/restaurants/0/FoodQueue/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch]
         [Authorize (Roles = "employee")]
-        public async Task<IActionResult> PutFoodQueue(Guid id, FoodQueue foodQueue, int restId)
+        public async Task<IActionResult> PatchFoodQueue(Guid id, FoodQueue foodQueue, int restId)
         {
             if (id != foodQueue.Id || restId!=foodQueue.RestaurantId)
             {
@@ -84,35 +106,32 @@ namespace QrCafe.Controllers
         [Authorize (Roles = "client")]
         public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueue(List<FoodDTO> foodList, int restId)
         {
-            var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
+            var restaurantIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
             var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
+            var tableIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "tableId")?.Value);
             var restaurant = await _context.Restaurants.Include(r => r.Clients)
                 .Include(r => r.Foods).ThenInclude(food => food.FoodExtras)
                 .FirstOrDefaultAsync(r=> r.Id == restId);
-            if (restaurantClaim != restId || restaurant == null) return BadRequest();
+            if (restaurantIdClaim != restId || restaurant == null) return BadRequest();
             var client = restaurant.Clients.FirstOrDefault(c=> c.Id == clientIdClaim);
             if (client == null) return NotFound();
             var time = TimeOnly.FromDateTime(DateTime.Now);
-            var queue = new List<FoodQueueDTO>();
             foreach (var foodItem in foodList)
             {
                 var food = restaurant.Foods.FirstOrDefault(f=> f.Id == foodItem.Id);
                 if (food == null) continue;
                 var foodQueue = new FoodQueue(food, client.Id, time);
                 await _context.FoodQueues.AddAsync(foodQueue);
-                var foodQueueResult = new FoodQueueDTO(foodQueue);
-                if (foodItem.ExtrasId != null)
-                    foreach (var extraId in foodItem.ExtrasId
-                                 .Where(extraId => food.FoodExtras.Any(fe => fe.ExtraId == extraId)))
-                    {
-                        var foodQueueExtra = new FoodQueueExtra(foodQueue.Id, extraId, restId);
-                        await _context.FoodQueueExtras.AddAsync(foodQueueExtra);
-                        foodQueueResult.Extras.Add(await _context.Extras.Where(e=> e.RestaurantId == restId)
-                            .FirstOrDefaultAsync(e=> e.Id == foodQueueExtra.ExtraId));
-                    }
-                queue.Add(foodQueueResult);
+                if (foodItem.ExtrasId == null) continue;
+                foreach (var extraId in foodItem.ExtrasId
+                             .Where(extraId => food.FoodExtras.Any(fe => fe.ExtraId == extraId)))
+                {
+                    var foodQueueExtra = new FoodQueueExtra(foodQueue.Id, extraId, restId);
+                    await _context.FoodQueueExtras.AddAsync(foodQueueExtra);
+                }
             }
             await _context.SaveChangesAsync();
+            var queue = await GetFoodQueueList(restaurantIdClaim, tableIdClaim);
             return Ok(queue);
         }
 
@@ -136,6 +155,28 @@ namespace QrCafe.Controllers
         private bool FoodQueueExists(Guid id, int restId)
         {
             return _context.FoodQueues.Where(q=> q.RestaurantId == restId).Any(e => e.Id == id);
+        }
+
+        private async Task<IEnumerable<FoodQueueDTO>> GetFoodQueueList(int restId, int tableId)
+        {
+            var table  = await _context.Tables.Where(t => t.RestaurantId == restId).Include(t => t.Client)
+                .ThenInclude(c => c.FoodQueues).ThenInclude(fq => fq.FoodQueueExtras)
+                .ThenInclude(fqe => fqe.Extra).FirstOrDefaultAsync(t => t.Id == tableId);
+            if (table?.Client == null) return null;
+            var result = new List<FoodQueueDTO>();
+            var foodQueueItems = table.Client.FoodQueues.ToList();
+            foreach (var item in foodQueueItems)
+            {
+                var resultItem = new FoodQueueDTO(item);
+                var foodQueueExtras = item.FoodQueueExtras.ToList();
+                foreach (var extra in foodQueueExtras)
+                {
+                    resultItem.Extras.Add(extra.Extra);
+                }
+                result.Add(resultItem);
+            }
+
+            return result;
         }
     }
 }

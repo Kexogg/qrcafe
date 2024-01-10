@@ -101,6 +101,9 @@ public partial class Client
     public short? PaymentMethod { get; set; }
 
     [System.Text.Json.Serialization.JsonIgnore]
+    public virtual Table Table { get; set; } = null!;
+    
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Employee AssignedEmployee { get; set; } = null!;
 
     [System.Text.Json.Serialization.JsonIgnore]
