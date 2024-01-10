@@ -1,7 +1,10 @@
 import { useAppDispatch } from '../../../hooks/hooks.ts'
 import { QrReader } from 'react-qr-reader'
 import { Button } from '../../../components/UI/Button/Button.tsx'
-import { setToken } from '../../../features/session/sessionSlice.ts'
+import {
+    setRestaurantId,
+    setToken,
+} from '../../../features/session/sessionSlice.ts'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getClientToken } from '../../../api/api.ts'
@@ -31,11 +34,8 @@ export const LoginQrScanner = () => {
                             .then((params) => {
                                 getClientToken(params.id, params.table)
                                     .then((response) => {
-                                        dispatch(
-                                            setToken(
-                                                response.data.access_token,
-                                            ),
-                                        )
+                                        dispatch(setToken(response.data.token))
+                                        dispatch(setRestaurantId(params.id))
                                         setData('Код подтвержден')
                                         navigate('/login/name')
                                     })

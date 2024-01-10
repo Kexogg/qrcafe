@@ -22,6 +22,9 @@ export const sessionSlice = createSlice({
             state.token = action.payload
             state.tokenTimestamp = Date.now()
         },
+        setRestaurantId: (state, action: { payload: string }) => {
+            state.restaurantId = action.payload
+        },
         setSession: (state, action: { payload: SessionState }) => {
             Object.assign(state, action.payload)
         },
@@ -31,6 +34,7 @@ export const sessionSlice = createSlice({
     },
 })
 
-export const { setSession, setToken, resetSession } = sessionSlice.actions
+export const { setSession, setToken, resetSession, setRestaurantId } =
+    sessionSlice.actions
 
 export default sessionSlice.reducer
