@@ -30,11 +30,11 @@
 
 .spinner1 {
   position: absolute;
-  transform: rotateX(180deg);
   animation: opacity1 2s linear infinite;
 }
 .spinner2 {
   position: absolute;
+  transform: rotateX(180deg);
   z-index: 5;
   animation: opacity2 2s linear infinite;
 }
