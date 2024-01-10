@@ -1,5 +1,5 @@
 import { WithId } from '../../../types/types.ts'
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import styles from './DashboardEditorTemplate.module.css'
 import {
     ComponentType,
@@ -15,6 +15,7 @@ import Dropdown from '../../../components/UI/Input/Dropdown/Dropdown.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { useNavigate } from 'react-router-dom'
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
+import { ErrorBox } from '../../../components/UI/ErrorBox/ErrorBox.tsx'
 
 interface Property {
     name: string
@@ -27,11 +28,24 @@ interface Property {
         | 'checkbox'
         | 'custom'
         | 'number'
+        | 'image'
     customComponent?: ComponentType<{
         value: unknown
         onChange: (value: unknown) => void
     }>
-    options?: string[]
+    options?: string[] | { name: string; value: string }[]
+    fetchOptions?: (
+        token: string,
+        restaurantId: string,
+    ) => Promise<
+        {
+            name: string
+            value: string
+        }[]
+    >
+    defaultValue?: (value?: unknown, options?: string) => string
+    required?: boolean
+    requiresItem?: boolean
 }
 
 type DashboardEditorTemplateProps<T extends WithId> = {
@@ -62,7 +76,7 @@ export const DashboardEditorTemplate = <T extends WithId>({
     const [item, setItem] = useState<T>({ id: '' } as T)
     const [itemExists, setItemExists] = useState(false)
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
+    const [error, setError] = useState<string | Error | AxiosError>('')
     const [lastUpdate, setLastUpdate] = useState(Date.now())
     const session = useAppSelector((state) => state.session)
     const navigate = useNavigate()
@@ -74,14 +88,15 @@ export const DashboardEditorTemplate = <T extends WithId>({
                     setItemExists(true)
                 })
                 .catch((response) => {
-                    setError(response.message)
+                    setError(response)
                 })
                 .finally(() => setLoading(false))
         } else {
             setLoading(false)
         }
     }, [getItem, session.restaurantId, session.token, id])
-    const onSubmit = () => {
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
         async function send() {
             return itemExists
                 ? await updateItem(session.token!, session.restaurantId!, item)
@@ -90,10 +105,11 @@ export const DashboardEditorTemplate = <T extends WithId>({
 
         setLoading(true)
         send()
-            .then(() => {
+            .then((response) => {
                 setLastUpdate(Date.now())
                 setItemExists(true)
                 setError('')
+                if (response) setItem(response as unknown as T)
             })
             .catch((response) => {
                 setError(response.message)
@@ -105,15 +121,17 @@ export const DashboardEditorTemplate = <T extends WithId>({
         <section className={'relative'}>
             {loading && <LoadingSpinner elementOverlay />}
             <h1>{pageTitle}</h1>
-            {error}
+            {error && <ErrorBox error={error} />}
             <form
+                onSubmit={onSubmit}
                 className={`${styles.form} ${
                     loading && 'animate-pulse opacity-75'
                 }`}>
                 {properties.map((property) => {
+                    if (property.requiresItem && !itemExists) return null
                     return (
                         <label key={property.name}>
-                            {property.name}
+                            <span>{property.name}</span>
                             <PropertyEditor
                                 setItem={setItem}
                                 item={item}
@@ -123,7 +141,7 @@ export const DashboardEditorTemplate = <T extends WithId>({
                     )
                 })}
                 <div className={'col-span-2 flex gap-2'}>
-                    <Button dark label={'Сохранить'} onClick={onSubmit} />
+                    <Button dark label={'Сохранить'} type={'submit'} />
                     <Button
                         border
                         label={'Назад'}
@@ -148,12 +166,24 @@ const PropertyEditor = <T extends WithId>({
     item,
     property,
 }: PropertyEditorProps<T>) => {
+    const session = useAppSelector((state) => state.session)
     const onChange = (value: unknown) => {
         setItem((item) => ({
             ...item,
             [property.key]: value,
         }))
     }
+    const [options, setOptions] = useState<
+        { name: string; value: string }[] | string[]
+    >(property.options ?? [])
+    useEffect(() => {
+        if (property.fetchOptions) {
+            property
+                .fetchOptions(session.token!, session.restaurantId!)
+                .then((options) => setOptions(options))
+        }
+    }, [property, session.restaurantId, session.token])
+
     switch (property.type) {
         case 'text':
         case 'number':
@@ -161,6 +191,7 @@ const PropertyEditor = <T extends WithId>({
             return (
                 <TextField
                     type={property.type}
+                    required={property.required}
                     dark
                     onChange={(e) => onChange(e.target.value)}
                     defaultValue={(item[property.key] as string) ?? ''}
@@ -169,6 +200,7 @@ const PropertyEditor = <T extends WithId>({
         case 'textarea':
             return (
                 <TextArea
+                    required={property.required}
                     value={(item[property.key] as string) ?? ''}
                     onChange={(e) => onChange(e.target.value)}
                 />
@@ -177,8 +209,12 @@ const PropertyEditor = <T extends WithId>({
             return (
                 <Dropdown
                     dark
-                    options={property.options ?? []}
-                    selected={item[property.key] as string}
+                    required={property.required}
+                    options={options}
+                    selected={
+                        property.defaultValue?.() ??
+                        (item[property.key] as string)
+                    }
                     onChange={(event) => onChange(event.target.value)}
                 />
             )
@@ -186,10 +222,37 @@ const PropertyEditor = <T extends WithId>({
             return (
                 <input
                     type={'checkbox'}
+                    required={property.required}
                     className={'w-min'}
                     checked={(item[property.key] as boolean) ?? false}
                     onChange={(event) => onChange(event.target.checked)}
                 />
+            )
+        case 'image':
+            return (
+                <div className={'flex flex-col gap-3'}>
+                    {item[property.key] !== '' && (
+                        <img
+                            src={
+                                item[property.key] instanceof File
+                                    ? URL.createObjectURL(
+                                          item[property.key] as Blob,
+                                      )
+                                    : (item[property.key] as string)
+                            }
+                            className={'h-40 w-40 object-cover'}
+                            alt={item[property.key] as string}
+                        />
+                    )}
+                    <input
+                        type={'file'}
+                        required={property.required}
+                        className={'w-min'}
+                        onChange={(event) =>
+                            onChange(event.target.files?.item(0))
+                        }
+                    />
+                </div>
             )
         case 'custom':
             return (
@@ -201,6 +264,6 @@ const PropertyEditor = <T extends WithId>({
                 )
             )
         default:
-            return <input type={'text'} />
+            return <>{item[property.key]}</>
     }
 }

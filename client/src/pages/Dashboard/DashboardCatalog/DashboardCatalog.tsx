@@ -32,8 +32,8 @@ export const DashboardCatalog = () => {
                     func: (row) => (row ? 'Да' : 'Нет'),
                 },
                 {
-                    name: 'Положение',
-                    key: 'position',
+                    name: 'Позиция',
+                    key: 'order',
                     shrink: true,
                 },
             ]}

@@ -4,6 +4,7 @@ import { ITable } from '../../../types/ITable.ts'
 import { useEffect, useRef, useState } from 'react'
 import { QRCodePDF } from './QRCodePDF.tsx'
 import { useAppSelector } from '../../../hooks/hooks.ts'
+import { getQRValue } from '../../../helpers.ts'
 
 type TableQrModalProps = {
     onClose: () => void
@@ -13,13 +14,7 @@ type TableQrModalProps = {
 
 export const TableQrModal = ({ onClose, open, table }: TableQrModalProps) => {
     const restaurantId = useAppSelector((state) => state.session.restaurantId)
-    const getQRValue = () => {
-        const params = new URLSearchParams({
-            id: restaurantId as string,
-            table: table.id,
-        })
-        return `https://${window.location.hostname}/login?${params.toString()}`
-    }
+
     const svgRef = useRef(null)
     const [QrCode, setQRCode] = useState<
         typeof import('react-qr-code').default | null
@@ -44,7 +39,10 @@ export const TableQrModal = ({ onClose, open, table }: TableQrModalProps) => {
             {table?.id && (
                 <>
                     <div className={'mx-auto bg-white p-3'}>
-                        <QrCode value={getQRValue()} ref={svgRef} />
+                        <QrCode
+                            value={getQRValue(restaurantId!, table.id)}
+                            ref={svgRef}
+                        />
                     </div>
                     <Button
                         dark

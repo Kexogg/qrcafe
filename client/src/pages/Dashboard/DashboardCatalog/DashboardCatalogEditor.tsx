@@ -22,11 +22,13 @@ export const DashboardCatalogEditor = () => {
                     name: 'Название',
                     key: 'name',
                     type: 'text',
+                    required: true,
                 },
                 {
                     name: 'Описание',
                     key: 'description',
                     type: 'text',
+                    required: true,
                 },
                 {
                     name: 'Публиковать',
@@ -45,11 +47,11 @@ export const DashboardCatalogEditor = () => {
                 },
                 {
                     name: 'Еда',
-                    key: 'food',
+                    key: 'foodList',
                     type: 'custom',
                     customComponent: (props) => (
                         <CatalogEditorSelector
-                            value={props.value as IDish[]}
+                            value={(props.value as IDish[]) ?? []}
                             onChange={props.onChange}
                         />
                     ),

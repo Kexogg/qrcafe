@@ -1,11 +1,14 @@
 import { useAppSelector } from '../../../hooks/hooks.ts'
 import { ComponentProps, useEffect, useState } from 'react'
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import { AutoTable } from '../../../components/UI/AutoTable/AutoTable.tsx'
 import { AddRounded, DeleteRounded, RefreshRounded } from '@mui/icons-material'
 import { TableButton } from '../../../components/UI/TableButton/TableButton.tsx'
 import { WithId } from '../../../types/types.ts'
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
+import { ErrorBox } from '../../../components/UI/ErrorBox/ErrorBox.tsx'
+import Modal from '../../../components/UI/Modal/Modal.tsx'
+import { Button } from '../../../components/UI/Button/Button.tsx'
 
 type DashboardPageTemplateProps<T extends WithId> = {
     pageTitle: string
@@ -38,8 +41,9 @@ export const DashboardPageTemplate = <T extends WithId>({
     const [items, setItems] = useState<T[]>([])
     const [selectedItems, setSelectedItems] = useState<T[]>([])
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
+    const [error, setError] = useState<AxiosError | Error | string>('')
     const [lastUpdate, setLastUpdate] = useState(Date.now())
+    const [modalOpen, setModalOpen] = useState(false)
     const session = useAppSelector((state) => state.session)
     useEffect(() => {
         getItems(session.token!, session.restaurantId!)
@@ -53,8 +57,39 @@ export const DashboardPageTemplate = <T extends WithId>({
     }, [getItems, session.restaurantId, session.token, lastUpdate])
     return (
         <section className={'relative'}>
+            <Modal open={modalOpen} autoHeight>
+                <h1>Подтвердите действие</h1>
+                <p>Вы уверены, что хотите удалить выбранные элементы?</p>
+                <Button
+                    label={'Удалить'}
+                    dark
+                    onClick={() => {
+                        setLoading(true)
+                        setModalOpen(false)
+                        for (const item of selectedItems) {
+                            deleteItem?.(
+                                session.token!,
+                                session.restaurantId!,
+                                item.id,
+                            )
+                                .catch((e) => {
+                                    setError(e.message)
+                                })
+                                .finally(() => {
+                                    setSelectedItems([])
+                                    setLastUpdate(Date.now())
+                                })
+                        }
+                    }}
+                />
+                <Button
+                    border
+                    label={'Отмена'}
+                    onClick={() => setModalOpen(false)}
+                />
+            </Modal>
             <h1>{pageTitle}</h1>
-            {error}
+            {error && <ErrorBox error={error} />}
             {loading && <LoadingSpinner elementOverlay />}
             <div
                 className={`flex flex-col gap-3 ${
@@ -75,21 +110,7 @@ export const DashboardPageTemplate = <T extends WithId>({
                         <TableButton
                             disabled={selectedItems.length === 0}
                             onClick={() => {
-                                setLoading(true)
-                                for (const item of selectedItems) {
-                                    deleteItem(
-                                        session.token!,
-                                        session.restaurantId!,
-                                        item.id,
-                                    )
-                                        .catch((e) => {
-                                            setError(e.message)
-                                        })
-                                        .finally(() => {
-                                            setSelectedItems([])
-                                            setLastUpdate(Date.now())
-                                        })
-                                }
+                                setModalOpen(true)
                             }}>
                             <DeleteRounded />
                         </TableButton>
