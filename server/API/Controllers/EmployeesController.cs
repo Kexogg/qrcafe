@@ -106,7 +106,7 @@ namespace QrCafe.Controllers
             try
             {
                 await _context.SaveChangesAsync();
-                if(Request.HasFormContentType)
+                if(Request is { HasFormContentType: true, Form.Files.Count: > 0 })
                 {
                     var fileRequest = Request.Form.Files[0];
                     if (fileRequest.ContentType != "image/jpeg") return BadRequest("Invalid image type");
@@ -155,7 +155,7 @@ namespace QrCafe.Controllers
             if (employee.Password == null) return Conflict();
             employee.RestaurantId = restId;
             await _context.Employees.AddAsync(employee);
-            if(Request.HasFormContentType)
+            if(Request is { HasFormContentType: true, Form.Files.Count: > 0 })
             {
                 var fileRequest = Request.Form.Files[0];
                 if (fileRequest.ContentType != "image/jpeg") return BadRequest("Invalid image type");

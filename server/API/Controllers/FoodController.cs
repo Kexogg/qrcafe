@@ -116,7 +116,7 @@ namespace QrCafe.Controllers
 
             _context.Entry(food).State = EntityState.Modified;
             
-            if (Request.HasFormContentType)
+            if (Request is { HasFormContentType: true, Form.Files.Count: > 0 })
             {
                 var fileRequest = Request.Form.Files[0];
                 if (fileRequest.ContentType != "image/jpeg") return BadRequest("Invalid image type");
@@ -169,7 +169,7 @@ namespace QrCafe.Controllers
                 RestaurantId = restId
             };
             await _context.Foods.AddAsync(food);
-            if (Request.HasFormContentType && Request.Form.Files.Count != 0)
+            if (Request is { HasFormContentType: true, Form.Files.Count: > 0 })
             {
                 var fileRequest = Request.Form.Files[0];
                 if (fileRequest.ContentType != "image/jpeg") return BadRequest("Invalid image type");
