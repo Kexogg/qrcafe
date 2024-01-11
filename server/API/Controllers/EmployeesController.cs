@@ -99,7 +99,7 @@ namespace QrCafe.Controllers
                     .FirstOrDefaultAsync(e=> e.Id==id);
             employeeData.FullName = employee.FullName;
             employeeData.Login = employee.Login;
-            employeeData.RoleId = employee.RoleId;
+            employeeData.Role = employee.Role;
             employeeData.Available = employee.Available;
             _context.Entry(employeeData).State = EntityState.Modified;
             
@@ -199,7 +199,7 @@ namespace QrCafe.Controllers
             var response = new
             {
                 token = encodedJwt,
-                roleId = employee.RoleId
+                roleId = employee.Role
             };
             return Ok(response);
         }

@@ -49,7 +49,7 @@ public partial class Table
     {
         var tables = db.Tables.Where(t => t.RestaurantId == table.RestaurantId).ToListAsync().Result;
         var availableEmployees = db.Employees
-            .Where(e => e.RestaurantId == table.RestaurantId && e.Available && e.RoleId == 1)
+            .Where(e => e.RestaurantId == table.RestaurantId && e.Available && e.Role == 1)
             .ToDictionary(employee => employee, _ => 0);
         if (availableEmployees.Count == 0) return null;
         foreach (var tabl in tables.Where(tabl => tabl.AssignedEmployeeId != null))

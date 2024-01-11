@@ -18,7 +18,7 @@ public class EmployeeDTO
         Id = employee.Id;
         Login = employee.Login;
         FullName = employee.FullName;
-        Role = employee.RoleId;
+        Role = employee.Role;
         Available = employee.Available;
         ImageUrl = $"https://s3.stk8s.66bit.ru/nyashdev/employees/{employee.Id}.jpg";
     }
@@ -42,10 +42,11 @@ public partial class Employee
     public string FullName { get; set; } = null!;
 
     public string Login { get; set; }
-
+    
     public string? Password { get; set; }
-    public int RoleId { get; set; }
-
+    
+    public int Role { get; set; }
+    
     public int? RestaurantId { get; set; }
 
     public bool Available { get; set; }

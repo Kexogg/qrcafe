@@ -100,7 +100,7 @@ public partial class QrCafeDbContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("full_name");
             entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
-            entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.Role).HasColumnName("role");
 
             entity.HasOne(d => d.Restaurant).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.RestaurantId)
@@ -108,7 +108,7 @@ public partial class QrCafeDbContext : DbContext
             
             entity.HasData(new Employee
             {
-                Id = new Guid("AA249B46-CF7C-4B1E-9FF4-38053AE67677"), FullName = "admin", Login = "admin", Password = "IGI$arFiH~RXf9k", RoleId = 0,
+                Id = new Guid("AA249B46-CF7C-4B1E-9FF4-38053AE67677"), FullName = "admin", Login = "admin", Password = "IGI$arFiH~RXf9k", Role = 0,
                 RestaurantId = 0000000000, Available = true
             });
         });
