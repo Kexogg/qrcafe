@@ -37,6 +37,8 @@ namespace QrCafe.Controllers
         {
             var restaurant = await _context.Restaurants.Include(restaurant => restaurant.Categories)
                 .ThenInclude(c => c.FoodCategories).ThenInclude(fc => fc.Food)
+                .ThenInclude(f=>f.FoodExtras)
+                .ThenInclude(fe=>fe.Extra)
                 .FirstOrDefaultAsync(r => r.Id == restId);
             if (restaurant == null) return NotFound();
             var result = new List<CategoryDTO>();
@@ -45,7 +47,13 @@ namespace QrCafe.Controllers
                 var categoryDTO = new CategoryDTO(category);
                 foreach (var foodCategory in category.FoodCategories)
                 {
-                    categoryDTO.FoodList.Add(new FoodDTO(foodCategory.Food));
+                    var food = foodCategory.Food;
+                    var foodItem = new FoodDTO(food);
+                    foreach (var item in food.FoodExtras)
+                    {
+                        foodItem.Extras?.Add(new ExtraDTO(item.Extra));
+                    }
+                    categoryDTO.FoodList.Add(foodItem);
                 }
 
                 result.Add(categoryDTO);
