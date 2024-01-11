@@ -3,7 +3,10 @@ import { setWaiter } from '../../../features/waiter/waiterSlice.ts'
 import { AccountCircle } from '@mui/icons-material'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { useNavigate } from 'react-router-dom'
-import { setSession } from '../../../features/session/sessionSlice.ts'
+import {
+    SessionType,
+    setSession,
+} from '../../../features/session/sessionSlice.ts'
 
 export const LoginWelcome = () => {
     const waiter = useAppSelector((state) => state.waiter)
@@ -51,7 +54,12 @@ export const LoginWelcome = () => {
                     <Button
                         label={'Продолжить'}
                         onClick={() => {
-                            dispatch(setSession({ ...session, type: 1 }))
+                            dispatch(
+                                setSession({
+                                    ...session,
+                                    type: SessionType.CUSTOMER,
+                                }),
+                            )
                             navigate('/customer/home')
                         }}
                     />

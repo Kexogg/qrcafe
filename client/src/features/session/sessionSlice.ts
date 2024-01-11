@@ -1,10 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+export enum SessionType {
+    EMPLOYEE = 0,
+    WAITER = 1,
+    CUSTOMER = 2,
+}
+
 export interface SessionState {
     token: string | undefined
     restaurantId: string | undefined
     tokenTimestamp: number | undefined
-    type: number | undefined // 0: employee, 1: customer
+    type: SessionType | undefined
 }
 
 const initialState: SessionState = {

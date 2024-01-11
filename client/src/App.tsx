@@ -5,6 +5,7 @@ import { CustomerRouter } from './routers/CustomerRouter.tsx'
 import { WaiterRouter } from './routers/WaiterRouter.tsx'
 import { LoginRouter } from './routers/LoginRouter.tsx'
 import { DashboardRouter } from './routers/DashboardRouter.tsx'
+import { SessionType } from './features/session/sessionSlice.ts'
 
 function App() {
     const token = useAppSelector((state) => state.session.token)
@@ -14,9 +15,11 @@ function App() {
             {(sessionType === undefined || token === undefined) && (
                 <LoginRouter />
             )}
-            {token && sessionType == 0 && <WaiterRouter />}
-            {token && sessionType == 1 && <CustomerRouter />}
-            {token && sessionType == 2 && <DashboardRouter />}
+            {token && sessionType == SessionType.WAITER && <WaiterRouter />}
+            {token && sessionType == SessionType.CUSTOMER && <CustomerRouter />}
+            {token && sessionType == SessionType.EMPLOYEE && (
+                <DashboardRouter />
+            )}
         </BrowserRouter>
     )
 }

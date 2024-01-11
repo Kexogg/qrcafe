@@ -18,14 +18,13 @@ export const LoginEmployee = () => {
         login: string,
         password: string,
         restaurant: string,
-        sessionType: number,
     ) => {
         setLoading(true)
         getEmployeeToken(login, password, restaurant)
             .then((response) => {
                 dispatch(
                     setSession({
-                        type: sessionType,
+                        type: response.data.roleId,
                         token: response.data.token,
                         tokenTimestamp: Date.now(),
                         restaurantId: restaurant,
@@ -82,17 +81,8 @@ export const LoginEmployee = () => {
                         password.length == 0 ||
                         restaurant.length == 0
                     }
-                    onClick={() => fetchToken(login, password, restaurant, 0)}
+                    onClick={() => fetchToken(login, password, restaurant)}
                     label={'Войти'}
-                />
-                <Button
-                    disabled={
-                        login.length == 0 ||
-                        password.length == 0 ||
-                        restaurant.length == 0
-                    }
-                    onClick={() => fetchToken(login, password, restaurant, 2)}
-                    label={'Войти (личный кабинет)'}
                 />
                 <Button
                     label={'Назад'}
