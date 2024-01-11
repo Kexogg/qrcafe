@@ -99,7 +99,7 @@ namespace QrCafe.Controllers
             return result;
         }
 
-        // PUT: /api/restaurants/0/Food/5
+        // PATCH: /api/restaurants/0/Food/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> PatchFood(int id, [FromForm] FoodDTO foodDto, int restId)
