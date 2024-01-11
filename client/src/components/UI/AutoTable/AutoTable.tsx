@@ -35,7 +35,13 @@ export const AutoTable = <T extends WithId>({
                 <tr>
                     {selected && <th></th>}
                     {columns.map((column) => (
-                        <th key={column.key}>{column.name}</th>
+                        <th
+                            key={column.key + column.name}
+                            className={
+                                column.shrink ? 'whitespace-nowrap' : ''
+                            }>
+                            {column.name}
+                        </th>
                     ))}
                     {onEdit && <th></th>}
                 </tr>
@@ -63,7 +69,7 @@ export const AutoTable = <T extends WithId>({
                         )}
                         {columns.map((column) => (
                             <td
-                                key={column.key}
+                                key={column.key + column.name}
                                 className={`${
                                     column.shrink && 'w-0 whitespace-nowrap'
                                 }`}>

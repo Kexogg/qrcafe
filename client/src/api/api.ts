@@ -27,7 +27,7 @@ export const getClientToken = async (restaurant: string, tableId: string) => {
 
 export const getTables = async (token: string, restaurantId: string) => {
     return api
-        .get(`/restaurants/${restaurantId}/tables`, {
+        .get(`/restaurants/${restaurantId}/tables/getAll`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

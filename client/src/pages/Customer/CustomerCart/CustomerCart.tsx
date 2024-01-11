@@ -13,6 +13,8 @@ import Modal from '../../../components/UI/Modal/Modal.tsx'
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { getCartTotal, getFilteredCart } from '../../../helpers.ts'
+import { createOrder } from '../../../api/api.ts'
+import { ErrorBox } from '../../../components/UI/ErrorBox/ErrorBox.tsx'
 
 type CustomerCartCards = {
     setSelectedDish: (dish: IDish) => void
@@ -45,7 +47,9 @@ export const CustomerCart = () => {
     const isOrderConfirmed = useAppSelector((state) => state.cart.confirmed)
     const [selectedDish, setSelectedDish] = useState<IDish | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [error, setError] = useState('')
     const dispatch = useAppDispatch()
+    const session = useAppSelector((state) => state.session)
     return (
         <section className={'container mx-auto px-3 text-primary-700'}>
             <Modal
@@ -62,15 +66,29 @@ export const CustomerCart = () => {
                     label={'Подтвердить'}
                     dark
                     onClick={() => {
-                        dispatch(updateConfirmed(true))
-                        dispatch(
-                            updateCart(
-                                cart.map((dish) => ({
-                                    ...dish,
-                                    status: DishStatus.COOKING,
-                                })),
+                        createOrder(
+                            session.token!,
+                            session.restaurantId!,
+                            cart.filter(
+                                (dish) => dish.status === DishStatus.NEW,
                             ),
                         )
+                            .then((r) => {
+                                console.log(r)
+                                dispatch(updateConfirmed(true))
+                                dispatch(
+                                    updateCart(
+                                        cart.map((dish) => ({
+                                            ...dish,
+                                            status: DishStatus.COOKING,
+                                        })),
+                                    ),
+                                )
+                            })
+                            .catch((err) => {
+                                setError(err)
+                            })
+                            .finally(() => setIsModalOpen(false))
                         setIsModalOpen(false)
                     }}
                 />
@@ -82,6 +100,7 @@ export const CustomerCart = () => {
                 onClose={() => setSelectedDish(null)}
             />
             <PageTitle title={'Ваш заказ'} />
+            {error && <ErrorBox error={error} />}
             {isOrderConfirmed && (
                 <div
                     className={

@@ -10,9 +10,10 @@ export const TablePage = () => {
     return (
         <section className={'flex flex-col gap-3 px-3'}>
             <PageTitle title={table.name} />
-            {table.customerName && <p>Имя: {table.customerName}</p>}
-            {table.assignedWaiter && <p>Официант: {table.assignedWaiter}</p>}
-            {/*TODO: get waiter name from id*/}
+            {table.client && <p>Имя: {table.client.name}</p>}
+            {table.assignedEmployee && (
+                <p>Официант: {table.assignedEmployee.fullName}</p>
+            )}
             <h2>Заказ</h2>
             <div className={'rounded-3xl border-2 border-primary-700 p-5'}>
                 <ul>
