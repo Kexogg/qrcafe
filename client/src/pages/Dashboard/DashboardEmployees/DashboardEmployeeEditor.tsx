@@ -36,7 +36,9 @@ export const DashboardEmployeeEditor = () => {
                     name: 'Роль',
                     key: 'role',
                     type: 'dropdown',
-                    options: Object.values(EmployeeRole) as string[],
+                    options: Object.values(EmployeeRole).map((e) =>
+                        e.toString(),
+                    ),
                 },
                 {
                     name: 'На смене',

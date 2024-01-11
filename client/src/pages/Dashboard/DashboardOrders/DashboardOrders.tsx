@@ -1,11 +1,11 @@
 import { DashboardPageTemplate } from '../DashboardPageTemplate/DashboardPageTemplate.tsx'
-import { getOrders } from '../../../api/api.ts'
+import { getClients } from '../../../api/api.ts'
 
 export const DashboardOrders = () => {
     return (
         <DashboardPageTemplate
             pageTitle={'Заказы'}
-            getItems={getOrders}
+            getItems={getClients}
             tableColumns={[
                 {
                     name: 'Название',

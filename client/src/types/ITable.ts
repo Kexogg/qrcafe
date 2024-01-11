@@ -1,5 +1,6 @@
 import { DishStatus, getPlaceholderDish, IDish } from './IDish.ts'
 import { WithId } from './types.ts'
+import { IEmployee } from './IEmployee.ts'
 
 /**
  * Enum for the status of a table
@@ -15,22 +16,20 @@ export enum TableStatus {
 }
 
 /**
- * Interface for a table in a restaurant
+ * Interface for a table
  * @interface
- * @property {string} id - The unique identifier for the table
+ * @property {string} id - The id of the table
  * @property {string} name - The name of the table
- * @property {TableStatus} status - The current status of the table (OPEN, OCCUPIED, RESERVED)
- * @property {IDish[]} order - The array of dishes ordered at the table
- * @property {string} [customerName] - The name of the customer (optional)
- * @property {string} [assignedWaiter] - ID of the waiter assigned to the table
+ * @property {IDish[]} order - The order for the table
+ * @property {IEmployee} assignedEmployee - The employee assigned to the table
+ * @property {unknown} client - The client assigned to the table
  */
 export interface ITable extends WithId {
     id: string
     name: string
-    status: TableStatus
     order: IDish[]
-    customerName?: string
-    assignedWaiter?: string
+    assignedEmployee?: IEmployee
+    client?: unknown
 }
 
 export function getPlaceholderTables(): ITable[] {
@@ -47,14 +46,14 @@ export function getPlaceholderTables(): ITable[] {
                       { ...getPlaceholderDish(), status: DishStatus.SERVED },
                       { ...getPlaceholderDish(), status: DishStatus.CANCELED },
                   ],
-                  status: TableStatus.OCCUPIED,
-                  assignedWaiter: Math.round(Math.random()).toString(),
+                  assignedEmployee: undefined,
+                  client: undefined,
               })
             : tables.push({
                   id: Math.random().toString(),
                   name: 'Столик ' + (i + 1),
                   order: [],
-                  status: TableStatus.OPEN,
+                  client: undefined,
               })
     }
     return tables

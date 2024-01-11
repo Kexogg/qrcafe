@@ -17,9 +17,7 @@ function App() {
             )}
             {token && sessionType == SessionType.WAITER && <WaiterRouter />}
             {token && sessionType == SessionType.CUSTOMER && <CustomerRouter />}
-            {token && sessionType == SessionType.EMPLOYEE && (
-                <DashboardRouter />
-            )}
+            {token && sessionType == SessionType.ADMIN && <DashboardRouter />}
         </BrowserRouter>
     )
 }

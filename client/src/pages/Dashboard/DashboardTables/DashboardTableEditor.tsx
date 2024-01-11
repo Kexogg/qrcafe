@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { getQRValue } from '../../../helpers.ts'
 import { useAppSelector } from '../../../hooks/hooks.ts'
+import { IEmployee } from '../../../types/IEmployee.ts'
 
 export const DashboardTableEditor = () => {
     const params = useParams()
@@ -38,11 +39,14 @@ export const DashboardTableEditor = () => {
                 },
                 {
                     name: 'Официант',
-                    key: 'assignedWaiter',
+                    key: 'assignedEmployee',
                     requiresItem: true,
                     type: 'custom',
                     customComponent: (props) => (
-                        <>{props.value ?? 'Не назначен'}</>
+                        <>
+                            {(props.value as IEmployee)?.fullName ??
+                                'Не назначен'}
+                        </>
                     ),
                 },
                 {

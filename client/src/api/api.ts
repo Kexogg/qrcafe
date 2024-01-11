@@ -32,21 +32,7 @@ export const getTables = async (token: string, restaurantId: string) => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then((response) =>
-            response.data.map(
-                (table: {
-                    id: string
-                    name: string
-                    assignedEmployeeId: string
-                }) => {
-                    return {
-                        id: table.id.toString(),
-                        name: table.name,
-                        assignedWaiter: table.assignedEmployeeId || null,
-                    }
-                },
-            ),
-        )
+        .then((response) => response.data as ITable[])
 }
 
 export const getTableById = async (
@@ -60,13 +46,7 @@ export const getTableById = async (
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then((response) => {
-            return {
-                id: response.data.id,
-                name: response.data.name,
-                assignedWaiter: response.data.assignedEmployeeId || null,
-            } as ITable
-        })
+        .then((response) => response.data as ITable)
 }
 
 export const createTable = async (
@@ -464,6 +444,16 @@ export const getOrders = async (token: string, restaurantId: string) => {
         .then((response) => response.data)
 }
 
+export const getOrder = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/foodQueue`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
+}
+
 export const getOrderById = async (
     token: string,
     restaurantId: string,
@@ -478,11 +468,33 @@ export const getOrderById = async (
         .then((response) => response.data)
 }
 
-//TODO: order API
+export const createOrder = async (
+    token: string,
+    restaurantId: string,
+    order: IDish[],
+) => {
+    return api
+        .post(`/restaurants/${restaurantId}/foodQueue`, order, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response)
+}
 
 export const getCatalog = async (token: string, restaurantId: string) => {
     return api
         .get(`/restaurants/${restaurantId}/categories/food`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
+}
+
+export const getClients = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/clients`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

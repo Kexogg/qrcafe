@@ -9,7 +9,7 @@ type AutoTableProps<T extends WithId> = {
     columns: {
         name: string
         key: string
-        func?: (param: string) => string
+        func?: (param: any) => string
         shrink?: boolean
     }[]
     selected?: T[]
@@ -68,7 +68,7 @@ export const AutoTable = <T extends WithId>({
                                     column.shrink && 'w-0 whitespace-nowrap'
                                 }`}>
                                 {column.func
-                                    ? column.func(row[column.key] as string)
+                                    ? column.func(row[column.key])
                                     : (row[column.key] as string)}
                             </td>
                         ))}

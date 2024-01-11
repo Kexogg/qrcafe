@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 export enum SessionType {
-    EMPLOYEE = 0,
+    ADMIN = 0,
     WAITER = 1,
     CUSTOMER = 2,
 }
