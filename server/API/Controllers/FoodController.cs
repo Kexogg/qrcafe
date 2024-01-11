@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 using QrCafe;
 using QrCafe.Models;
 
@@ -22,6 +23,7 @@ namespace QrCafe.Controllers
         private readonly QrCafeDbContext _context;
 
         public IAmazonS3 client;
+
         public FoodController(QrCafeDbContext context)
         {
             _context = context;
@@ -40,7 +42,7 @@ namespace QrCafe.Controllers
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetFoodsInCategories(int restId)
         {
             var restaurant = await _context.Restaurants.Include(restaurant => restaurant.Categories)
-                .ThenInclude(c=> c.FoodCategories).ThenInclude(fc=> fc.Food)
+                .ThenInclude(c => c.FoodCategories).ThenInclude(fc => fc.Food)
                 .FirstOrDefaultAsync(r => r.Id == restId);
             if (restaurant == null) return NotFound();
             var result = new List<CategoryDTO>();
@@ -51,17 +53,20 @@ namespace QrCafe.Controllers
                 {
                     categoryDTO.FoodList.Add(new FoodDTO(foodCategory.Food));
                 }
+
                 result.Add(categoryDTO);
             }
+
             return Ok(result);
         }
+
         // GET: /api/restaurants/0/Food
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<FoodDTO>>> GetFoods(int restId)
         {
             var foodList = await _context.Foods.Where(f => f.RestaurantId == restId)
-                .Include(f=>f.FoodExtras).ThenInclude(fe=> fe.Extra)
+                .Include(f => f.FoodExtras).ThenInclude(fe => fe.Extra)
                 .ToListAsync();
             var result = new List<FoodDTO>();
             foreach (var food in foodList)
@@ -71,17 +76,20 @@ namespace QrCafe.Controllers
                 {
                     foodResult.Extras?.Add(new ExtraDTO(item.Extra));
                 }
+
                 result.Add(foodResult);
             }
+
             return result;
         }
+
         // GET: /api/restaurants/0/Food/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<FoodDTO>> GetFood(int id, int restId)
         {
-            var food = await _context.Foods.Where(f=> f.RestaurantId == restId)
-                .Include(f=>f.FoodExtras).ThenInclude(fe=> fe.Extra)
-                .FirstOrDefaultAsync(f=> f.Id == id);
+            var food = await _context.Foods.Where(f => f.RestaurantId == restId)
+                .Include(f => f.FoodExtras).ThenInclude(fe => fe.Extra)
+                .FirstOrDefaultAsync(f => f.Id == id);
 
             if (food == null)
             {
@@ -100,49 +108,53 @@ namespace QrCafe.Controllers
         // PUT: /api/restaurants/0/Food/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id:int}")]
-        public async Task<IActionResult> PatchFood(int id, FoodDTO foodDto, int restId)
+        public async Task<IActionResult> PatchFood(int id, [FromForm] FoodDTO foodDto, int restId)
         {
             var food = await
                 _context.Foods.Where(e => e.RestaurantId == restId)
-                    .FirstOrDefaultAsync(e=> e.Id == id);
+                    .FirstOrDefaultAsync(e => e.Id == id);
             if (food == null) return NotFound();
             food.Name = foodDto.Name;
             food.Description = foodDto.Description;
             food.Weight = foodDto.Weight;
             food.Price = foodDto.Price;
             food.Available = foodDto.Available;
-            
+
             _context.Entry(food).State = EntityState.Modified;
             
-            await _context.FoodExtras.Where(fc => fc.RestaurantId == restId && fc.FoodId == id)
-                .ExecuteDeleteAsync();
-            var extras = new List<ExtraDTO>();
-            if (foodDto.Extras != null)
-                foreach (var extraDto in foodDto.Extras)
-                {
-                    var extra = new Extra(extraDto);
-                    await _context.Extras.AddAsync(extra);
-                    await _context.SaveChangesAsync();
-                    var foodExtra = new FoodExtra(food.Id, extra.Id, restId);
-                    await _context.FoodExtras.AddAsync(foodExtra);
-                    extraDto.Id = extra.Id;
-                    extras.Add(extraDto);
-                }
-            await _context.SaveChangesAsync();
-            if(Request.HasFormContentType)
+            if (Request.HasFormContentType)
             {
                 var fileRequest = Request.Form.Files[0];
-                var file = new FileStream(fileRequest.FileName, FileMode.Open);
+                if (fileRequest.ContentType != "image/jpeg") return BadRequest("Invalid image type");
+                await using var stream = fileRequest.OpenReadStream();
                 var request = new PutObjectRequest
                 {
                     BucketName = "nyashdev",
-                    Key = $"food/{food.Id.ToString()}",
-                    InputStream = file,
+                    Key = $"food/{food.Id.ToString()}.jpg",
+                    InputStream = stream,
                     CannedACL = S3CannedACL.PublicRead
                 };
                 await client.PutObjectAsync(request);
 
             }
+            
+            await _context.FoodExtras.Where(fc => fc.RestaurantId == restId && fc.FoodId == id)
+                .ExecuteDeleteAsync();
+            var extras = new List<ExtraDTO>();
+            var extrasJson = Request.Form.Where(k => k.Key == "extras");
+            foreach (var items in extrasJson)
+            {
+                foreach (var extra in items.Value.Select(item => item.FromJson<Extra>()))
+                {
+                    await _context.Extras.AddAsync(extra);
+                    await _context.SaveChangesAsync();
+                    var foodExtra = new FoodExtra(food.Id, extra.Id, restId);
+                    await _context.FoodExtras.AddAsync(foodExtra);
+                    extras.Add(new ExtraDTO(extra));
+                }
+            }
+
+            await _context.SaveChangesAsync();
             var result = new FoodDTO(food)
             {
                 Extras = extras
@@ -153,7 +165,7 @@ namespace QrCafe.Controllers
         // POST: /api/restaurants/0/Food
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<FoodDTO>> PostFood(FoodDTO foodDto, int restId)
+        public async Task<ActionResult<FoodDTO>> PostFood([FromForm] FoodDTO foodDto, int restId)
         {
             var restaurant = await _context.Restaurants.FirstOrDefaultAsync(r => r.Id == restId);
             if (restaurant == null) return NotFound();
@@ -163,40 +175,42 @@ namespace QrCafe.Controllers
                 RestaurantId = restId
             };
             await _context.Foods.AddAsync(food);
-            if(Request.HasFormContentType)
+            if (Request.HasFormContentType && Request.Form.Files.Count != 0)
             {
                 var fileRequest = Request.Form.Files[0];
-                var file = new FileStream(fileRequest.FileName, FileMode.Open);
+                if (fileRequest.ContentType != "image/jpeg") return BadRequest("Invalid image type");
+                await using var stream = fileRequest.OpenReadStream();
                 var request = new PutObjectRequest
                 {
                     BucketName = "nyashdev",
-                    Key = $"food/{food.Id.ToString()}",
-                    InputStream = file,
+                    Key = $"food/{food.Id.ToString()}.jpg",
+                    InputStream = stream,
                     CannedACL = S3CannedACL.PublicRead
                 };
                 await client.PutObjectAsync(request);
-
             }
+
             var extras = new List<ExtraDTO>();
-            if (foodDto.Extras != null)
-                foreach (var extraDto in foodDto.Extras)
+            var extrasJson = Request.Form.Where(k => k.Key == "extras");
+            foreach (var items in extrasJson)
+            {
+                foreach (var extra in items.Value.Select(item => item.FromJson<Extra>()))
                 {
-                    var extra = new Extra(extraDto);
                     await _context.Extras.AddAsync(extra);
                     await _context.SaveChangesAsync();
                     var foodExtra = new FoodExtra(food.Id, extra.Id, restId);
                     await _context.FoodExtras.AddAsync(foodExtra);
-                    extraDto.Id = extra.Id;
-                    extras.Add(extraDto);
+                    extras.Add(new ExtraDTO(extra));
                 }
+            }
             await _context.SaveChangesAsync();
-            var result = new FoodDTO(food)
-            {
-                Extras = extras
-            };
+                var result = new FoodDTO(food)
+                {
+                    Extras = extras
+                };
             return Ok(result);
         }
-        
+
         [HttpPost("/api/restaurants/{restId:int}/categories/food/{id:int}")]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> PutFoodIntoCategories(List<int> categoriesIdList, 
             int restId, int id)

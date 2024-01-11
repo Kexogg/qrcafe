@@ -103,6 +103,7 @@ namespace QrCafe.Controllers
             var tableIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "tableId")?.Value);
             var restaurant = await _context.Restaurants.Include(r => r.Clients)
                 .Include(r => r.Foods).ThenInclude(food => food.FoodExtras)
+                .Include(r=> r.FoodQueues)
                 .FirstOrDefaultAsync(r=> r.Id == restId);
             if (restaurantIdClaim != restId || restaurant == null) return BadRequest();
             var client = restaurant.Clients.FirstOrDefault(c=> c.Id == clientIdClaim);
@@ -112,14 +113,26 @@ namespace QrCafe.Controllers
             {
                 var food = restaurant.Foods.FirstOrDefault(f=> f.Id == foodItem.Id);
                 if (food == null) continue;
-                var foodQueue = new FoodQueue(food, client.Id, time);
-                await _context.FoodQueues.AddAsync(foodQueue);
-                if (foodItem.ExtrasId == null) continue;
-                foreach (var extraId in foodItem.ExtrasId
-                             .Where(extraId => food.FoodExtras.Any(fe => fe.ExtraId == extraId)))
+                var foodQueue = restaurant.FoodQueues.Where(fq => fq.ClientId == client.Id)
+                    .FirstOrDefault(fq => fq.FoodId == foodItem.Id);
+                if (foodQueue != null)
                 {
-                    var foodQueueExtra = new FoodQueueExtra(foodQueue.Id, extraId, restId);
-                    await _context.FoodQueueExtras.AddAsync(foodQueueExtra);
+                    foodQueue.Count++;
+                    
+                }
+                else
+                {
+                    foodQueue = new FoodQueue(food, client.Id, time);
+                    if(restaurant.FoodQueues.Where(fq=> fq.ClientId == client.Id)
+                           .FirstOrDefault(fq=> fq.FoodId == foodItem.Id) == null)
+                        await _context.FoodQueues.AddAsync(foodQueue);
+                    if (foodItem.ExtrasId == null) continue;
+                    foreach (var extraId in foodItem.ExtrasId
+                                 .Where(extraId => food.FoodExtras.Any(fe => fe.ExtraId == extraId)))
+                    {
+                        var foodQueueExtra = new FoodQueueExtra(foodQueue.Id, extraId, restId);
+                        await _context.FoodQueueExtras.AddAsync(foodQueueExtra);
+                    }
                 }
             }
             await _context.SaveChangesAsync();

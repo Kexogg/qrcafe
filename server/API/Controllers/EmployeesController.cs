@@ -92,7 +92,7 @@ namespace QrCafe.Controllers
         // PATCH: api/restaurants/0/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id:guid}")]
-        public async Task<IActionResult> PatchEmployee(Guid id, Employee employee, int restId)
+        public async Task<IActionResult> PatchEmployee(Guid id, [FromForm] Employee employee, int restId)
         {
             var employeeData = await
                 _context.Employees.Where(e => e.RestaurantId == restId)
@@ -109,12 +109,13 @@ namespace QrCafe.Controllers
                 if(Request.HasFormContentType)
                 {
                     var fileRequest = Request.Form.Files[0];
-                    var file = new FileStream(fileRequest.FileName, FileMode.Open);
+                    if (fileRequest.ContentType != "image/jpeg") return BadRequest("Invalid image type");
+                    await using var stream = fileRequest.OpenReadStream();
                     var request = new PutObjectRequest
                     {
                         BucketName = "nyashdev",
-                        Key = $"employees/{employee.Id.ToString()}",
-                        InputStream = file,
+                        Key = $"employees/{employee.Id.ToString()}.jpg",
+                        InputStream = stream,
                         CannedACL = S3CannedACL.PublicRead
                     };
                     await client.PutObjectAsync(request);
@@ -144,7 +145,7 @@ namespace QrCafe.Controllers
         /// <param name="restId">ID ресторана</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> PostEmployee(Employee employee, int restId)
+        public async Task<IActionResult> PostEmployee([FromForm]Employee employee, int restId)
         {
             var restaurant = _context.Restaurants.Include(r=> r.Employees)
                 .FirstOrDefault(r => r.Id == restId);
@@ -157,12 +158,13 @@ namespace QrCafe.Controllers
             if(Request.HasFormContentType)
             {
                 var fileRequest = Request.Form.Files[0];
-                var file = new FileStream(fileRequest.FileName, FileMode.Open);
+                if (fileRequest.ContentType != "image/jpeg") return BadRequest("Invalid image type");
+                await using var stream = fileRequest.OpenReadStream();
                 var request = new PutObjectRequest
                 {
                     BucketName = "nyashdev",
-                    Key = $"employees/{employee.Id.ToString()}",
-                    InputStream = file,
+                    Key = $"employees/{employee.Id.ToString()}.jpg",
+                    InputStream = stream,
                     CannedACL = S3CannedACL.PublicRead
                 };
                 await client.PutObjectAsync(request);

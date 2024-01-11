@@ -21,6 +21,7 @@ public class ClientDTO
         Total = client.Total;
         PaymentMethod = client.PaymentMethod;
         Order.AddRange(client.FoodQueue.Select(fq => new FoodQueueDTO(fq)).ToList());
+        AssignedEmployee = client.AssignedEmployee == null ? null : new EmployeeDTO(client.AssignedEmployee);
     }
 
     public int TableId { get; set; }
@@ -48,7 +49,8 @@ public class ClientDTO
     public short? PaymentMethod { get; set; }
 
     public List<FoodQueueDTO?> Order { get; set; } = new ();
-
+    
+    public EmployeeDTO? AssignedEmployee { get; set; }
 }
 public partial class Client
 {

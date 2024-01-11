@@ -20,7 +20,7 @@ public class EmployeeDTO
         FullName = employee.FullName;
         RoleId = employee.RoleId;
         Available = employee.Available;
-        ImageUrl = $"https://s3.stk8s.66bit.ru/nyashdev/employees/{employee.Id}";
+        ImageUrl = $"https://s3.stk8s.66bit.ru/nyashdev/employees/{employee.Id}.jpg";
     }
     public Guid? Id { get; set; }
 

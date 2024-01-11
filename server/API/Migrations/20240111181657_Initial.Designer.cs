@@ -12,15 +12,15 @@ using QrCafe;
 namespace QrCafe.Migrations
 {
     [DbContext(typeof(QrCafeDbContext))]
-    [Migration("20231223210731_CategoryNum")]
-    partial class CategoryNum
+    [Migration("20240111181657_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -28,24 +28,29 @@ namespace QrCafe.Migrations
             modelBuilder.Entity("QrCafe.Models.Category", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Available")
+                        .HasColumnType("boolean")
+                        .HasColumnName("available");
+
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("name");
 
-                    b.Property<int>("Num")
+                    b.Property<int>("Order")
                         .HasColumnType("integer")
-                        .HasColumnName("num");
+                        .HasColumnName("order");
 
                     b.Property<int>("RestaurantId")
                         .HasColumnType("integer")
@@ -131,6 +136,7 @@ namespace QrCafe.Migrations
             modelBuilder.Entity("QrCafe.Models.Employee", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -149,7 +155,6 @@ namespace QrCafe.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int?>("RestaurantId")
@@ -166,22 +171,68 @@ namespace QrCafe.Migrations
                     b.HasIndex("RestaurantId");
 
                     b.ToTable("employees", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aa249b46-cf7c-4b1e-9ff4-38053ae67677"),
+                            Available = true,
+                            FullName = "admin",
+                            Login = "admin",
+                            Password = "IGI$arFiH~RXf9k",
+                            RestaurantId = 0,
+                            RoleId = 0
+                        });
+                });
+
+            modelBuilder.Entity("QrCafe.Models.Extra", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer")
+                        .HasColumnName("price");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("restaurant_id");
+
+                    b.HasKey("Id")
+                        .HasName("extras_pk");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("extras", (string)null);
                 });
 
             modelBuilder.Entity("QrCafe.Models.Food", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Available")
+                        .HasColumnType("boolean")
+                        .HasColumnName("available");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_available");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -233,15 +284,43 @@ namespace QrCafe.Migrations
                     b.ToTable("food_categories", (string)null);
                 });
 
+            modelBuilder.Entity("QrCafe.Models.FoodExtra", b =>
+                {
+                    b.Property<int>("FoodId")
+                        .HasColumnType("integer")
+                        .HasColumnName("food_id");
+
+                    b.Property<int>("ExtraId")
+                        .HasColumnType("integer")
+                        .HasColumnName("extra_id");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("restaurant_id");
+
+                    b.HasKey("FoodId", "ExtraId")
+                        .HasName("food_extras_pk");
+
+                    b.HasIndex("ExtraId");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("food_extras", (string)null);
+                });
+
             modelBuilder.Entity("QrCafe.Models.FoodQueue", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid")
                         .HasColumnName("client_id");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
 
                     b.Property<TimeOnly>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -273,6 +352,30 @@ namespace QrCafe.Migrations
                     b.ToTable("food_queue", (string)null);
                 });
 
+            modelBuilder.Entity("QrCafe.Models.FoodQueueExtra", b =>
+                {
+                    b.Property<Guid>("FoodQueueId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_queue_id");
+
+                    b.Property<int>("ExtraId")
+                        .HasColumnType("integer")
+                        .HasColumnName("extra_id");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("restaurant_id");
+
+                    b.HasKey("FoodQueueId", "ExtraId")
+                        .HasName("food_queue_extras_pk");
+
+                    b.HasIndex("ExtraId");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("food_queue_extras", (string)null);
+                });
+
             modelBuilder.Entity("QrCafe.Models.Organization", b =>
                 {
                     b.Property<int>("Id")
@@ -294,6 +397,14 @@ namespace QrCafe.Migrations
                         .HasName("organization_pk");
 
                     b.ToTable("organization", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            FullName = "TestOrg",
+                            ShortName = "testOrg"
+                        });
                 });
 
             modelBuilder.Entity("QrCafe.Models.Restaurant", b =>
@@ -324,13 +435,25 @@ namespace QrCafe.Migrations
                     b.HasIndex("OrgId");
 
                     b.ToTable("restaurants", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Address = "Home",
+                            Name = "TestRest",
+                            OrgId = 0
+                        });
                 });
 
             modelBuilder.Entity("QrCafe.Models.Table", b =>
                 {
-                    b.Property<int>("Num")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("num");
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("RestaurantId")
                         .HasColumnType("integer")
@@ -340,10 +463,22 @@ namespace QrCafe.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("assigned_employee_id");
 
-                    b.HasKey("Num", "RestaurantId")
+                    b.Property<Guid?>("ClientId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id", "RestaurantId")
                         .HasName("tables_pk");
 
                     b.HasIndex("AssignedEmployeeId");
+
+                    b.HasIndex("ClientId")
+                        .IsUnique();
 
                     b.HasIndex("RestaurantId");
 
@@ -391,6 +526,18 @@ namespace QrCafe.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("QrCafe.Models.Extra", b =>
+                {
+                    b.HasOne("QrCafe.Models.Restaurant", "Restaurant")
+                        .WithMany("Extras")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("extras_restaurants_fk");
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("QrCafe.Models.Food", b =>
                 {
                     b.HasOne("QrCafe.Models.Restaurant", "Restaurant")
@@ -432,10 +579,40 @@ namespace QrCafe.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("QrCafe.Models.FoodExtra", b =>
+                {
+                    b.HasOne("QrCafe.Models.Extra", "Extra")
+                        .WithMany("FoodExtras")
+                        .HasForeignKey("ExtraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_extras_extras_id_fk");
+
+                    b.HasOne("QrCafe.Models.Food", "Food")
+                        .WithMany("FoodExtras")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_extras_food_id_fk");
+
+                    b.HasOne("QrCafe.Models.Restaurant", "Restaurant")
+                        .WithMany("FoodExtras")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_extras_restaurants_id_fk");
+
+                    b.Navigation("Extra");
+
+                    b.Navigation("Food");
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("QrCafe.Models.FoodQueue", b =>
                 {
                     b.HasOne("QrCafe.Models.Client", "Client")
-                        .WithMany("FoodQueues")
+                        .WithMany("FoodQueue")
                         .HasForeignKey("ClientId")
                         .IsRequired()
                         .HasConstraintName("food_queue_clients_id_fk");
@@ -459,6 +636,36 @@ namespace QrCafe.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("QrCafe.Models.FoodQueueExtra", b =>
+                {
+                    b.HasOne("QrCafe.Models.Extra", "Extra")
+                        .WithMany("FoodQueueExtras")
+                        .HasForeignKey("ExtraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_queue_extras_extras_id_fk");
+
+                    b.HasOne("QrCafe.Models.FoodQueue", "FoodQueue")
+                        .WithMany("FoodQueueExtras")
+                        .HasForeignKey("FoodQueueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_queue_extras_food_queue_id_fk");
+
+                    b.HasOne("QrCafe.Models.Restaurant", "Restaurant")
+                        .WithMany("FoodQueueExtras")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("food_queue_extras_restaurants_id_fk");
+
+                    b.Navigation("Extra");
+
+                    b.Navigation("FoodQueue");
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("QrCafe.Models.Restaurant", b =>
                 {
                     b.HasOne("QrCafe.Models.Organization", "Org")
@@ -477,6 +684,11 @@ namespace QrCafe.Migrations
                         .HasForeignKey("AssignedEmployeeId")
                         .HasConstraintName("tables_employees_id_fk");
 
+                    b.HasOne("QrCafe.Models.Client", "Client")
+                        .WithOne("Table")
+                        .HasForeignKey("QrCafe.Models.Table", "ClientId")
+                        .HasConstraintName("tables_clients_id_fk");
+
                     b.HasOne("QrCafe.Models.Restaurant", "Restaurant")
                         .WithMany("Tables")
                         .HasForeignKey("RestaurantId")
@@ -484,6 +696,8 @@ namespace QrCafe.Migrations
                         .HasConstraintName("tables_restaurants_id_fk");
 
                     b.Navigation("AssignedEmployee");
+
+                    b.Navigation("Client");
 
                     b.Navigation("Restaurant");
                 });
@@ -495,7 +709,9 @@ namespace QrCafe.Migrations
 
             modelBuilder.Entity("QrCafe.Models.Client", b =>
                 {
-                    b.Navigation("FoodQueues");
+                    b.Navigation("FoodQueue");
+
+                    b.Navigation("Table");
                 });
 
             modelBuilder.Entity("QrCafe.Models.Employee", b =>
@@ -505,11 +721,25 @@ namespace QrCafe.Migrations
                     b.Navigation("Tables");
                 });
 
+            modelBuilder.Entity("QrCafe.Models.Extra", b =>
+                {
+                    b.Navigation("FoodExtras");
+
+                    b.Navigation("FoodQueueExtras");
+                });
+
             modelBuilder.Entity("QrCafe.Models.Food", b =>
                 {
                     b.Navigation("FoodCategories");
 
+                    b.Navigation("FoodExtras");
+
                     b.Navigation("FoodQueues");
+                });
+
+            modelBuilder.Entity("QrCafe.Models.FoodQueue", b =>
+                {
+                    b.Navigation("FoodQueueExtras");
                 });
 
             modelBuilder.Entity("QrCafe.Models.Organization", b =>
@@ -525,7 +755,13 @@ namespace QrCafe.Migrations
 
                     b.Navigation("Employees");
 
+                    b.Navigation("Extras");
+
                     b.Navigation("FoodCategories");
+
+                    b.Navigation("FoodExtras");
+
+                    b.Navigation("FoodQueueExtras");
 
                     b.Navigation("FoodQueues");
 

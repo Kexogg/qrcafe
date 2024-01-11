@@ -25,7 +25,7 @@ public class FoodDTO
         Description = food.Description;
         Weight = food.Weight;
         Price = food.Price;
-        ImageUrl = $"https://s3.stk8s.66bit.ru/nyashdev/food/{food.Id}";
+        ImageUrl = $"https://s3.stk8s.66bit.ru/nyashdev/food/{food.Id}.jpg";
     }
     public int? Id { get; set; }
 
@@ -43,7 +43,7 @@ public class FoodDTO
     
     public List<int>? ExtrasId { get; set; } = new();
     
-    public List<ExtraDTO>? Extras { get; set; } = new();
+    public List<ExtraDTO>? Extras { get; set; }
     
     public string? ImageUrl { get; set; } 
 }

@@ -20,6 +20,8 @@ public class FoodQueueDTO
         {
             Food.Extras.Add(new ExtraDTO(item.Extra));
         }
+
+        Count = foodQueue.Count;
     }
 
 /*
@@ -42,6 +44,8 @@ public class FoodQueueDTO
     public short State { get; set; }
     
     public FoodDTO? Food { get; set; }
+    
+    public int Count { get; set; }
     
     public int? TableId { get; set; }
     
@@ -82,6 +86,8 @@ public partial class FoodQueue
     public short State { get; set; }
 
     public TimeOnly CreatedAt { get; set; }
+
+    public int Count { get; set; } = 1;
     
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodQueueExtra> FoodQueueExtras { get; set; } = new List<FoodQueueExtra>();
