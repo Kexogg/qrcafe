@@ -42,8 +42,8 @@ public class FoodDTO
     public int Price { get; set; }
     
     public List<int>? ExtrasId { get; set; } = new();
-    
-    public List<ExtraDTO>? Extras { get; set; }
+
+    public List<ExtraDTO>? Extras { get; set; } = new List<ExtraDTO>();
     
     public string? ImageUrl { get; set; } 
 }
