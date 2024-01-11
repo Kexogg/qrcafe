@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Amazon.S3;
 
 namespace QrCafe.Models;
 
@@ -24,6 +25,7 @@ public class FoodDTO
         Description = food.Description;
         Weight = food.Weight;
         Price = food.Price;
+        ImageUrl = $"https://s3.stk8s.66bit.ru/nyashdev/food/{food.Id}";
     }
     public int? Id { get; set; }
 
@@ -42,6 +44,8 @@ public class FoodDTO
     public List<int>? ExtrasId { get; set; } = new();
     
     public List<ExtraDTO>? Extras { get; set; } = new();
+    
+    public string? ImageUrl { get; set; } 
 }
 public partial class Food
 {

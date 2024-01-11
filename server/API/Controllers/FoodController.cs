@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -72,7 +73,6 @@ namespace QrCafe.Controllers
                 }
                 result.Add(foodResult);
             }
-
             return result;
         }
         // GET: /api/restaurants/0/Food/5
@@ -102,17 +102,17 @@ namespace QrCafe.Controllers
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> PatchFood(int id, FoodDTO foodDto, int restId)
         {
-            var foodData = await
+            var food = await
                 _context.Foods.Where(e => e.RestaurantId == restId)
                     .FirstOrDefaultAsync(e=> e.Id == id);
-            if (foodData == null) return NotFound();
-            foodData.Name = foodDto.Name;
-            foodData.Description = foodDto.Description;
-            foodData.Weight = foodDto.Weight;
-            foodData.Price = foodDto.Price;
-            foodData.Available = foodDto.Available;
+            if (food == null) return NotFound();
+            food.Name = foodDto.Name;
+            food.Description = foodDto.Description;
+            food.Weight = foodDto.Weight;
+            food.Price = foodDto.Price;
+            food.Available = foodDto.Available;
             
-            _context.Entry(foodData).State = EntityState.Modified;
+            _context.Entry(food).State = EntityState.Modified;
             
             await _context.FoodExtras.Where(fc => fc.RestaurantId == restId && fc.FoodId == id)
                 .ExecuteDeleteAsync();
@@ -123,13 +123,27 @@ namespace QrCafe.Controllers
                     var extra = new Extra(extraDto);
                     await _context.Extras.AddAsync(extra);
                     await _context.SaveChangesAsync();
-                    var foodExtra = new FoodExtra(foodData.Id, extra.Id, restId);
+                    var foodExtra = new FoodExtra(food.Id, extra.Id, restId);
                     await _context.FoodExtras.AddAsync(foodExtra);
                     extraDto.Id = extra.Id;
                     extras.Add(extraDto);
                 }
             await _context.SaveChangesAsync();
-            var result = new FoodDTO(foodData)
+            if(Request.HasFormContentType)
+            {
+                var fileRequest = Request.Form.Files[0];
+                var file = new FileStream(fileRequest.FileName, FileMode.Open);
+                var request = new PutObjectRequest
+                {
+                    BucketName = "nyashdev",
+                    Key = $"food/{food.Id.ToString()}",
+                    InputStream = file,
+                    CannedACL = S3CannedACL.PublicRead
+                };
+                await client.PutObjectAsync(request);
+
+            }
+            var result = new FoodDTO(food)
             {
                 Extras = extras
             };
@@ -143,11 +157,26 @@ namespace QrCafe.Controllers
         {
             var restaurant = await _context.Restaurants.FirstOrDefaultAsync(r => r.Id == restId);
             if (restaurant == null) return NotFound();
+
             var food = new Food(foodDto)
             {
                 RestaurantId = restId
             };
             await _context.Foods.AddAsync(food);
+            if(Request.HasFormContentType)
+            {
+                var fileRequest = Request.Form.Files[0];
+                var file = new FileStream(fileRequest.FileName, FileMode.Open);
+                var request = new PutObjectRequest
+                {
+                    BucketName = "nyashdev",
+                    Key = $"food/{food.Id.ToString()}",
+                    InputStream = file,
+                    CannedACL = S3CannedACL.PublicRead
+                };
+                await client.PutObjectAsync(request);
+
+            }
             var extras = new List<ExtraDTO>();
             if (foodDto.Extras != null)
                 foreach (var extraDto in foodDto.Extras)

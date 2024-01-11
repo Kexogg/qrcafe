@@ -4,6 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Amazon.Runtime;
+using Amazon.S3;
+using Amazon.S3.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +24,17 @@ namespace QrCafe.Controllers
     {
         private readonly QrCafeDbContext _context;
 
+        public IAmazonS3 client;
         public EmployeesController(QrCafeDbContext context)
         {
             _context = context;
+            var credentials = new BasicAWSCredentials("nyashdev", "nyashdev");
+            var config = new AmazonS3Config
+            {
+                ServiceURL = "https://s3.stk8s.66bit.ru",
+                ForcePathStyle = true
+            };
+            client = new AmazonS3Client(credentials, config);
         }
 
         // GET: api/restaurants/0/Employees
@@ -91,10 +102,23 @@ namespace QrCafe.Controllers
             employeeData.RoleId = employee.RoleId;
             employeeData.Available = employee.Available;
             _context.Entry(employeeData).State = EntityState.Modified;
-
+            
             try
             {
                 await _context.SaveChangesAsync();
+                if(Request.HasFormContentType)
+                {
+                    var fileRequest = Request.Form.Files[0];
+                    var file = new FileStream(fileRequest.FileName, FileMode.Open);
+                    var request = new PutObjectRequest
+                    {
+                        BucketName = "nyashdev",
+                        Key = $"employees/{employee.Id.ToString()}",
+                        InputStream = file,
+                        CannedACL = S3CannedACL.PublicRead
+                    };
+                    await client.PutObjectAsync(request);
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -130,6 +154,19 @@ namespace QrCafe.Controllers
             if (employee.Password == null) return Conflict();
             employee.RestaurantId = restId;
             await _context.Employees.AddAsync(employee);
+            if(Request.HasFormContentType)
+            {
+                var fileRequest = Request.Form.Files[0];
+                var file = new FileStream(fileRequest.FileName, FileMode.Open);
+                var request = new PutObjectRequest
+                {
+                    BucketName = "nyashdev",
+                    Key = $"employees/{employee.Id.ToString()}",
+                    InputStream = file,
+                    CannedACL = S3CannedACL.PublicRead
+                };
+                await client.PutObjectAsync(request);
+            }
             await _context.SaveChangesAsync();
             return Ok(new EmployeeDTO(employee));
         }
