@@ -13,7 +13,7 @@ import { TextArea } from '../../../components/UI/Input/TextArea/TextArea.tsx'
 import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
 import Dropdown from '../../../components/UI/Input/Dropdown/Dropdown.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
 import { ErrorBox } from '../../../components/UI/ErrorBox/ErrorBox.tsx'
 
@@ -80,6 +80,7 @@ export const DashboardEditorTemplate = <T extends WithId>({
     const [lastUpdate, setLastUpdate] = useState(Date.now())
     const session = useAppSelector((state) => state.session)
     const navigate = useNavigate()
+    const location = useLocation()
     useEffect(() => {
         if (id) {
             getItem(session.token!, session.restaurantId!, id)
@@ -107,9 +108,14 @@ export const DashboardEditorTemplate = <T extends WithId>({
         send()
             .then((response) => {
                 setLastUpdate(Date.now())
-                setItemExists(true)
+                console.log(response)
                 setError('')
-                if (response) setItem(response as unknown as T)
+                if (response && response.status !== 204) {
+                    setItem(response as unknown as T)
+                    if (!itemExists) {
+                        navigate(`${(response as unknown as T).id}`)
+                    }
+                }
             })
             .catch((response) => {
                 setError(response.message)
@@ -145,7 +151,17 @@ export const DashboardEditorTemplate = <T extends WithId>({
                     <Button
                         border
                         label={'Назад'}
-                        onClick={() => navigate(-1)}
+                        onClick={() => {
+                            const pathSegments = location.pathname.split('/')
+                            if (
+                                pathSegments[pathSegments.length - 2] === 'edit'
+                            ) {
+                                pathSegments.pop()
+                            }
+                            pathSegments.pop()
+                            const newPath = pathSegments.join('/')
+                            navigate(newPath)
+                        }}
                     />
                 </div>
                 <small>

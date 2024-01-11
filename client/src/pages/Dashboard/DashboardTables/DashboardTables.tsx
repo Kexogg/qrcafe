@@ -6,6 +6,7 @@ import { TableQrModal } from './TableQrModal.tsx'
 import { DashboardPageTemplate } from '../DashboardPageTemplate/DashboardPageTemplate.tsx'
 import { useNavigate } from 'react-router-dom'
 import { IEmployee } from '../../../types/IEmployee.ts'
+import { IClient } from '../../../types/IClient.ts'
 export const DashboardTables = () => {
     const [qrModalTable, setQrModalTable] = useState<ITable | null>(null)
     const navigate = useNavigate()
@@ -30,6 +31,29 @@ export const DashboardTables = () => {
                         key: 'assignedEmployee',
                         func: (param: IEmployee) =>
                             param ? param.fullName : 'Не назначен',
+                    },
+                    {
+                        name: 'Статус',
+                        key: 'client',
+                        shrink: true,
+                        func: (param: IClient) =>
+                            param ? 'Занят' : 'Свободен',
+                    },
+                    {
+                        name: 'Кол-во блюд',
+                        shrink: true,
+                        key: 'client',
+                        func: (param: IClient) =>
+                            param && param.order
+                                ? //SUM OF DISHES
+                                  param.order
+                                      .reduce(
+                                          (acc, orderEntry) =>
+                                              acc + orderEntry.count ?? 1,
+                                          0,
+                                      )
+                                      .toString()
+                                : '',
                     },
                 ]}
                 tableCustomButtons={[

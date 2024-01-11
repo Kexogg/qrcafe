@@ -1,5 +1,6 @@
 import { DashboardPageTemplate } from '../DashboardPageTemplate/DashboardPageTemplate.tsx'
 import { getClients } from '../../../api/api.ts'
+import { IOrderEntry } from '../../../types/IOrderEntry.ts'
 
 export const DashboardOrders = () => {
     return (
@@ -8,9 +9,43 @@ export const DashboardOrders = () => {
             getItems={getClients}
             tableColumns={[
                 {
-                    name: 'Название',
-                    key: 'name',
+                    name: 'Столик',
+                    key: 'tableId',
+                    shrink: true,
                 },
+                {
+                    name: 'Кол-во блюд',
+                    key: 'order',
+                    shrink: true,
+                    func: (param: IOrderEntry[]) =>
+                        param
+                            ? param
+                                  .reduce(
+                                      (acc, orderEntry) =>
+                                          acc + orderEntry.count ?? 1,
+                                      0,
+                                  )
+                                  .toString()
+                            : '',
+                },
+                {
+                    name: 'Сумма',
+                    key: 'order',
+                    shrink: true,
+                    func: (param: IOrderEntry[]) =>
+                        param
+                            .reduce(
+                                (acc, orderEntry) =>
+                                    acc + orderEntry.food.price,
+                                0,
+                            )
+                            .toString() + ' ₽',
+                },
+                /*{
+                    name: 'Официант',
+                    key: 'assignedEmployee',
+                    func: (param: IEmployee) => param.fullName,
+                },*/
             ]}
         />
     )
