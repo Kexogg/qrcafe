@@ -36,6 +36,10 @@ public class ClientsController : ControllerBase
     public async Task<ActionResult<IEnumerable<ClientDTO>>> GetClients(int restId)
     {
         return await _context.Clients.Where(c=> c.RestaurantId == restId)
+            .Include(c => c.FoodQueues).ThenInclude(fq => fq.FoodQueueExtras)
+            .ThenInclude(fqe => fqe.Extra)
+            .Include(c => c.FoodQueues)
+            .ThenInclude(fq=> fq.Food)
             .Select(c => new ClientDTO(c)).ToListAsync();
     }
 
@@ -71,7 +75,7 @@ public class ClientsController : ControllerBase
     [Authorize(Roles = "employee")]
     public async Task<IActionResult> PatchClient(Guid id, Client client, int restId)
     {
-        if (id != client.Id || restId != client.RestaurantId)
+        if (id != client.Id)
         {
             return BadRequest();
         }
