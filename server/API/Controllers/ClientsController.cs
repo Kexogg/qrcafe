@@ -169,7 +169,7 @@ public class ClientsController : ControllerBase
         var table = await _context.Tables.Where(t=> t.RestaurantId == restId)
             .FirstOrDefaultAsync(t=> t.Id == client.TableId);
         table.AssignedEmployeeId = null;
-        _context.Tables.Update(table);
+        table.ClientId = null;
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -196,7 +196,7 @@ public class ClientsController : ControllerBase
         var table = await _context.Tables.Where(t=> t.RestaurantId == restId)
             .FirstOrDefaultAsync(t=> t.Id == client.TableId);
         table.AssignedEmployeeId = null;
-        _context.Tables.Update(table);
+        table.ClientId = null;
         await _context.SaveChangesAsync();
 
         return NoContent();
