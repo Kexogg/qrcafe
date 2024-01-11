@@ -114,7 +114,7 @@ namespace QrCafe.Controllers
                     var request = new PutObjectRequest
                     {
                         BucketName = "nyashdev",
-                        Key = $"employees/{employee.Id.ToString()}.jpg",
+                        Key = $"employees/{employeeData.Id.ToString()}.jpg",
                         InputStream = stream,
                         CannedACL = S3CannedACL.PublicRead
                     };
