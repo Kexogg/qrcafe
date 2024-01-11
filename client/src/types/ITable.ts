@@ -1,6 +1,7 @@
 import { DishStatus, getPlaceholderDish, IDish } from './IDish.ts'
 import { WithId } from './types.ts'
 import { IEmployee } from './IEmployee.ts'
+import { IClient } from './IClient.ts'
 
 /**
  * Enum for the status of a table
@@ -22,14 +23,14 @@ export enum TableStatus {
  * @property {string} name - The name of the table
  * @property {IDish[]} order - The order for the table
  * @property {IEmployee} assignedEmployee - The employee assigned to the table
- * @property {unknown} client - The client assigned to the table
+ * @property {IClient} client - The client assigned to the table
  */
 export interface ITable extends WithId {
     id: string
     name: string
     order: IDish[]
     assignedEmployee?: IEmployee
-    client?: unknown
+    client?: IClient
 }
 
 export function getPlaceholderTables(): ITable[] {
