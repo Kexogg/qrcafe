@@ -152,7 +152,7 @@ public partial class QrCafeDbContext : DbContext
             entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
             entity.Property(e => e.State).HasColumnName("state");
 
-            entity.HasOne(d => d.Client).WithMany(p => p.FoodQueues)
+            entity.HasOne(d => d.Client).WithMany(p => p.FoodQueue)
                 .HasForeignKey(d => d.ClientId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("food_queue_clients_id_fk");

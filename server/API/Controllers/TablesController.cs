@@ -38,9 +38,9 @@ namespace QrCafe.Controllers
             return await _context.Tables.Where(t => t.RestaurantId == restId)
                 .Include(t=> t.AssignedEmployee)
                 .Include(t => t.Client)
-                .ThenInclude(c => c.FoodQueues).ThenInclude(fq => fq.FoodQueueExtras)
+                .ThenInclude(c => c.FoodQueue).ThenInclude(fq => fq.FoodQueueExtras)
                 .ThenInclude(fqe => fqe.Extra)
-                .Include(t=>t.Client.FoodQueues)
+                .Include(t=>t.Client.FoodQueue)
                 .ThenInclude(fq=> fq.Food).Select(t=> new TableDTO(t))
                 .ToListAsync();
         }

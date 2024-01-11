@@ -36,9 +36,9 @@ public class ClientsController : ControllerBase
     public async Task<ActionResult<IEnumerable<ClientDTO>>> GetClients(int restId)
     {
         return await _context.Clients.Where(c=> c.RestaurantId == restId)
-            .Include(c => c.FoodQueues).ThenInclude(fq => fq.FoodQueueExtras)
+            .Include(c => c.FoodQueue).ThenInclude(fq => fq.FoodQueueExtras)
             .ThenInclude(fqe => fqe.Extra)
-            .Include(c => c.FoodQueues)
+            .Include(c => c.FoodQueue)
             .ThenInclude(fq=> fq.Food)
             .Select(c => new ClientDTO(c)).ToListAsync();
     }

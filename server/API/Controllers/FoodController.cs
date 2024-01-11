@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Runtime;
 using Amazon.S3;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,7 +24,13 @@ namespace QrCafe.Controllers
         public FoodController(QrCafeDbContext context)
         {
             _context = context;
-            //client = new AmazonS3Client("nyashdev", "nyashdev");
+            var credentials = new BasicAWSCredentials("nyashdev", "nyashdev");
+            var config = new AmazonS3Config
+            {
+                ServiceURL = "https://s3.stk8s.66bit.ru",
+                ForcePathStyle = true
+            };
+            client = new AmazonS3Client(credentials, config);
         }
 
         // GET: /api/restaurants/0/categories/Food
@@ -52,14 +59,28 @@ namespace QrCafe.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<FoodDTO>>> GetFoods(int restId)
         {
-            return await _context.Foods.Where(f => f.RestaurantId == restId)
-                .Select(f => new FoodDTO(f)).ToListAsync();
+            var foodList = await _context.Foods.Where(f => f.RestaurantId == restId)
+                .Include(f=>f.FoodExtras).ThenInclude(fe=> fe.Extra)
+                .ToListAsync();
+            var result = new List<FoodDTO>();
+            foreach (var food in foodList)
+            {
+                var foodResult = new FoodDTO(food);
+                foreach (var item in food.FoodExtras)
+                {
+                    foodResult.Extras?.Add(new ExtraDTO(item.Extra));
+                }
+                result.Add(foodResult);
+            }
+
+            return result;
         }
         // GET: /api/restaurants/0/Food/5
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Food>> GetFood(int id, int restId)
+        public async Task<ActionResult<FoodDTO>> GetFood(int id, int restId)
         {
             var food = await _context.Foods.Where(f=> f.RestaurantId == restId)
+                .Include(f=>f.FoodExtras).ThenInclude(fe=> fe.Extra)
                 .FirstOrDefaultAsync(f=> f.Id == id);
 
             if (food == null)
@@ -67,7 +88,13 @@ namespace QrCafe.Controllers
                 return NotFound();
             }
 
-            return food;
+            var result = new FoodDTO(food);
+            foreach (var item in food.FoodExtras)
+            {
+                result.Extras?.Add(new ExtraDTO(item.Extra));
+            }
+
+            return result;
         }
 
         // PUT: /api/restaurants/0/Food/5

@@ -20,7 +20,7 @@ public class ClientDTO
         Tip = client.Tip;
         Total = client.Total;
         PaymentMethod = client.PaymentMethod;
-        FoodQueues.AddRange(client.FoodQueues.Select(fq => new FoodQueueDTO(fq)).ToList());
+        Order.AddRange(client.FoodQueue.Select(fq => new FoodQueueDTO(fq)).ToList());
     }
 
     public int TableId { get; set; }
@@ -47,7 +47,7 @@ public class ClientDTO
 
     public short? PaymentMethod { get; set; }
 
-    public List<FoodQueueDTO?> FoodQueues { get; set; } = new ();
+    public List<FoodQueueDTO?> Order { get; set; } = new ();
 
 }
 public partial class Client
@@ -110,7 +110,7 @@ public partial class Client
     public virtual Employee? AssignedEmployee { get; set; } = null!;
 
     [System.Text.Json.Serialization.JsonIgnore]
-    public virtual ICollection<FoodQueue> FoodQueues { get; set; } = new List<FoodQueue>();
+    public virtual ICollection<FoodQueue> FoodQueue { get; set; } = new List<FoodQueue>();
 
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual Restaurant? Restaurant { get; set; } = null!;

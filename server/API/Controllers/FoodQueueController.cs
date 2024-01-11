@@ -153,12 +153,12 @@ namespace QrCafe.Controllers
         private async Task<IEnumerable<FoodQueueDTO>> GetFoodQueueList(int restId, int tableId)
         {
             var table  = await _context.Tables.Where(t => t.RestaurantId == restId).Include(t => t.Client)
-                .ThenInclude(c => c.FoodQueues).ThenInclude(fq => fq.FoodQueueExtras)
+                .ThenInclude(c => c.FoodQueue).ThenInclude(fq => fq.FoodQueueExtras)
                 .ThenInclude(fqe => fqe.Extra)
-                .Include(t=>t.Client.FoodQueues)
+                .Include(t=>t.Client.FoodQueue)
                 .ThenInclude(fq=> fq.Food)
                 .FirstOrDefaultAsync(t => t.Id == tableId);
-            var foodQueueItems = table?.Client?.FoodQueues.ToList();
+            var foodQueueItems = table?.Client?.FoodQueue.ToList();
 
             return foodQueueItems?.Select(item => new FoodQueueDTO(item)).ToList();
         }
