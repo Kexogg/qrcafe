@@ -350,17 +350,20 @@ public partial class QrCafeDbContext : DbContext
             entity.Property(e => e.RestaurantId)
                 .HasColumnName("restaurant_id");
             
-            entity.HasOne(d => d.FoodQueue).WithMany(p => p.FoodQueueExtras)
+            entity.HasOne(d => d.FoodQueue)
+                .WithMany(p => p.FoodQueueExtras)
                 .HasForeignKey(d => d.FoodQueueId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("food_queue_extras_food_queue_id_fk");
             
-            entity.HasOne(d => d.Extra).WithMany(p => p.FoodQueueExtras)
+            entity.HasOne(d => d.Extra)
+                .WithMany(p => p.FoodQueueExtras)
                 .HasForeignKey(d => d.ExtraId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("food_queue_extras_extras_id_fk");
             
-            entity.HasOne(d => d.Restaurant).WithMany(p => p.FoodQueueExtras)
+            entity.HasOne(d => d.Restaurant)
+                .WithMany(p => p.FoodQueueExtras)
                 .HasForeignKey(d => d.RestaurantId)
                 .HasConstraintName("food_queue_extras_restaurants_id_fk");
         });

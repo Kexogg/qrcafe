@@ -148,7 +148,17 @@ namespace QrCafe.Controllers
             {
                 foreach (var extra in items.Value.Select(item => item.FromJson<Extra>()))
                 {
-                    await _context.Extras.AddAsync(extra);
+                    var extraData = await _context.Extras.Where(e => e.RestaurantId == restId)
+                        .FirstOrDefaultAsync(e => e.Id == extra.Id);
+                    if (extraData != null)
+                    {
+                        extraData = extra;
+                    }
+                    else
+                    {
+                        await _context.Extras.AddAsync(extra);
+                    }
+                    
                     await _context.SaveChangesAsync();
                     var foodExtra = new FoodExtra(food.Id, extra.Id, restId);
                     await _context.FoodExtras.AddAsync(foodExtra);

@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -135,6 +136,7 @@ public class ClientsController : ControllerBase
     /// <param name="restId">ID ресторана</param>
     /// <returns></returns>
     [HttpPost("tables/{tableId:int}")]
+    [AllowAnonymous]
     public async Task<IActionResult> PutClient(int restId, int tableId)
     {
         var restaurant = _context.Restaurants.Include(restaurant => restaurant.Tables)
@@ -142,11 +144,23 @@ public class ClientsController : ControllerBase
         if (restaurant == null) return NotFound();
         var table = restaurant.Tables.FirstOrDefault(t => t.Id== tableId);
         if (table == null) return BadRequest();
+        var value = User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value;
         if (table.AssignedEmployeeId != null) return BadRequest();
-        var employee = Table.AssignEmployee(_context, table);
-        if (employee == null) return Conflict();
-        table.AssignedEmployeeId = employee.Id;
-        var client = new Client(restId, tableId, employee.Id);
+        Employee assignedEmployee;
+        if (value != null)
+        {
+            var employeeIdClaim = Guid.Parse(value);
+            var employee = await _context.Employees.Where(e => e.RestaurantId == restId)
+                .FirstOrDefaultAsync(e=> e.Id == employeeIdClaim);
+            assignedEmployee = employee;
+        }
+        else
+        {
+            assignedEmployee = Table.AssignEmployee(_context, table);
+        }
+        if (assignedEmployee == null) return Conflict();
+        table.AssignedEmployeeId = assignedEmployee.Id;
+        var client = new Client(restId, tableId, assignedEmployee.Id);
         await _context.Clients.AddAsync(client);
         await _context.SaveChangesAsync();
         table.ClientId = client.Id;
@@ -163,7 +177,7 @@ public class ClientsController : ControllerBase
             expires: DateTime.UtcNow.Add(TimeSpan.FromHours(3)),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),
                 SecurityAlgorithms.HmacSha256));
-        string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+        var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
         var response = new
         {
             token = encodedJwt

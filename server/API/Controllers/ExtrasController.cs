@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+/*using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QrCafe.Models;
@@ -101,4 +101,4 @@ namespace QrCafe.Controllers
             return _context.Extras.Any(e => e.Id == id);
         }
     }
-}
+}*/

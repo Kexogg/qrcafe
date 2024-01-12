@@ -49,8 +49,7 @@ namespace QrCafe.Controllers
         public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> GetFoodQueueByTableId(int tableId, int restId)
         {
             var foodQueue = await GetFoodQueueList(restId, tableId);
-
-            return foodQueue.ToList();
+            return foodQueue != null ? foodQueue.ToList() : new List<FoodQueueDTO>();
         }
 
         // PUT: /api/restaurants/0/FoodQueue/5
@@ -106,9 +105,7 @@ namespace QrCafe.Controllers
                 if (food == null) continue;
                 {
                     var foodQueue = new FoodQueue(foodItem, client.Id, restId, time);
-                    if(restaurant.FoodQueues.Where(fq=> fq.ClientId == client.Id)
-                           .FirstOrDefault(fq=> fq.FoodId == foodItem.Id) == null)
-                        await _context.FoodQueues.AddAsync(foodQueue);
+                    await _context.FoodQueues.AddAsync(foodQueue);
                     if (foodItem.ExtrasId == null) continue;
                     foreach (var extraId in foodItem.ExtrasId
                                  .Where(extraId => food.FoodExtras.Any(fe => fe.ExtraId == extraId)))
@@ -146,9 +143,7 @@ namespace QrCafe.Controllers
                 if (food == null) continue;
                 {
                     var foodQueue = new FoodQueue(foodItem, client.Id, restId, time);
-                    if(restaurant.FoodQueues.Where(fq=> fq.ClientId == client.Id)
-                           .FirstOrDefault(fq=> fq.FoodId == foodItem.Id) == null)
-                        await _context.FoodQueues.AddAsync(foodQueue);
+                    await _context.FoodQueues.AddAsync(foodQueue);
                     if (foodItem.ExtrasId == null) continue;
                     foreach (var extraId in foodItem.ExtrasId
                                  .Where(extraId => food.FoodExtras.Any(fe => fe.ExtraId == extraId)))
