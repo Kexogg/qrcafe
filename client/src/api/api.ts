@@ -498,7 +498,9 @@ export const createOrder = async (
         return {
             id: Number(entry.food.id),
             count: entry.count,
-            extras: entry.food.extras.filter((extra) => extra.applied),
+            extras: entry.food.extras
+                .filter((extra) => extra.applied)
+                .map((e) => e.id),
         }
     }, [])
     return api
@@ -559,9 +561,9 @@ export const deleteClient = async (
     })
 }
 
-export const getExtras = async (token: string, restaurantId: string) => {
+export const getRestaurant = async (token: string, restaurantId: string) => {
     return api
-        .get(`/restaurants/${restaurantId}/extras`, {
+        .get(`/restaurants/${restaurantId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
