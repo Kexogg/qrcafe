@@ -70,7 +70,7 @@ public partial class FoodQueue
         ClientId = clientId;
         RestaurantId = food.RestaurantId;
         FoodId = food.Id;
-        State = 1;
+        State = 2;
         CreatedAt = createdAt;
     }
     
