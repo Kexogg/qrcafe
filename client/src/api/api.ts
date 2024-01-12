@@ -8,7 +8,11 @@ import { IOrderEntry } from '../types/IOrderEntry.ts'
 const toFormData = <T>(obj: T) => {
     const formData = new FormData()
     for (const key in obj) {
-        if (key !== 'id') formData.append(key, obj[key] as string | Blob)
+        if (obj[key] instanceof Array) {
+            for (const item of obj[key] as any[]) {
+                formData.append(`${key}[]`, item)
+            }
+        } else if (key !== 'id') formData.append(key, obj[key] as string | Blob)
     }
     console.log(formData)
     return formData
@@ -249,8 +253,6 @@ export const getFood = async (token: string, restaurantId: string) => {
                         available: food.available,
                         imageUrl: food.imageUrl,
                         extras: [],
-                        status: 0,
-                        count: 0,
                     } as IDish
                 },
             ),
@@ -277,9 +279,7 @@ export const getFoodById = async (
                 price: response.data.price,
                 available: response.data.available,
                 imageUrl: response.data.imageUrl,
-                extras: [],
-                status: 0,
-                count: 0,
+                extras: response.data.extras ?? [],
             } as IDish
         })
 }

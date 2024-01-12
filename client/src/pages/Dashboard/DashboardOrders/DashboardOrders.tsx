@@ -1,6 +1,7 @@
 import { DashboardPageTemplate } from '../DashboardPageTemplate/DashboardPageTemplate.tsx'
 import { deleteClient, getClients } from '../../../api/api.ts'
 import { IOrderEntry } from '../../../types/IOrderEntry.ts'
+import { getOrderEntryTotal } from '../../../types/IDish.ts'
 
 export const DashboardOrders = () => {
     return (
@@ -37,7 +38,7 @@ export const DashboardOrders = () => {
                         param
                             .reduce(
                                 (acc, orderEntry) =>
-                                    acc + orderEntry.food.price,
+                                    acc + getOrderEntryTotal(orderEntry),
                                 0,
                             )
                             .toString() + ' ₽',

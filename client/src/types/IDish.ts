@@ -11,7 +11,6 @@ export interface IDish extends WithId {
     extras: IDishExtra[]
     imageUrl: string
     available: boolean
-    count: number | undefined //undefined means that the dish is not in the cart
 }
 
 export function toggleDishExtra(dish: IDish, id: number): IDishExtra[] {
