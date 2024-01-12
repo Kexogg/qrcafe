@@ -35,6 +35,19 @@ export const getEmployeeToken = async (
     })
 }
 
+export const getAssignedEmployee = async (
+    token: string,
+    restaurant: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurant}/clients/employee`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data as IEmployee)
+}
+
 export const getClientToken = async (restaurant: string, tableId: string) => {
     return api.post(`/restaurants/${restaurant}/clients/tables/${tableId}`, {})
 }
@@ -224,6 +237,25 @@ export const deleteEmployee = async (
             Authorization: `Bearer ${token}`,
         },
     })
+}
+
+export const getEmployeeInfo = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/employees/info`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            return {
+                id: response.data.id,
+                login: response.data.login,
+                fullName: response.data.fullName,
+                role: response.data.role,
+                available: response.data.available,
+                imageUrl: response.data.imageUrl,
+            } as IEmployee
+        })
 }
 
 export const getFood = async (token: string, restaurantId: string) => {
@@ -462,15 +494,12 @@ export const createOrder = async (
     restaurantId: string,
     order: IOrderEntry[],
 ) => {
-    //god forgive me for this
-    const orderItems = order.flatMap((entry) => {
-        const food = entry.food
-        food.extras.filter((extra) => extra.applied)
-        const array = []
-        for (let i = 0; i < entry.count; i++) {
-            array.push(food)
+    const orderItems = order.map((entry) => {
+        return {
+            id: Number(entry.food.id),
+            count: entry.count,
+            extras: entry.food.extras.filter((extra) => extra.applied),
         }
-        return array
     }, [])
     return api
         .post(`/restaurants/${restaurantId}/foodQueue`, orderItems, {
@@ -478,6 +507,24 @@ export const createOrder = async (
                 Authorization: `Bearer ${token}`,
             },
         })
+        .then((response) => response)
+}
+
+export const deleteOrder = async (
+    token: string,
+    restaurantId: string,
+    orderId: string,
+) => {
+    return api
+        .patch(
+            `/restaurants/${restaurantId}/foodQueue/${orderId}`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
         .then((response) => response)
 }
 

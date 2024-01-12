@@ -12,7 +12,7 @@ export const WaiterRouter = () => {
         <Routes>
             <Route path="/employee" element={<Layout customer={false} />}>
                 <Route index path="home" element={<WaiterHome />} />
-                <Route path="new-order" element={<NewOrder />} />
+                <Route path="new-order/:id?" element={<NewOrder />} />
                 <Route path="chat" element={<WaiterChat />} />
                 <Route path="account" element={<WaiterProfile />} />
                 <Route path="catalog" element={<WaiterCatalog />} />

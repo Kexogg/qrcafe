@@ -7,6 +7,8 @@ import {
     SessionType,
     setSession,
 } from '../../../features/session/sessionSlice.ts'
+import { useEffect } from 'react'
+import { getAssignedEmployee } from '../../../api/api.ts'
 
 export const LoginWelcome = () => {
     const waiter = useAppSelector((state) => state.waiter)
@@ -14,8 +16,22 @@ export const LoginWelcome = () => {
     const session = useAppSelector((state) => state.session)
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
+    useEffect(() => {
+        getAssignedEmployee(session.token!, session.restaurantId!).then(
+            (employee) => {
+                if (employee) {
+                    dispatch(
+                        setWaiter({
+                            name: employee.fullName,
+                            id: employee.id,
+                            image: employee.imageUrl,
+                        }),
+                    )
+                }
+            },
+        )
+    }, [dispatch, session.restaurantId, session.token])
     if (!waiter.id) {
-        dispatch(setWaiter({ name: 'Иван', id: '2134', image: undefined }))
         return <></>
     } else {
         return (

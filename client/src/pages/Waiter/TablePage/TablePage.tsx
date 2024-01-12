@@ -1,12 +1,23 @@
 import { ITable } from '../../../types/ITable.ts'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
 import { getOrderEntryTotal } from '../../../types/IDish.ts'
 import { Button } from '../../../components/UI/Button/Button.tsx'
+import { deleteClient } from '../../../api/api.ts'
+import { useAppSelector } from '../../../hooks/hooks.ts'
 
 export const TablePage = () => {
     const location = useLocation()
     const table = location.state as ITable
+    const session = useAppSelector((state) => state.session)
+    const navigate = useNavigate()
+    const closeTable = () => {
+        deleteClient(
+            session.token!,
+            session.restaurantId!,
+            table.client!.id,
+        ).then(() => navigate(-1))
+    }
     return (
         <section className={'flex flex-col gap-3 px-3'}>
             <PageTitle title={table.name} />
@@ -63,7 +74,11 @@ export const TablePage = () => {
             <div className={'flex flex-col gap-3'}>
                 <Button dark label={'Открыть чат'} />
                 <div className={'grid gap-3 sm:grid-cols-2'}>
-                    <Button border label={'Закрыть стол'} />
+                    <Button
+                        border
+                        label={'Закрыть стол'}
+                        onClick={closeTable}
+                    />
                     <Button border label={'Редактировать'} />
                 </div>
             </div>

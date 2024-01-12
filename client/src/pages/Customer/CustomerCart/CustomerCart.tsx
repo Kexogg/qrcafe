@@ -1,10 +1,6 @@
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts'
-import {
-    clearCart,
-    setCart,
-    updateConfirmed,
-} from '../../../features/cart/cartSlice.ts'
-import { useState } from 'react'
+import { clearCart, updateConfirmed } from '../../../features/cart/cartSlice.ts'
+import { useEffect, useState } from 'react'
 import DishModal from '../../../components/UI/Modal/DishModal.tsx'
 import { DishCardCart } from '../../../components/UI/DishCartdCart/DishCardCart.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
@@ -44,12 +40,19 @@ const CustomerCartCards = ({
 export const CustomerCart = () => {
     const cart = useAppSelector((state) => state.cart.items)
     const navigate = useNavigate()
+    const [order, setOrder] = useState<IOrderEntry[]>([])
+    const session = useAppSelector((state) => state.session)
+    useEffect(() => {
+        getOrder(session.token!, session.restaurantId!).then((r) => {
+            setOrder(r)
+        })
+    }, [session.restaurantId, session.token])
+
     const isOrderConfirmed = useAppSelector((state) => state.cart.confirmed)
     const [selectedDish, setSelectedDish] = useState<IOrderEntry | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [error, setError] = useState('')
     const dispatch = useAppDispatch()
-    const session = useAppSelector((state) => state.session)
     return (
         <section className={'container mx-auto px-3 text-primary-700'}>
             <Modal
@@ -66,13 +69,7 @@ export const CustomerCart = () => {
                     label={'Подтвердить'}
                     dark
                     onClick={() => {
-                        createOrder(
-                            session.token!,
-                            session.restaurantId!,
-                            cart.filter(
-                                (dish) => dish.state === FoodStatus.NEW,
-                            ),
-                        )
+                        createOrder(session.token!, session.restaurantId!, cart)
                             .then((r) => {
                                 console.log(r)
                                 dispatch(updateConfirmed(true))
@@ -81,7 +78,7 @@ export const CustomerCart = () => {
                                     session.token!,
                                     session.restaurantId!,
                                 ).then((r) => {
-                                    dispatch(setCart(r))
+                                    setOrder(r)
                                 })
                             })
                             .catch((err) => {
@@ -163,7 +160,7 @@ export const CustomerCart = () => {
                 {
                     <CustomerCartCards
                         setSelectedDish={setSelectedDish}
-                        cards={getFilteredCart(cart, FoodStatus.COOKING)}
+                        cards={getFilteredCart(order, FoodStatus.COOKING)}
                         dispatch={dispatch}
                     />
                 }

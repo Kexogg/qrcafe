@@ -1,5 +1,5 @@
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
-import { ITable, TableStatus } from '../../../types/ITable.ts'
+import { ITable } from '../../../types/ITable.ts'
 import { getOrderEntryTotal, IDish } from '../../../types/IDish.ts'
 import { useEffect, useState } from 'react'
 import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
@@ -12,27 +12,34 @@ import { clearCart, removeFromCart } from '../../../features/cart/cartSlice.ts'
 import { getAppliedDishExtras } from '../../../helpers.ts'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { getTables } from '../../../api/api.ts'
 
 export const NewOrder = () => {
     const session = useAppSelector((state) => state.session)
     const [tables, setTables] = useState<ITable[]>([])
+    const params = useParams()
     useEffect(() => {
-        getTables(session.token!, session.restaurantId!).then((tables) =>
-            setTables(tables),
-        )
-    }, [session.restaurantId, session.token])
+        let tables: ITable[] = []
+        getTables(session.token!, session.restaurantId!).then((response) => {
+            setTables(response)
+            tables = response
+        })
+        if (params.id) {
+            setTable(
+                tables.find((table) => table.id === params.tableId) ?? null,
+            )
+        }
+    }, [params.id, params.tableId, session.restaurantId, session.token])
     const cart = useAppSelector((state) => state.cart.items)
-    const [table, setTable] = useState('') //TODO: replace with ITable
+    const [table, setTable] = useState<ITable | null>(null)
     const [clientName, setClientName] = useState('')
     const dispatch = useAppDispatch()
     const [selectedDish, setSelectedDish] = useState<IDish | null>(null)
     const [confirmModalOpen, setConfirmModalOpen] = useState(false)
     const navigate = useNavigate()
     const createOrder = () => {
-        //TODO: create order
-        setTable('')
+        setTable(null)
         setClientName('')
         setConfirmModalOpen(false)
         dispatch(clearCart())
@@ -46,7 +53,7 @@ export const NewOrder = () => {
                 title={'Подтвердите создание заказа'}>
                 <p>
                     {clientName.length > 0 && clientName + ', '}
-                    {table}
+                    {table?.name}
                 </p>
                 <h2>Состав заказа</h2>
                 <ol className={'h-full list-decimal pl-5'}>
@@ -86,12 +93,19 @@ export const NewOrder = () => {
                         <span className={'my-auto'}>Стол</span>
                         <Dropdown
                             required={true}
-                            placeholder={' '}
+                            value={table?.name ?? ''}
                             options={tables
-                                .filter((t) => t.status === TableStatus.OPEN)
+                                .filter((t) => t.client === null)
                                 .map((t) => t.name)}
                             dark
-                            onChange={(e) => setTable(e.target.value)}
+                            onChange={(e) =>
+                                setTable(
+                                    () =>
+                                        tables.find(
+                                            (t) => t.name === e.target.value,
+                                        ) ?? null,
+                                )
+                            }
                         />
                     </label>
                 </div>
@@ -138,7 +152,7 @@ export const NewOrder = () => {
                     ))}
                     <details className={styles.orderItem}>
                         <summary>
-                            <div></div>
+                            <div />
                             <div className={'font-bold'}>Итого:</div>
                             <div className={'font-bold'}>
                                 {cart.reduce(
@@ -154,7 +168,7 @@ export const NewOrder = () => {
                     label={'Создать заказ'}
                     onClick={() => setConfirmModalOpen(true)}
                     dark
-                    disabled={cart.length == 0 || table.length == 0}
+                    disabled={cart.length == 0 || table == null}
                 />
                 <Button
                     label={'Отчистить корзину'}

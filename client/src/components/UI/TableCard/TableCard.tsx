@@ -1,5 +1,5 @@
-import { ITable, TableStatus } from '../../../types/ITable.ts'
-import { Link } from 'react-router-dom'
+import { ITable } from '../../../types/ITable.ts'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '../Button/Button.tsx'
 import { FoodStatus } from '../../../types/IOrderEntry.ts'
 
@@ -8,6 +8,7 @@ type TableCardProps = {
 }
 
 export const TableCard = ({ table }: TableCardProps) => {
+    const navigate = useNavigate()
     return (
         <li
             className={
@@ -19,13 +20,16 @@ export const TableCard = ({ table }: TableCardProps) => {
                     className={
                         'rounded-full bg-accent-800 px-3 py-1  font-medium text-white'
                     }>
-                    {table.status === TableStatus.OPEN && 'Свободен'}
-                    {table.status === TableStatus.OCCUPIED && 'Занят'}
-                    {table.status === TableStatus.RESERVED && 'Забронирован'}
+                    {table.client === null && 'Свободен'}
+                    {table.client && 'Занят'}
                 </span>
             </span>
-            {table.status === TableStatus.OPEN && (
-                <Button dark label={'Создать заказ'} />
+            {table.client === null && (
+                <Button
+                    dark
+                    label={'Создать заказ'}
+                    onClick={() => navigate(`/employee/new-order/${table.id}`)}
+                />
             )}
             {table.client?.order && table.client.order.length > 0 && (
                 <ul className={'flex flex-col gap-3'}>

@@ -1,22 +1,27 @@
-import { ITable, TableStatus } from '../../../types/ITable.ts'
+import { ITable } from '../../../types/ITable.ts'
 import { useEffect, useState } from 'react'
 import { TablesSection } from '../../../components/UI/Waiter/TablesSection/TablesSection.tsx'
 import { Searchbar } from '../../../components/UI/Searchbar/Searchbar.tsx'
 import { TableRowsRounded } from '@mui/icons-material'
-import { getTables } from '../../../api/api.ts'
+import { getEmployeeInfo, getTables } from '../../../api/api.ts'
 import { useAppSelector } from '../../../hooks/hooks.ts'
+import { IEmployee } from '../../../types/IEmployee.ts'
 
 export const WaiterHome = () => {
     const [tables, setTables] = useState<ITable[]>([])
     const session = useAppSelector((state) => state.session)
+    const [employee, setEmployee] = useState<IEmployee | null>()
     useEffect(() => {
         getTables(session.token!, session.restaurantId!).then((tables) =>
             setTables(tables),
         )
+        getEmployeeInfo(session.token!, session.restaurantId!).then(
+            (employee) => setEmployee(employee),
+        )
     }, [session.restaurantId, session.token])
+    useEffect(() => {}, [])
     const [occupiedTables, setOccupiedTables] = useState<ITable[]>([])
     const [openTables, setOpenTables] = useState<ITable[]>([])
-    const [reservedTables, setReservedTables] = useState<ITable[]>([])
     const [showAll, setShowAll] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
     useEffect(() => {
@@ -25,8 +30,7 @@ export const WaiterHome = () => {
                 if (showAll) {
                     return true
                 }
-                //TODO: use waiter id here
-                return table.assignedWaiter === '1'
+                return table.assignedEmployee?.id === employee?.id
             },
             [tables, showAll],
         )
@@ -36,19 +40,12 @@ export const WaiterHome = () => {
             )
         }
         setOccupiedTables(
-            filteredTables.filter(
-                (table) => table.status === TableStatus.OCCUPIED,
-            ),
+            filteredTables.filter((table) => table.assignedEmployee !== null),
         )
         setOpenTables(
-            filteredTables.filter((table) => table.status === TableStatus.OPEN),
+            filteredTables.filter((table) => table.assignedEmployee === null),
         )
-        setReservedTables(
-            filteredTables.filter(
-                (table) => table.status === TableStatus.RESERVED,
-            ),
-        )
-    }, [tables, showAll, searchTerm])
+    }, [tables, showAll, searchTerm, employee?.id])
 
     return (
         <section className={'px-3'}>
@@ -100,10 +97,6 @@ export const WaiterHome = () => {
                         <TablesSection
                             tables={openTables}
                             title={'Свободные столы'}
-                        />
-                        <TablesSection
-                            tables={reservedTables}
-                            title={'Забронированные столы'}
                         />
                     </>
                 ) : (
