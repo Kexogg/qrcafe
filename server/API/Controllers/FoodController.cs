@@ -244,7 +244,12 @@ namespace QrCafe.Controllers
             {
                 return NotFound();
             }
-
+            var request = new DeleteObjectRequest
+            {
+                BucketName = "nyashdev",
+                Key = $"food/{food.Id.ToString()}.jpg"
+            };
+            await client.DeleteObjectAsync(request);
             _context.Foods.Remove(food);
             await _context.SaveChangesAsync();
 

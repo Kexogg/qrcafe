@@ -208,10 +208,15 @@ namespace QrCafe.Controllers
             {
                 return NotFound();
             }
-
+            var request = new DeleteObjectRequest
+            {
+                BucketName = "nyashdev",
+                Key = $"employees/{employee.Id.ToString()}.jpg"
+            };
+            await client.DeleteObjectAsync(request);
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
-
+            
             return NoContent();
         }
 
