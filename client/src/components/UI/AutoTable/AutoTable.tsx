@@ -81,9 +81,13 @@ export const AutoTable = <T extends WithId>({
                         {(onEdit || customButtons) && (
                             <td className={'w-0 whitespace-nowrap'}>
                                 <div className={'flex gap-1'}>
-                                    <TableButton onClick={() => onEdit?.(row)}>
-                                        <EditRounded fontSize={'small'} />
-                                    </TableButton>
+                                    {onEdit && (
+                                        <TableButton
+                                            onClick={() => onEdit?.(row)}>
+                                            <EditRounded fontSize={'small'} />
+                                        </TableButton>
+                                    )}
+
                                     {customButtons &&
                                         customButtons.map((button) => (
                                             <TableButton

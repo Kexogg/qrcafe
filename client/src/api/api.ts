@@ -10,7 +10,7 @@ const toFormData = <T>(obj: T) => {
     for (const key in obj) {
         if (obj[key] instanceof Array) {
             for (const item of obj[key] as any[]) {
-                formData.append(`${key}[]`, item)
+                formData.append(`${key}`, JSON.stringify(item))
             }
         } else if (key !== 'id') formData.append(key, obj[key] as string | Blob)
     }
@@ -557,4 +557,14 @@ export const deleteClient = async (
             Authorization: `Bearer ${token}`,
         },
     })
+}
+
+export const getExtras = async (token: string, restaurantId: string) => {
+    return api
+        .get(`/restaurants/${restaurantId}/extras`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data)
 }
