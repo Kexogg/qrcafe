@@ -84,6 +84,44 @@ namespace QrCafe.Controllers
 
             return NoContent();
         }
+        
+        [HttpPost("clients/{clientId:guid}")]
+        [Authorize (Roles = "employee")]
+        public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueueByEmployee(List<FoodOrder> foodList, int restId, Guid clientId)
+        {
+            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value);
+            var restaurant = await _context.Restaurants.Include(r=>r.Employees)
+                .ThenInclude(r => r.Clients)
+                .Include(r => r.Foods).ThenInclude(food => food.FoodExtras)
+                .Include(r=> r.FoodQueues)
+                .FirstOrDefaultAsync(r=> r.Id == restId);
+            if (restaurant == null) return BadRequest();
+            var employee = restaurant.Employees.FirstOrDefault(e=> e.Id == employeeIdClaim);
+            var client = employee.Clients.FirstOrDefault(c => c.Id == clientId);
+            if (client == null) return NotFound();
+            var time = TimeOnly.FromDateTime(DateTime.Now);
+            foreach (var foodItem in foodList)
+            {
+                var food = restaurant.Foods.FirstOrDefault(f=> f.Id == foodItem.Id);
+                if (food == null) continue;
+                {
+                    var foodQueue = new FoodQueue(foodItem, client.Id, restId, time);
+                    if(restaurant.FoodQueues.Where(fq=> fq.ClientId == client.Id)
+                           .FirstOrDefault(fq=> fq.FoodId == foodItem.Id) == null)
+                        await _context.FoodQueues.AddAsync(foodQueue);
+                    if (foodItem.ExtrasId == null) continue;
+                    foreach (var extraId in foodItem.ExtrasId
+                                 .Where(extraId => food.FoodExtras.Any(fe => fe.ExtraId == extraId)))
+                    {
+                        var foodQueueExtra = new FoodQueueExtra(foodQueue.Id, extraId, restId);
+                        await _context.FoodQueueExtras.AddAsync(foodQueueExtra);
+                    }
+                }
+            }
+            await _context.SaveChangesAsync();
+            var queue = await GetFoodQueueList(restaurant.Id, client.TableId);
+            return Ok(queue);
+        }
 
         // POST: /api/restaurants/0/FoodQueue
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

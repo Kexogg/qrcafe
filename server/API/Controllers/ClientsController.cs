@@ -36,7 +36,20 @@ public class ClientsController : ControllerBase
             .ThenInclude(fq=> fq.Food)
             .Select(c => new ClientDTO(c)).ToListAsync();
     }
+    
+    [HttpGet("employee")]
+    [Authorize(Roles = "client")]
+    public async Task<ActionResult<EmployeeDTO>> GetEmployeeInfo(int restId)
+    {
 
+            var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
+            var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
+            var client = await _context.Clients.Where(c => c.RestaurantId == restaurantClaim)
+                .Include(c => c.AssignedEmployee)
+                .FirstOrDefaultAsync(c => c.Id == clientIdClaim);
+            return new EmployeeDTO(client.AssignedEmployee);
+    }
+    
     // GET: api/restaurants/0/clients/5
     /// <summary>
     /// Получение клиента
@@ -66,7 +79,7 @@ public class ClientsController : ControllerBase
     /// <param name="restId">ID ресторана</param>
     /// <returns></returns>
     [HttpPatch("{id:guid}")]
-    [Authorize(Roles = "employee")]
+    [Authorize(Roles = "client,employee")]
     public async Task<IActionResult> PatchClient(Guid id, Client client, int restId)
     {
         if (id != client.Id)
@@ -93,6 +106,23 @@ public class ClientsController : ControllerBase
         }
 
         return NoContent();
+    }
+    
+    [HttpPatch]
+    [Authorize(Roles = "client")]
+    public async Task<IActionResult> ChangeClientName(string clientName, int restId)
+    {
+        var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
+        var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
+        var client = await _context.Clients.Where(c => c.RestaurantId == restaurantClaim)
+            .FirstOrDefaultAsync(c => c.Id == clientIdClaim);
+        if (client == null) return BadRequest("Клиента не существует");
+
+        client.Name = clientName;
+
+        await _context.SaveChangesAsync();
+
+        return Ok();
     }
         
     // POST: api/Clients/restaurants/0/tables/1
