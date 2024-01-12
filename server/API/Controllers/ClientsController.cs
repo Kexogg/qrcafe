@@ -188,14 +188,15 @@ public class ClientsController : ControllerBase
         var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
         var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
         var restaurant = await _context.Restaurants.Include(r=> r.Clients)
+            .ThenInclude(c=> c.FoodQueue)
+            .ThenInclude(fq=> fq.FoodQueueExtras)
             .FirstOrDefaultAsync(r=> r.Id == restId);
         if (restaurantClaim != restId || restaurant == null) return BadRequest();
         var client = restaurant.Clients.FirstOrDefault(c=> c.Id == clientIdClaim);
         if (client == null) return NotFound();
-        
-        _context.Clients.Remove(client);
         var table = await _context.Tables.Where(t=> t.RestaurantId == restId)
             .FirstOrDefaultAsync(t=> t.Id == client.TableId);
+        _context.Clients.Remove(client);
         table.AssignedEmployeeId = null;
         await _context.SaveChangesAsync();
 
