@@ -154,7 +154,7 @@ public partial class QrCafeDbContext : DbContext
 
             entity.HasOne(d => d.Client).WithMany(p => p.FoodQueue)
                 .HasForeignKey(d => d.ClientId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("food_queue_clients_id_fk");
 
             entity.HasOne(d => d.Food).WithMany(p => p.FoodQueues)
@@ -352,6 +352,7 @@ public partial class QrCafeDbContext : DbContext
             
             entity.HasOne(d => d.FoodQueue).WithMany(p => p.FoodQueueExtras)
                 .HasForeignKey(d => d.FoodQueueId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("food_queue_extras_food_queue_id_fk");
             
             entity.HasOne(d => d.Extra).WithMany(p => p.FoodQueueExtras)

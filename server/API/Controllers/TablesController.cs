@@ -41,7 +41,9 @@ namespace QrCafe.Controllers
                 .ThenInclude(c => c.FoodQueue).ThenInclude(fq => fq.FoodQueueExtras)
                 .ThenInclude(fqe => fqe.Extra)
                 .Include(t=>t.Client.FoodQueue)
-                .ThenInclude(fq=> fq.Food).Select(t=> new TableDTO(t))
+                .ThenInclude(fq=> fq.Food)
+                .Include(t=> t.Client).ThenInclude(c=>c.AssignedEmployee)
+                .Select(t=> new TableDTO(t))
                 .ToListAsync();
         }
         

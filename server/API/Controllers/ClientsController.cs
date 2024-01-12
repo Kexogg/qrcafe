@@ -159,6 +159,8 @@ public class ClientsController : ControllerBase
     public async Task<IActionResult> DeleteClient(Guid id, int restId)
     {
         var client = await _context.Clients.Where(c=> c.RestaurantId == restId)
+            .Include(c=> c.FoodQueue)
+            .ThenInclude(fq=> fq.FoodQueueExtras)
             .FirstOrDefaultAsync(c=> c.Id == id);
         if (client == null)
         {
@@ -169,7 +171,6 @@ public class ClientsController : ControllerBase
         var table = await _context.Tables.Where(t=> t.RestaurantId == restId)
             .FirstOrDefaultAsync(t=> t.Id == client.TableId);
         table.AssignedEmployeeId = null;
-        table.ClientId = null;
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -196,7 +197,6 @@ public class ClientsController : ControllerBase
         var table = await _context.Tables.Where(t=> t.RestaurantId == restId)
             .FirstOrDefaultAsync(t=> t.Id == client.TableId);
         table.AssignedEmployeeId = null;
-        table.ClientId = null;
         await _context.SaveChangesAsync();
 
         return NoContent();
