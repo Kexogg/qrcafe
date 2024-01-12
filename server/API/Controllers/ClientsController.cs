@@ -114,6 +114,7 @@ public class ClientsController : ControllerBase
     {
         var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
         var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
+        if (restaurantClaim != restId) return BadRequest();
         var client = await _context.Clients.Where(c => c.RestaurantId == restaurantClaim)
             .FirstOrDefaultAsync(c => c.Id == clientIdClaim);
         if (client == null) return BadRequest("Клиента не существует");
