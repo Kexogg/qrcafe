@@ -1,7 +1,7 @@
 import { ITable } from '../../../types/ITable.ts'
 import { useLocation } from 'react-router-dom'
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
-import { getDishTotal } from '../../../types/IDish.ts'
+import { getOrderEntryTotal } from '../../../types/IDish.ts'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 
 export const TablePage = () => {
@@ -17,40 +17,46 @@ export const TablePage = () => {
             <h2>Заказ</h2>
             <div className={'rounded-3xl border-2 border-primary-700 p-5'}>
                 <ul>
-                    {table.order.map((dish) => (
-                        <li key={dish.id} className={'flex justify-between'}>
-                            <span>
-                                <span className={'font-semibold'}>
-                                    {dish.name}
+                    {table.client?.order &&
+                        table.client.order.map((dish) => (
+                            <li
+                                key={dish.id}
+                                className={'flex justify-between'}>
+                                <span>
+                                    <span className={'font-semibold'}>
+                                        {dish.food.name}
+                                    </span>
+                                    , {dish.count ?? 1} шт.
+                                    {dish.food.extras.length > 0 && (
+                                        <>
+                                            <br />
+                                            <span
+                                                className={'text-neutral-500'}>
+                                                {dish.food.extras
+                                                    .filter(
+                                                        (extra) =>
+                                                            !extra.applied,
+                                                    )
+                                                    .map((extra) => extra.name)
+                                                    .join(', ')}
+                                            </span>
+                                        </>
+                                    )}
                                 </span>
-                                , {dish.count ?? 1} шт.
-                                {dish.extras.length > 0 && (
-                                    <>
-                                        <br />
-                                        <span className={'text-neutral-500'}>
-                                            {dish.extras
-                                                .filter(
-                                                    (extra) => !extra.applied,
-                                                )
-                                                .map((extra) => extra.name)
-                                                .join(', ')}
-                                        </span>
-                                    </>
-                                )}
-                            </span>
-                            <span className={'shrink-0'}>
-                                {getDishTotal(dish)} ₽
-                            </span>
-                        </li>
-                    ))}
+                                <span className={'shrink-0'}>
+                                    {getOrderEntryTotal(dish)} ₽
+                                </span>
+                            </li>
+                        ))}
                 </ul>
                 <hr className={'border-b-1 my-2 border-primary-700'} />
                 <span className={'flex justify-between text-lg font-bold'}>
                     <span>Сумма заказа: </span>
-                    {table.order.reduce(
-                        (acc, dish) => acc + getDishTotal(dish),
-                        0,
-                    )}{' '}
+                    {table.client?.order &&
+                        table.client.order.reduce(
+                            (acc, dish) => acc + getOrderEntryTotal(dish),
+                            0,
+                        )}{' '}
                     ₽
                 </span>
             </div>

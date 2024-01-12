@@ -20,6 +20,10 @@ export const DashboardEmployees = () => {
                         param == '0' ? 'Администратор' : 'Официант',
                 },
                 {
+                    name: 'Картинка',
+                    key: 'imageUrl',
+                },
+                {
                     name: 'Статус',
                     key: 'available',
                     func: (param) => (param ? 'На смене' : 'Не на смене'),

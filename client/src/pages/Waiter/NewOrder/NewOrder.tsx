@@ -1,11 +1,7 @@
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
-import {
-    getPlaceholderTables,
-    ITable,
-    TableStatus,
-} from '../../../types/ITable.ts'
-import { getDishTotal, IDish } from '../../../types/IDish.ts'
-import { useState } from 'react'
+import { ITable, TableStatus } from '../../../types/ITable.ts'
+import { getOrderEntryTotal, IDish } from '../../../types/IDish.ts'
+import { useEffect, useState } from 'react'
 import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
 import Dropdown from '../../../components/UI/Input/Dropdown/Dropdown.tsx'
 import styles from './NewOrder.module.css'
@@ -17,9 +13,16 @@ import { getAppliedDishExtras } from '../../../helpers.ts'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import Modal from '../../../components/UI/Modal/Modal.tsx'
 import { useNavigate } from 'react-router-dom'
+import { getTables } from '../../../api/api.ts'
 
 export const NewOrder = () => {
-    const tables: ITable[] = getPlaceholderTables()
+    const session = useAppSelector((state) => state.session)
+    const [tables, setTables] = useState<ITable[]>([])
+    useEffect(() => {
+        getTables(session.token!, session.restaurantId!).then((tables) =>
+            setTables(tables),
+        )
+    }, [session.restaurantId, session.token])
     const cart = useAppSelector((state) => state.cart.items)
     const [table, setTable] = useState('') //TODO: replace with ITable
     const [clientName, setClientName] = useState('')
@@ -48,12 +51,16 @@ export const NewOrder = () => {
                 <h2>Состав заказа</h2>
                 <ol className={'h-full list-decimal pl-5'}>
                     {cart.map((dish) => (
-                        <li key={dish.cartId}>
-                            {dish.name}, {dish.count} шт., {getDishTotal(dish)}₽
+                        <li key={dish.id}>
+                            {dish.food.name}, {dish.count} шт.,{' '}
+                            {getOrderEntryTotal(dish)}₽
                         </li>
                     ))}
                 </ol>
-                <h2>Итого: {cart.reduce((a, b) => a + getDishTotal(b), 0)}₽</h2>
+                <h2>
+                    Итого: {cart.reduce((a, b) => a + getOrderEntryTotal(b), 0)}
+                    ₽
+                </h2>
                 <Button label={'Подтвердить'} onClick={createOrder} dark />
                 <Button
                     label={'Назад'}
@@ -62,7 +69,7 @@ export const NewOrder = () => {
             </Modal>
             <DishModal
                 isInCart
-                dish={selectedDish}
+                item={selectedDish}
                 onClose={() => setSelectedDish(null)}
             />
             <PageTitle title={'Новый заказ'} />
@@ -96,31 +103,32 @@ export const NewOrder = () => {
                         <div>Цена</div>
                     </div>
                     {cart.map((dish, index) => (
-                        <details key={dish.cartId} className={styles.orderItem}>
+                        <details key={dish.id} className={styles.orderItem}>
                             <summary>
                                 <div>{index + 1}</div>
                                 <div className={'cursor-pointer font-medium'}>
-                                    {`${dish.name}, ${dish.count} шт.`}
+                                    {`${dish.food.name}, ${dish.count} шт.`}
                                 </div>
-                                <div>{getDishTotal(dish)}₽</div>
+                                <div>{getOrderEntryTotal(dish)}₽</div>
                             </summary>
                             <div className={styles.expand}>
                                 <div className={'col-span-1 col-start-2 py-2'}>
-                                    {getAppliedDishExtras(dish).length > 0 &&
+                                    {getAppliedDishExtras(dish.food).length >
+                                        0 &&
                                         'Добавки: ' +
-                                            getAppliedDishExtras(dish)}
+                                            getAppliedDishExtras(dish.food)}
                                 </div>
                                 <div className={'col-span-1 col-start-3 p-0'}>
                                     <button
-                                        onClick={() => setSelectedDish(dish)}>
+                                        onClick={() =>
+                                            setSelectedDish(dish.food)
+                                        }>
                                         <EditRounded fontSize={'medium'} />
                                     </button>
                                     <button
                                         onClick={() =>
-                                            dish.cartId &&
-                                            dispatch(
-                                                removeFromCart(dish.cartId),
-                                            )
+                                            dish.id &&
+                                            dispatch(removeFromCart(dish.id))
                                         }>
                                         <DeleteRounded fontSize={'medium'} />
                                     </button>
@@ -133,7 +141,11 @@ export const NewOrder = () => {
                             <div></div>
                             <div className={'font-bold'}>Итого:</div>
                             <div className={'font-bold'}>
-                                {cart.reduce((a, b) => a + getDishTotal(b), 0)}₽
+                                {cart.reduce(
+                                    (a, b) => a + getOrderEntryTotal(b),
+                                    0,
+                                )}
+                                ₽
                             </div>
                         </summary>
                     </details>

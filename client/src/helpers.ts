@@ -1,11 +1,12 @@
-import { DishStatus, getDishTotal, IDish } from './types/IDish.ts'
+import { getOrderEntryTotal, IDish } from './types/IDish.ts'
+import { FoodStatus, IOrderEntry } from './types/IOrderEntry.ts'
 
-export function getFilteredCart(cart: IDish[], status: DishStatus) {
-    return cart.filter((item) => item.status === status)
+export function getFilteredCart(cart: IOrderEntry[], status: FoodStatus) {
+    return cart.filter((item) => item.state === status)
 }
 
-export function getCartTotal(cart: IDish[]) {
-    return cart.reduce((acc, dish) => acc + getDishTotal(dish), 0)
+export function getCartTotal(cart: IOrderEntry[]) {
+    return cart.reduce((acc, dish) => acc + getOrderEntryTotal(dish), 0)
 }
 
 export function getAppliedDishExtras(dish: IDish) {

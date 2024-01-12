@@ -38,7 +38,7 @@ export const DashboardFoodEditor = () => {
                 },
                 {
                     name: 'Картинка',
-                    key: 'image',
+                    key: 'imageUrl',
                     type: 'image',
                 },
             ]}

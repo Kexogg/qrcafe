@@ -4,13 +4,14 @@ import {
     removeFromCart,
     updateCartItem,
 } from '../../../features/cart/cartSlice.ts'
-import { DishStatus, getDishTotal, IDish } from '../../../types/IDish.ts'
+import { getOrderEntryTotal } from '../../../types/IDish.ts'
 import { useAppDispatch } from '../../../hooks/hooks.ts'
 import { useEffect, useState } from 'react'
+import { FoodStatus, IOrderEntry } from '../../../types/IOrderEntry.ts'
 
 type DishCardCartProps = {
-    item: IDish
-    setSelectedDish: (dish: IDish) => void
+    item: IOrderEntry
+    setSelectedDish: (dish: IOrderEntry) => void
     dispatch: ReturnType<typeof useAppDispatch>
 }
 
@@ -19,28 +20,29 @@ export const DishCardCart = ({
     setSelectedDish,
     dispatch,
 }: DishCardCartProps) => {
-    const [currentDish, setCurrentDish] = useState<IDish>(item)
+    const [currentDish, setCurrentDish] = useState<IOrderEntry>(item)
     useEffect(() => {
         setCurrentDish({ ...structuredClone(item), count: item.count ?? 1 })
     }, [item])
     const [extras, setExtras] = useState('')
+
     useEffect(() => {
         setExtras(
-            item.extras
+            item.food.extras
                 .filter((extra) => extra.applied)
                 .map((extra) => extra.name)
                 .join(', '),
         )
-    }, [extras, item.extras])
+    }, [extras, item.food.extras])
     return (
         <li
-            key={item.cartId}
+            key={item.id}
             className={
                 'flex min-h-[12rem] max-w-lg gap-5 rounded-3xl border-2 border-primary-700 p-4 hover:bg-primary-50/50'
             }>
             <img
-                src={item.image}
-                alt={item.name}
+                src={item.food.imageUrl}
+                alt={item.food.name}
                 className={
                     'aspect-square h-28 shrink-0 rounded-3xl object-cover sm:h-40'
                 }
@@ -51,9 +53,9 @@ export const DishCardCart = ({
                         className={
                             'text-2xl text-accent-800  max-[375px]:text-xl'
                         }>
-                        {item.name}
+                        {item.food.name}
                     </h2>
-                    {item.status === DishStatus.NEW && (
+                    {item.state === FoodStatus.NEW && (
                         <span
                             className={
                                 'mb-auto ml-auto flex gap-3 pl-3 text-primary-700'
@@ -65,7 +67,7 @@ export const DishCardCart = ({
                                 onClick={() =>
                                     dispatch(
                                         removeFromCart(
-                                            currentDish.cartId as string,
+                                            currentDish.id as string,
                                         ),
                                     )
                                 }>
@@ -74,7 +76,8 @@ export const DishCardCart = ({
                         </span>
                     )}
                 </span>
-                {item.extras.filter((extra) => extra.applied).length > 0 && (
+                {item.food.extras.filter((extra) => extra.applied).length >
+                    0 && (
                     <div className={'flex flex-col gap-1'}>
                         <h3 className={'text-accent-800'}>Добавки</h3>
                         <p className={'flex flex-wrap gap-1'}>{extras}</p>
@@ -85,14 +88,14 @@ export const DishCardCart = ({
                         'mt-auto flex flex-wrap items-center justify-between'
                     }>
                     <CountInput
-                        disabled={item.status !== DishStatus.NEW}
+                        disabled={item.state !== FoodStatus.NEW}
                         count={currentDish.count ?? 1}
                         onCountChange={(count) =>
                             dispatch(updateCartItem({ ...item, count }))
                         }
                     />
                     <p className={'text-lg font-semibold text-primary-700'}>
-                        {getDishTotal(item)}₽
+                        {getOrderEntryTotal(item)}₽
                     </p>
                 </div>
             </div>

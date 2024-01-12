@@ -3,11 +3,28 @@ import { useState } from 'react'
 import QrCodeScannerRoundedIcon from '@mui/icons-material/QrCodeScannerRounded'
 import { useNavigate } from 'react-router-dom'
 import Modal from '../../components/UI/Modal/Modal.tsx'
+import {
+    setRestaurantId,
+    setToken,
+} from '../../features/session/sessionSlice.ts'
+import { useAppDispatch } from '../../hooks/hooks.ts'
+import { getClientToken } from '../../api/api.ts'
 
 const buttonBoxClass = 'flex flex-col gap-3 mt-auto'
 
 export const Login = () => {
     const navigate = useNavigate()
+    const dispatch = useAppDispatch()
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('id') && params.get('table')) {
+        getClientToken(params.get('id')!, params.get('table')!).then(
+            (response) => {
+                dispatch(setToken(response.data.token))
+                dispatch(setRestaurantId(params.get('id')!))
+                navigate('/login/name')
+            },
+        )
+    }
     const legalSpeak =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
     const [modalOpen, setModalOpen] = useState(false)

@@ -1,8 +1,7 @@
-import { DishStatus, IDish } from '../../../types/IDish.ts'
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts'
 import {
     clearCart,
-    updateCart,
+    setCart,
     updateConfirmed,
 } from '../../../features/cart/cartSlice.ts'
 import { useState } from 'react'
@@ -13,12 +12,13 @@ import Modal from '../../../components/UI/Modal/Modal.tsx'
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { getCartTotal, getFilteredCart } from '../../../helpers.ts'
-import { createOrder } from '../../../api/api.ts'
 import { ErrorBox } from '../../../components/UI/ErrorBox/ErrorBox.tsx'
+import { FoodStatus, IOrderEntry } from '../../../types/IOrderEntry.ts'
+import { createOrder, getOrder } from '../../../api/api.ts'
 
 type CustomerCartCards = {
-    setSelectedDish: (dish: IDish) => void
-    cards: IDish[]
+    setSelectedDish: (dish: IOrderEntry) => void
+    cards: IOrderEntry[]
     dispatch: ReturnType<typeof useAppDispatch>
 }
 
@@ -31,7 +31,7 @@ const CustomerCartCards = ({
         <ul className={'flex flex-col gap-5'}>
             {cards.map((item) => (
                 <DishCardCart
-                    key={item.cartId}
+                    key={item.id}
                     item={item}
                     setSelectedDish={setSelectedDish}
                     dispatch={dispatch}
@@ -45,7 +45,7 @@ export const CustomerCart = () => {
     const cart = useAppSelector((state) => state.cart.items)
     const navigate = useNavigate()
     const isOrderConfirmed = useAppSelector((state) => state.cart.confirmed)
-    const [selectedDish, setSelectedDish] = useState<IDish | null>(null)
+    const [selectedDish, setSelectedDish] = useState<IOrderEntry | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [error, setError] = useState('')
     const dispatch = useAppDispatch()
@@ -60,7 +60,7 @@ export const CustomerCart = () => {
                 <p>Подтвердив заказ, вы не сможете удалить эти блюда</p>
                 <p>
                     Сумма заказа -{' '}
-                    {getCartTotal(getFilteredCart(cart, DishStatus.NEW))}₽
+                    {getCartTotal(getFilteredCart(cart, FoodStatus.NEW))}₽
                 </p>
                 <Button
                     label={'Подтвердить'}
@@ -70,20 +70,19 @@ export const CustomerCart = () => {
                             session.token!,
                             session.restaurantId!,
                             cart.filter(
-                                (dish) => dish.status === DishStatus.NEW,
+                                (dish) => dish.state === FoodStatus.NEW,
                             ),
                         )
                             .then((r) => {
                                 console.log(r)
                                 dispatch(updateConfirmed(true))
-                                dispatch(
-                                    updateCart(
-                                        cart.map((dish) => ({
-                                            ...dish,
-                                            status: DishStatus.COOKING,
-                                        })),
-                                    ),
-                                )
+                                dispatch(clearCart())
+                                getOrder(
+                                    session.token!,
+                                    session.restaurantId!,
+                                ).then((r) => {
+                                    dispatch(setCart(r))
+                                })
                             })
                             .catch((err) => {
                                 setError(err)
@@ -96,7 +95,7 @@ export const CustomerCart = () => {
             </Modal>
             <DishModal
                 isInCart
-                dish={selectedDish}
+                item={selectedDish}
                 onClose={() => setSelectedDish(null)}
             />
             <PageTitle title={'Ваш заказ'} />
@@ -122,7 +121,7 @@ export const CustomerCart = () => {
                     </p>
                 </div>
             )}
-            {getFilteredCart(cart, DishStatus.NEW).length > 0 && (
+            {getFilteredCart(cart, FoodStatus.NEW).length > 0 && (
                 <div className={'flex flex-col gap-3'}>
                     <div>
                         <h3>Новые блюда</h3>
@@ -137,7 +136,7 @@ export const CustomerCart = () => {
                     )}
                     <CustomerCartCards
                         setSelectedDish={setSelectedDish}
-                        cards={getFilteredCart(cart, DishStatus.NEW)}
+                        cards={getFilteredCart(cart, FoodStatus.NEW)}
                         dispatch={dispatch}
                     />
                     <div
@@ -146,7 +145,7 @@ export const CustomerCart = () => {
                         }>
                         <h2>
                             {`Итого: ${getCartTotal(
-                                getFilteredCart(cart, DishStatus.NEW),
+                                getFilteredCart(cart, FoodStatus.NEW),
                             )}₽`}
                         </h2>
                         <Button
@@ -164,7 +163,7 @@ export const CustomerCart = () => {
                 {
                     <CustomerCartCards
                         setSelectedDish={setSelectedDish}
-                        cards={getFilteredCart(cart, DishStatus.COOKING)}
+                        cards={getFilteredCart(cart, FoodStatus.COOKING)}
                         dispatch={dispatch}
                     />
                 }

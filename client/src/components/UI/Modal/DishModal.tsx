@@ -1,34 +1,47 @@
 import { ArrowBackRounded } from '@mui/icons-material'
 import Modal from './Modal.tsx'
-import { getDishTotal, IDish, toggleDishExtra } from '../../../types/IDish.ts'
+import {
+    getOrderEntryTotal,
+    IDish,
+    toggleDishExtra,
+} from '../../../types/IDish.ts'
 import { useEffect, useState } from 'react'
 import { Button } from '../Button/Button.tsx'
 import { addToCart, updateCartItem } from '../../../features/cart/cartSlice.ts'
 import { useAppDispatch } from '../../../hooks/hooks.ts'
 import { CountInput } from '../CountInput/CountInput.tsx'
+import { FoodStatus, IOrderEntry } from '../../../types/IOrderEntry.ts'
 
 type DishModalProps = {
-    dish: IDish | null
+    item: IOrderEntry | IDish | null
     onClose: () => void
     isInCart?: boolean
 }
 
-const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
-    const [currentDish, setCurrentDish] = useState<IDish | null>(null)
+const DishModal = ({ item, onClose, isInCart }: DishModalProps) => {
+    const [currentItem, setCurrentItem] = useState<IOrderEntry | null>(null)
     useEffect(() => {
-        setCurrentDish(
-            dish ? { ...structuredClone(dish), count: dish.count ?? 1 } : null,
-        )
-    }, [dish])
+        if (item) {
+            if ('food' in item) setCurrentItem(item as IOrderEntry)
+            else
+                setCurrentItem({
+                    food: item,
+                    count: 1,
+                    createdAt: '',
+                    id: '',
+                    state: FoodStatus.NONE,
+                })
+        }
+    }, [item])
     const dispatch = useAppDispatch()
     return (
-        <Modal open={!!dish} onClose={onClose}>
-            {currentDish && (
+        <Modal open={!!item} onClose={onClose}>
+            {currentItem && (
                 <div className={'flex h-full flex-col gap-3'}>
                     <div className={'relative flex aspect-[3/2] shrink-0'}>
                         <img
-                            src={currentDish.image}
-                            alt={currentDish.name}
+                            src={currentItem.food.imageUrl}
+                            alt={currentItem.food.name}
                             className={
                                 'absolute aspect-[3/2] w-full rounded-3xl object-cover'
                             }
@@ -44,20 +57,20 @@ const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
                     </div>
                     <section className={'min-h-0 grow overflow-y-scroll'}>
                         <h1 className={'text-3xl font-bold text-primary-700'}>
-                            {currentDish.name}
+                            {currentItem.food.name}
                         </h1>
                         <p className={'text-lg text-primary-700'}>
-                            {currentDish.weight}
+                            {currentItem.food.weight}
                         </p>
                         <p className={'text-lg text-primary-500'}>
-                            {currentDish.description}
+                            {currentItem.food.description}
                         </p>
                     </section>
                     <section
                         className={
                             'mt-auto flex grow-0 flex-col justify-end gap-3'
                         }>
-                        {currentDish.extras.length > 0 && (
+                        {currentItem.food.extras.length > 0 && (
                             <>
                                 <h2
                                     className={
@@ -69,7 +82,7 @@ const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
                                     className={
                                         'no-scrollbar flex grow-0 gap-3 overflow-y-scroll pb-1'
                                     }>
-                                    {currentDish.extras.map((extra) => {
+                                    {currentItem.food.extras.map((extra) => {
                                         return (
                                             <li key={extra.id}>
                                                 <button
@@ -79,12 +92,15 @@ const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
                                                             : 'text-primary-700'
                                                     }`}
                                                     onClick={() => {
-                                                        setCurrentDish({
-                                                            ...currentDish,
-                                                            extras: toggleDishExtra(
-                                                                currentDish,
-                                                                extra.id,
-                                                            ),
+                                                        setCurrentItem({
+                                                            ...currentItem,
+                                                            food: {
+                                                                ...currentItem.food,
+                                                                extras: toggleDishExtra(
+                                                                    currentItem.food,
+                                                                    extra.id,
+                                                                ),
+                                                            },
                                                         })
                                                     }}>
                                                     {extra.name}
@@ -99,12 +115,12 @@ const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
                         <div className={'flex items-center'}>
                             <CountInput
                                 onCountChange={(count) =>
-                                    setCurrentDish({
-                                        ...currentDish,
+                                    setCurrentItem({
+                                        ...currentItem,
                                         count: count,
                                     })
                                 }
-                                count={currentDish.count ?? 1}
+                                count={currentItem.count}
                             />
                             <div className={'ml-auto flex items-center gap-3'}>
                                 <span
@@ -117,7 +133,7 @@ const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
                                     className={
                                         'rounded-full bg-primary-700 p-3 text-lg font-semibold text-white'
                                     }>
-                                    {getDishTotal(currentDish)}₽
+                                    {getOrderEntryTotal(currentItem)}₽
                                 </p>
                             </div>
                         </div>
@@ -130,8 +146,8 @@ const DishModal = ({ dish, onClose, isInCart }: DishModalProps) => {
                             dark
                             onClick={() => {
                                 if (isInCart)
-                                    dispatch(updateCartItem(currentDish))
-                                else dispatch(addToCart(currentDish))
+                                    dispatch(updateCartItem(currentItem))
+                                else dispatch(addToCart(currentItem))
                                 onClose()
                             }}
                         />

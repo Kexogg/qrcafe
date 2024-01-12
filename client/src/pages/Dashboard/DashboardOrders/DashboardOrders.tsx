@@ -1,5 +1,5 @@
 import { DashboardPageTemplate } from '../DashboardPageTemplate/DashboardPageTemplate.tsx'
-import { getClients } from '../../../api/api.ts'
+import { deleteClient, getClients } from '../../../api/api.ts'
 import { IOrderEntry } from '../../../types/IOrderEntry.ts'
 
 export const DashboardOrders = () => {
@@ -7,6 +7,7 @@ export const DashboardOrders = () => {
         <DashboardPageTemplate
             pageTitle={'Заказы'}
             getItems={getClients}
+            deleteItem={deleteClient}
             tableColumns={[
                 {
                     name: 'Столик',

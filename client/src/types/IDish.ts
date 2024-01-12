@@ -1,14 +1,5 @@
-import food_placeholder from '/src/assets/food_placeholder.jpg'
 import { WithId } from './types.ts'
-
-export enum DishStatus {
-    NONE,
-    NEW,
-    COOKING,
-    COOKED,
-    SERVED,
-    CANCELED,
-}
+import { IOrderEntry } from './IOrderEntry.ts'
 
 export interface IDish extends WithId {
     id: string
@@ -18,8 +9,7 @@ export interface IDish extends WithId {
     description: string
     weight: string
     extras: IDishExtra[]
-    image: string
-    status: DishStatus
+    imageUrl: string
     available: boolean
     count: number | undefined //undefined means that the dish is not in the cart
 }
@@ -33,68 +23,16 @@ export function toggleDishExtra(dish: IDish, id: number): IDishExtra[] {
     })
 }
 
-export function getDishTotal(dish: IDish) {
+export function getOrderEntryTotal(orderEntry: IOrderEntry) {
     return (
-        (dish.price +
-            dish.extras
+        (orderEntry.food.price +
+            orderEntry.food.extras
                 .filter((extra) => extra.applied)
                 .reduce((acc, extra) => acc + extra.price, 0)) *
-        (dish.count ?? 1)
+        (orderEntry.count ?? 1)
     )
 }
 
-export function getPlaceholderDish(): IDish {
-    const DishNames = [
-        'Салат греческий',
-        'Салат с креветками',
-        'Салат с курицей',
-        'Салат с тунцом',
-        'Салат с лососем',
-        'Салат с мидиями',
-        'Салат с кальмарами',
-    ]
-    const DishExtras = [
-        { id: 0, name: 'Сыр', price: 200, applied: false },
-        { id: 1, name: 'Соус', price: 250, applied: false },
-        { id: 2, name: 'Оливки', price: 150, applied: false },
-        { id: 3, name: 'Огурцы', price: 100, applied: false },
-        { id: 4, name: 'Помидоры', price: 100, applied: false },
-        { id: 5, name: 'Лук', price: 50, applied: false },
-        { id: 6, name: 'Перец', price: 50, applied: false },
-        { id: 7, name: 'Оливковое масло', price: 50, applied: false },
-    ]
-    const DishName = DishNames[Math.floor(Math.random() * DishNames.length)]
-    const DishDescription =
-        DishName +
-        ', приготовленный по греческому рецепту, с добавлением оливок, сыра фета, огурцов, помидоров, лука, перца и оливкового масла.'
-    return {
-        id: Math.random().toString(),
-        name: DishName,
-        price: Math.floor(Math.random() * 100),
-        description: DishDescription,
-        weight: '100 гр.',
-        //@ts-ignore
-        extras: DishExtras.filter((value) => Math.random() > 0.5),
-        image: food_placeholder,
-        count: undefined,
-        status: DishStatus.NONE,
-        available: true,
-    }
-}
-export const getDishStub = (): IDish => {
-    return {
-        id: '',
-        name: '',
-        price: 0,
-        description: '',
-        weight: '',
-        extras: [],
-        image: '',
-        status: DishStatus.NONE,
-        count: 0,
-        available: true,
-    }
-}
 interface IDishExtra {
     id: number
     name: string

@@ -1,12 +1,18 @@
-import { WithId } from './types.ts'
 import { IDish } from './IDish.ts'
 
-export interface IOrderEntry extends WithId {
-    id: string
-    clientId: string
+export enum FoodStatus {
+    NONE,
+    NEW,
+    COOKING,
+    COOKED,
+    SERVED,
+    CANCELED,
+}
+
+export interface IOrderEntry {
+    id?: string
     food: IDish
-    tableId: number
     createdAt: string
-    state: number
+    state: FoodStatus
     count: number
 }

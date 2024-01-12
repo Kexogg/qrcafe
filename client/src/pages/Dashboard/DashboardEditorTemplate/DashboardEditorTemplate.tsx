@@ -113,7 +113,9 @@ export const DashboardEditorTemplate = <T extends WithId>({
                 if (response && response.status !== 204) {
                     setItem(response as unknown as T)
                     if (!itemExists) {
-                        navigate(`${(response as unknown as T).id}`)
+                        setTimeout(() => {
+                            navigate(`${(response as unknown as T).id}`)
+                        }, 500)
                     }
                 }
             })

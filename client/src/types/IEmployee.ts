@@ -11,4 +11,5 @@ export interface IEmployee extends WithId {
     fullName: string
     role: EmployeeRole
     available: boolean
+    imageUri?: string
 }

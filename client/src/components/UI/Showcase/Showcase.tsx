@@ -1,29 +1,51 @@
-import {IDish} from "../../../types/IDish.ts";
-import {useState} from "react";
-import DishModal from "../Modal/DishModal.tsx";
+import { IDish } from '../../../types/IDish.ts'
+import { useState } from 'react'
+import DishModal from '../Modal/DishModal.tsx'
 
 type ShowcaseProps = {
-    title: string;
-    items: IDish[];
+    title: string
+    items: IDish[]
 }
 
-export const Showcase = ({title, items}: ShowcaseProps) => {
-    const [activeItem, setActiveItem] = useState<IDish | null>(null);
+export const Showcase = ({ title, items }: ShowcaseProps) => {
+    const [activeItem, setActiveItem] = useState<IDish | null>(null)
     return (
         <section>
-            <DishModal dish={activeItem} onClose={() => setActiveItem(null)} />
-            <h2 className={'text-accent-800 font-bold text-3xl ml-5 my-5 align-middle'}>{title}</h2>
-            <ul className={'flex gap-3 overflow-y-scroll snap-x snap-mandatory no-scrollbar px-5 py-1'}>
+            <DishModal item={activeItem} onClose={() => setActiveItem(null)} />
+            <h2
+                className={
+                    'my-5 ml-5 align-middle text-3xl font-bold text-accent-800'
+                }>
+                {title}
+            </h2>
+            <ul
+                className={
+                    'no-scrollbar flex snap-x snap-mandatory gap-3 overflow-y-scroll px-5 py-1'
+                }>
                 {items.map((item) => (
                     <li key={item.id}>
-                        <button onClick={() => setActiveItem(item)} className={'snap-center group relative flex justify-end w-48 h-48 rounded-3xl shadow overflow-hidden shrink-0'}>
-                            <img src={item.image} alt={item.name}
-                                 className={'absolute w-full h-full object-cover group-hover:scale-110 transition-transform'}/>
-                            <div className={'max-w-[90%] relative text-gray-200 bg-neutral-400 bg-opacity-30 backdrop-blur-sm rounded-2xl p-3 text-right mt-auto mb-2 mr-2 font-bold'}>{item.name}</div>
+                        <button
+                            onClick={() => setActiveItem(item)}
+                            className={
+                                'group relative flex h-48 w-48 shrink-0 snap-center justify-end overflow-hidden rounded-3xl shadow'
+                            }>
+                            <img
+                                src={item.imageUrl}
+                                alt={item.name}
+                                className={
+                                    'absolute h-full w-full object-cover transition-transform group-hover:scale-110'
+                                }
+                            />
+                            <div
+                                className={
+                                    'relative mb-2 mr-2 mt-auto max-w-[90%] rounded-2xl bg-neutral-400 bg-opacity-30 p-3 text-right font-bold text-gray-200 backdrop-blur-sm'
+                                }>
+                                {item.name}
+                            </div>
                         </button>
                     </li>
                 ))}
             </ul>
         </section>
-    );
-};
+    )
+}

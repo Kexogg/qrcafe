@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom'
-import { EmployeeRole } from '../../../types/IEmployee.ts'
 import {
     createEmployee,
     getEmployeeById,
@@ -36,14 +35,26 @@ export const DashboardEmployeeEditor = () => {
                     name: 'Роль',
                     key: 'role',
                     type: 'dropdown',
-                    options: Object.values(EmployeeRole).map((e) =>
-                        e.toString(),
-                    ),
+                    options: [
+                        {
+                            name: 'Официант',
+                            value: '1',
+                        },
+                        {
+                            name: 'Администратор',
+                            value: '0',
+                        },
+                    ],
                 },
                 {
                     name: 'На смене',
                     key: 'available',
                     type: 'checkbox',
+                },
+                {
+                    name: 'Картинка',
+                    key: 'imageUrl',
+                    type: 'image',
                 },
             ]}
             id={params.id}

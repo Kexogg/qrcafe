@@ -11,8 +11,8 @@ import { OverridableStringUnion } from '@mui/types'
 import { SvgIconPropsSizeOverrides } from '@mui/material/SvgIcon/SvgIcon'
 import { useAppSelector } from '../../../hooks/hooks.ts'
 import { getFilteredCart } from '../../../helpers.ts'
-import { DishStatus } from '../../../types/IDish.ts'
 import { IMenuItem } from '../../../types/IMenuItem.ts'
+import { FoodStatus } from '../../../types/IOrderEntry.ts'
 
 type NavigationMenuProps = {
     customer: boolean
@@ -89,14 +89,14 @@ export const NavigationMenu = ({ customer }: NavigationMenuProps) => {
                             {item.icon}
                         </Link>
                         {item.path === '/customer/cart' &&
-                            getFilteredCart(cart, DishStatus.NEW).length >
+                            getFilteredCart(cart, FoodStatus.NEW).length >
                                 0 && (
                                 <span
                                     className={
                                         'absolute left-1/2 top-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-accent-700 text-sm font-medium text-white'
                                     }>
                                     {
-                                        getFilteredCart(cart, DishStatus.NEW)
+                                        getFilteredCart(cart, FoodStatus.NEW)
                                             .length
                                     }
                                 </span>

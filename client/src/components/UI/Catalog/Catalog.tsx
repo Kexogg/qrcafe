@@ -109,7 +109,7 @@ export const Catalog = ({ title, categories }: CatalogProps) => {
     return (
         <section>
             <DishModal
-                dish={selectedDish}
+                item={selectedDish}
                 onClose={() => setSelectedDish(null)}
             />
             <h2

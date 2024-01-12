@@ -1,7 +1,7 @@
 import { ITable, TableStatus } from '../../../types/ITable.ts'
-import { DishStatus } from '../../../types/IDish.ts'
 import { Link } from 'react-router-dom'
 import { Button } from '../Button/Button.tsx'
+import { FoodStatus } from '../../../types/IOrderEntry.ts'
 
 type TableCardProps = {
     table: ITable
@@ -27,31 +27,31 @@ export const TableCard = ({ table }: TableCardProps) => {
             {table.status === TableStatus.OPEN && (
                 <Button dark label={'Создать заказ'} />
             )}
-            {table.order.length > 0 && (
+            {table.client?.order && table.client.order.length > 0 && (
                 <ul className={'flex flex-col gap-3'}>
-                    {structuredClone(table.order)
+                    {structuredClone(table.client.order)
                         .sort(
                             (dish) =>
-                                dish.status === DishStatus.COOKED ? 0 : 1,
+                                dish.state === FoodStatus.COOKED ? 0 : 1,
                             //Display ready to serve dishes first
                         )
                         .map((dish) => (
                             <li key={dish.id} className={'flex gap-3'}>
                                 <img
-                                    alt={dish.name}
+                                    alt={dish.food.name}
                                     className={
                                         'aspect-square h-14 rounded-xl object-cover'
                                     }
-                                    src={dish.image}
+                                    src={dish.food.imageUrl}
                                 />
                                 <div>
-                                    <h3>{dish.name}</h3>
-                                    {dish.status === DishStatus.COOKING && (
+                                    <h3>{dish.food.name}</h3>
+                                    {dish.state === FoodStatus.COOKING && (
                                         <span className={'text-neutral-700'}>
                                             Готовится
                                         </span>
                                     )}
-                                    {dish.status === DishStatus.COOKED && (
+                                    {dish.state === FoodStatus.COOKED && (
                                         <span
                                             className={
                                                 'font-bold text-accent-700'
@@ -59,12 +59,12 @@ export const TableCard = ({ table }: TableCardProps) => {
                                             Готово
                                         </span>
                                     )}
-                                    {dish.status === DishStatus.SERVED && (
+                                    {dish.state === FoodStatus.SERVED && (
                                         <span className={'text-green-600'}>
                                             Подано
                                         </span>
                                     )}
-                                    {dish.status === DishStatus.CANCELED && (
+                                    {dish.state === FoodStatus.CANCELED && (
                                         <span className={'text-neutral-400'}>
                                             Отменено
                                         </span>
@@ -74,7 +74,7 @@ export const TableCard = ({ table }: TableCardProps) => {
                         ))}
                 </ul>
             )}
-            {table.order.length > 0 && (
+            {table.client?.order && table.client.order.length > 0 && (
                 <Link
                     className={'text-center'}
                     to={`/employee/table/${table.id}`}

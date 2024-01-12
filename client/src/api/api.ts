@@ -1,8 +1,18 @@
 import axios from 'axios'
-import { EmployeeRole, IEmployee } from '../types/IEmployee.ts'
+import { IEmployee } from '../types/IEmployee.ts'
 import { IDish } from '../types/IDish.ts'
 import { ITable } from '../types/ITable.ts'
 import { ICategory } from '../types/ICategory.ts'
+import { IOrderEntry } from '../types/IOrderEntry.ts'
+
+const toFormData = <T>(obj: T) => {
+    const formData = new FormData()
+    for (const key in obj) {
+        if (key !== 'id') formData.append(key, obj[key] as string | Blob)
+    }
+    console.log(formData)
+    return formData
+}
 
 const API_BASE_URL = '/api'
 
@@ -23,6 +33,17 @@ export const getEmployeeToken = async (
 
 export const getClientToken = async (restaurant: string, tableId: string) => {
     return api.post(`/restaurants/${restaurant}/clients/tables/${tableId}`, {})
+}
+
+export const finishClientSession = async (
+    token: string,
+    restaurant: string,
+) => {
+    return api.delete(`/restaurants/${restaurant}/clients`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
 }
 
 export const getTables = async (token: string, restaurantId: string) => {
@@ -117,14 +138,14 @@ export const getEmployees = async (token: string, restaurantId: string) => {
                         id: string
                         fullName: string
                         login: string
-                        roleId: string
+                        role: string
                         available: boolean
                     }) => {
                         return {
                             id: employee.id,
                             login: employee.login,
                             fullName: employee.fullName,
-                            role: employee.roleId,
+                            role: employee.role,
                             available: employee.available,
                         }
                     },
@@ -148,8 +169,9 @@ export const getEmployeeById = async (
                 id: response.data.id,
                 login: response.data.login,
                 fullName: response.data.fullName,
-                role: response.data.roleId,
+                role: response.data.role,
                 available: response.data.available,
+                imageUrl: response.data.imageUrl,
             } as IEmployee
         })
 }
@@ -160,21 +182,12 @@ export const createEmployee = async (
     employee: IEmployee,
 ) => {
     return api
-        .post(
-            `/restaurants/${restaurantId}/employees`,
-            {
-                fullName: employee.fullName,
-                login: employee.login,
-                password: employee.password,
-                roleId: employee.role,
-                available: employee.available,
+        .post(`/restaurants/${restaurantId}/employees`, toFormData(employee), {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        )
+        })
         .then((response) => response)
 }
 
@@ -186,21 +199,11 @@ export const updateEmployee = async (
     return api
         .patch(
             `/restaurants/${restaurantId}/employees/${employee.id}`,
-            {
-                ...{
-                    fullName: employee.fullName,
-                    login: employee.login,
-                    roleId:
-                        typeof employee.role === 'string' //TODO: fix later
-                            ? Object.values(EmployeeRole).indexOf(employee.role)
-                            : employee.role,
-                    available: employee.available,
-                },
-                ...(employee.password && { password: employee.password }),
-            },
+            toFormData(employee),
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
                 },
             },
         )
@@ -235,6 +238,7 @@ export const getFood = async (token: string, restaurantId: string) => {
                     description: string
                     weight: number
                     price: number
+                    imageUrl: string
                 }) => {
                     return {
                         id: food.id,
@@ -243,7 +247,7 @@ export const getFood = async (token: string, restaurantId: string) => {
                         weight: food.weight.toString(),
                         price: food.price,
                         available: food.available,
-                        image: '', //TODO: remove
+                        imageUrl: food.imageUrl,
                         extras: [],
                         status: 0,
                         count: 0,
@@ -272,7 +276,7 @@ export const getFoodById = async (
                 weight: response.data.weight.toString(),
                 price: response.data.price,
                 available: response.data.available,
-                image: '', //TODO: remove
+                imageUrl: response.data.imageUrl,
                 extras: [],
                 status: 0,
                 count: 0,
@@ -286,21 +290,12 @@ export const createFood = async (
     dish: IDish,
 ) => {
     return api
-        .post(
-            `/restaurants/${restaurantId}/food`,
-            {
-                name: dish.name,
-                description: dish.description,
-                weight: dish.weight,
-                price: dish.price,
-                available: dish.available,
+        .post(`/restaurants/${restaurantId}/food`, toFormData(dish), {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        )
+        })
         .then((response) => response)
 }
 export const updateFood = async (
@@ -311,17 +306,11 @@ export const updateFood = async (
     return api
         .patch(
             `/restaurants/${restaurantId}/food/${dish.id}`,
-            {
-                id: dish.id,
-                name: dish.name,
-                description: dish.description,
-                weight: dish.weight,
-                price: dish.price,
-                available: dish.available,
-            },
+            toFormData(dish),
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
                 },
             },
         )
@@ -471,10 +460,20 @@ export const getOrderById = async (
 export const createOrder = async (
     token: string,
     restaurantId: string,
-    order: IDish[],
+    order: IOrderEntry[],
 ) => {
+    //god forgive me for this
+    const orderItems = order.flatMap((entry) => {
+        const food = entry.food
+        food.extras.filter((extra) => extra.applied)
+        const array = []
+        for (let i = 0; i < entry.count; i++) {
+            array.push(food)
+        }
+        return array
+    }, [])
     return api
-        .post(`/restaurants/${restaurantId}/foodQueue`, order, {
+        .post(`/restaurants/${restaurantId}/foodQueue`, orderItems, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -500,4 +499,15 @@ export const getClients = async (token: string, restaurantId: string) => {
             },
         })
         .then((response) => response.data)
+}
+export const deleteClient = async (
+    token: string,
+    restaurantId: string,
+    clientId: string,
+) => {
+    return api.delete(`/restaurants/${restaurantId}/clients/${clientId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
 }

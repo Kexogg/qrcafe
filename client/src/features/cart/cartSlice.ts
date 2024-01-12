@@ -1,8 +1,8 @@
-import { DishStatus, IDish } from '../../types/IDish.ts'
 import { createSlice } from '@reduxjs/toolkit'
+import { FoodStatus, IOrderEntry } from '../../types/IOrderEntry.ts'
 
 export interface CartState {
-    items: IDish[]
+    items: IOrderEntry[]
     confirmed: boolean
 }
 
@@ -15,31 +15,41 @@ export const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        addToCart: (state, action: { payload: IDish }) => {
+        addToCart: (state, action: { payload: IOrderEntry }) => {
+            console.log(action.payload)
             state.items.push({
                 ...action.payload,
-                cartId: Date.now().toString(),
-                status: DishStatus.NEW,
+                id: Date.now().toString(),
+                createdAt: new Date().toISOString(),
+                state: FoodStatus.NEW,
             })
         },
-        updateCartItem: (state, action: { payload: IDish }) => {
+        updateCartItem: (state, action: { payload: IOrderEntry }) => {
             state.items = state.items.map((item) => {
-                if (item.cartId === action.payload.cartId) {
+                if (item.id === action.payload.id) {
                     return action.payload
                 }
                 return item
             })
         },
-        updateCart: (state, action: { payload: IDish[] }) => {
-            state.items = action.payload
-        },
         removeFromCart: (state, action: { payload: string; type: string }) => {
             state.items = state.items.filter(
-                (item) => item.cartId !== action.payload,
+                (item) => item.id !== action.payload,
             )
+        },
+        updateItem: (state, action: { payload: IOrderEntry }) => {
+            state.items = state.items.map((item) => {
+                if (item.id === action.payload.id) {
+                    return action.payload
+                }
+                return item
+            })
         },
         clearCart: (state) => {
             state.items = []
+        },
+        setCart: (state, action: { payload: IOrderEntry[] }) => {
+            state.items = action.payload
         },
         updateConfirmed: (state, action: { payload: boolean }) => {
             state.confirmed = action.payload
@@ -51,14 +61,9 @@ export const {
     addToCart,
     removeFromCart,
     clearCart,
+    setCart,
     updateCartItem,
-    updateCart,
     updateConfirmed,
 } = cartSlice.actions
-
-export const selectCartItems = (state: { cart: CartState }) => state.cart.items
-
-export const selectOrdered = (state: { cart: CartState }) =>
-    state.cart.confirmed
 
 export default cartSlice.reducer

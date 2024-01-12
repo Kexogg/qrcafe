@@ -1,15 +1,19 @@
-import {
-    getPlaceholderTables,
-    ITable,
-    TableStatus,
-} from '../../../types/ITable.ts'
-import { useEffect, useMemo, useState } from 'react'
+import { ITable, TableStatus } from '../../../types/ITable.ts'
+import { useEffect, useState } from 'react'
 import { TablesSection } from '../../../components/UI/Waiter/TablesSection/TablesSection.tsx'
 import { Searchbar } from '../../../components/UI/Searchbar/Searchbar.tsx'
 import { TableRowsRounded } from '@mui/icons-material'
+import { getTables } from '../../../api/api.ts'
+import { useAppSelector } from '../../../hooks/hooks.ts'
 
 export const WaiterHome = () => {
-    const tables: ITable[] = useMemo(() => getPlaceholderTables(), [])
+    const [tables, setTables] = useState<ITable[]>([])
+    const session = useAppSelector((state) => state.session)
+    useEffect(() => {
+        getTables(session.token!, session.restaurantId!).then((tables) =>
+            setTables(tables),
+        )
+    }, [session.restaurantId, session.token])
     const [occupiedTables, setOccupiedTables] = useState<ITable[]>([])
     const [openTables, setOpenTables] = useState<ITable[]>([])
     const [reservedTables, setReservedTables] = useState<ITable[]>([])
