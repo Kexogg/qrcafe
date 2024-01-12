@@ -1,7 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Amazon.S3;
 
 namespace QrCafe.Models;
+
+public class FoodOrder
+{
+    public int Id { get; set; }
+    public List<int>? ExtrasId { get; set; } = new();
+    public int Count { get; set; } = 1;
+}
 
 public class FoodDTO
 {
@@ -40,8 +46,6 @@ public class FoodDTO
     public int Weight { get; set; }
     
     public int Price { get; set; }
-    
-    public List<int>? ExtrasId { get; set; } = new();
 
     public List<ExtraDTO>? Extras { get; set; } = new List<ExtraDTO>();
     

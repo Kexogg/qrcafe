@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace QrCafe.Models;
+﻿namespace QrCafe.Models;
 
 public partial class FoodCategory
 {

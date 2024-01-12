@@ -64,14 +64,16 @@ public partial class FoodQueue
         RestaurantId = restaurantId;
         CreatedAt = createdAt;
     }
+    
 
-    public FoodQueue(Food food, Guid clientId, TimeOnly createdAt)
+    public FoodQueue(FoodOrder foodOrder, Guid clientId, int restaurantId, TimeOnly createdAt)
     {
         ClientId = clientId;
-        RestaurantId = food.RestaurantId;
-        FoodId = food.Id;
+        RestaurantId = restaurantId;
+        FoodId = foodOrder.Id;
         State = 2;
         CreatedAt = createdAt;
+        Count = foodOrder.Count;
     }
     
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -93,11 +95,11 @@ public partial class FoodQueue
     public virtual ICollection<FoodQueueExtra> FoodQueueExtras { get; set; } = new List<FoodQueueExtra>();
 
     [System.Text.Json.Serialization.JsonIgnore]
-    public virtual Client Client { get; set; } = null!;
+    public virtual Client? Client { get; set; } = null!;
 
     [System.Text.Json.Serialization.JsonIgnore]
-    public virtual Food Food { get; set; } = null!;
+    public virtual Food? Food { get; set; } = null!;
 
     [System.Text.Json.Serialization.JsonIgnore]
-    public virtual Restaurant Restaurant { get; set; } = null!;
+    public virtual Restaurant? Restaurant { get; set; } = null!;
 }

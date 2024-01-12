@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace QrCafe.Models;
+﻿namespace QrCafe.Models;
 
 public class RestaurantDTO
 {

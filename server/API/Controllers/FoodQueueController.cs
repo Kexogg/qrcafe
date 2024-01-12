@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Packaging;
-using QrCafe;
 using QrCafe.Models;
 
 namespace QrCafe.Controllers
@@ -64,14 +57,14 @@ namespace QrCafe.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch]
         [Authorize (Roles = "employee")]
-        public async Task<IActionResult> PatchFoodQueue(Guid id, FoodQueue foodQueue, int restId)
+        public async Task<IActionResult> PatchFoodQueue(Guid id, FoodQueue foodQueueData, int restId)
         {
-            if (id != foodQueue.Id || restId!=foodQueue.RestaurantId)
-            {
-                return BadRequest();
-            }
+            var foodQueue = await _context.FoodQueues.Where(fq => fq.RestaurantId == restId)
+                .FirstOrDefaultAsync(fq=> fq.Id == foodQueueData.Id);
+            if (foodQueue == null) return NotFound();
 
-            _context.Entry(foodQueue).State = EntityState.Modified;
+            foodQueue.State = foodQueueData.State;
+            foodQueue.Count = foodQueueData.Count;
 
             try
             {
@@ -96,7 +89,7 @@ namespace QrCafe.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize (Roles = "client")]
-        public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueue(List<FoodDTO> foodList, int restId)
+        public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueue(List<FoodOrder> foodList, int restId)
         {
             var restaurantIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
             var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
@@ -113,16 +106,8 @@ namespace QrCafe.Controllers
             {
                 var food = restaurant.Foods.FirstOrDefault(f=> f.Id == foodItem.Id);
                 if (food == null) continue;
-                var foodQueue = restaurant.FoodQueues.Where(fq => fq.ClientId == client.Id)
-                    .FirstOrDefault(fq => fq.FoodId == foodItem.Id);
-                if (foodQueue != null)
                 {
-                    foodQueue.Count++;
-                    
-                }
-                else
-                {
-                    foodQueue = new FoodQueue(food, client.Id, time);
+                    var foodQueue = new FoodQueue(foodItem, client.Id, restId, time);
                     if(restaurant.FoodQueues.Where(fq=> fq.ClientId == client.Id)
                            .FirstOrDefault(fq=> fq.FoodId == foodItem.Id) == null)
                         await _context.FoodQueues.AddAsync(foodQueue);
