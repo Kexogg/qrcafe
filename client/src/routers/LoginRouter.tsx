@@ -21,10 +21,10 @@ export const LoginRouter = () => {
                 <Route index element={<Login />}></Route>
                 <Route path={'qr'} element={<LoginQrScanner />} />
                 <Route path={'code'} element={<LoginCodeEntry />} />
+                <Route path={'employee'} element={<LoginEmployee />} />
                 {session.token && (
                     <>
                         <Route path={'name'} element={<LoginNameInput />} />
-                        <Route path={'employee'} element={<LoginEmployee />} />
                         <Route path={'welcome'} element={<LoginWelcome />} />
                     </>
                 )}
