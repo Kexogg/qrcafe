@@ -267,10 +267,17 @@ const PropertyEditor = <T extends WithId>({
                         accept="image/jpeg"
                         required={property.required}
                         className={'w-min'}
-                        onChange={(event) =>
-                            onChange(event.target.files?.item(0))
-                        }
+                        onChange={(event) => {
+                            const file = event.target.files?.item(0)
+                            if (file && file.size <= 1048576) {
+                                // 1 MB = 1048576 bytes
+                                onChange(file)
+                            } else {
+                                alert('Размер файла не должен превышать 1 мб')
+                            }
+                        }}
                     />
+                    <span>JPEG, размер файла не больше 1 мб</span>
                 </div>
             )
         case 'custom':
