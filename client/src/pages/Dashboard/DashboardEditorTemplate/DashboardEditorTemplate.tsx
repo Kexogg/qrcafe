@@ -253,7 +253,8 @@ const PropertyEditor = <T extends WithId>({
                                     ? URL.createObjectURL(
                                           item[property.key] as Blob,
                                       )
-                                    : (item[property.key] as string)
+                                    : (item[property.key] as string) +
+                                      `?${Date.now()}` // Add timestamp to prevent caching
                             }
                             className={'h-40 w-40 object-cover'}
                             alt={item[property.key] as string}
