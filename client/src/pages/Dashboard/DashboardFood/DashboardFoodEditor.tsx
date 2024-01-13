@@ -13,7 +13,7 @@ export const DashboardFoodEditor = () => {
             getItem={getFoodById}
             properties={[
                 {
-                    name: 'Навзание',
+                    name: 'Название',
                     key: 'name',
                     type: 'text',
                 },
