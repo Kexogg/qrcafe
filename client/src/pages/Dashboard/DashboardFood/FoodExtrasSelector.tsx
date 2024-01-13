@@ -52,7 +52,7 @@ export const FoodExtrasSelector = ({
                             {
                                 name: current.name,
                                 price: current.price,
-                                id: Number(Date.now().toString().slice(0, 4)),
+                                id: Number(Date.now().toString().slice(-5)),
                             },
                         ])
                         setCurrent({ name: '', price: '' })
