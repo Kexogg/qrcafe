@@ -187,6 +187,7 @@ namespace QrCafe.Controllers
                 RestaurantId = restId
             };
             await _context.Foods.AddAsync(food);
+            await _context.SaveChangesAsync();
             if (Request is { HasFormContentType: true, Form.Files.Count: > 0 })
             {
                 var fileRequest = Request.Form.Files[0];
