@@ -11,15 +11,26 @@ import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpi
 
 export const CustomerHome = () => {
     const session = useAppSelector((state) => state.session)
-    const [catalog, setCatalog] = useState<ICategory[]>([])
+    const [catalog, setCatalog] = useState<ICategory[] | null>(null)
     useEffect(() => {
-        getCatalog(session.token!, session.restaurantId!).then((catalog) => {
-            setCatalog(catalog)
-            console.log(catalog)
-        })
+        getCatalog(session.token!, session.restaurantId!).then(
+            (catalog: ICategory[]) => {
+                setCatalog(
+                    catalog
+                        .map((category) => {
+                            category.foodList = category.foodList.filter(
+                                (dish) => dish.available,
+                            )
+                            return category
+                        })
+                        .filter((category) => category.foodList.length > 0),
+                )
+                console.log(catalog)
+            },
+        )
     }, [session.restaurantId, session.token])
-    if (catalog.length === 0) {
-        return <LoadingSpinner screenOverlay/>
+    if (!catalog) {
+        return <LoadingSpinner screenOverlay />
     }
     return (
         <>

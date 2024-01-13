@@ -6,8 +6,10 @@ import { LoginQrScanner } from '../pages/Login/LoginCodeEntry/LoginQrScanner.tsx
 import { LoginCodeEntry } from '../pages/Login/LoginCodeEntry/LoginCodeEntry.tsx'
 import { LoginWelcome } from '../pages/Login/LoginWelcome/LoginWelcome.tsx'
 import { LoginNameInput } from '../pages/Login/LoginNameInput/LoginNameInput.tsx'
+import { useAppSelector } from '../hooks/hooks.ts'
 
 export const LoginRouter = () => {
+    const session = useAppSelector((state) => state.session)
     return (
         <Routes>
             <Route
@@ -19,9 +21,13 @@ export const LoginRouter = () => {
                 <Route index element={<Login />}></Route>
                 <Route path={'qr'} element={<LoginQrScanner />} />
                 <Route path={'code'} element={<LoginCodeEntry />} />
-                <Route path={'name'} element={<LoginNameInput />} />
-                <Route path={'employee'} element={<LoginEmployee />} />
-                <Route path={'welcome'} element={<LoginWelcome />} />
+                {session.token && (
+                    <>
+                        <Route path={'name'} element={<LoginNameInput />} />
+                        <Route path={'employee'} element={<LoginEmployee />} />
+                        <Route path={'welcome'} element={<LoginWelcome />} />
+                    </>
+                )}
             </Route>
             <Route path="*" element={<Navigate replace to={'/login'} />} />
         </Routes>

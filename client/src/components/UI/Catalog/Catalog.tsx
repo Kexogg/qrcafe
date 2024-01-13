@@ -13,14 +13,13 @@ type CatalogProps = {
 }
 
 export const Catalog = ({ title, categories }: CatalogProps) => {
-    const [activeCategory, setActiveCategory] = useState<string>(
-        categories[0].name,
-    )
     const [selectedDish, setSelectedDish] = useState<IDish | null>(null)
     const categoryRefs = useRef<(HTMLLIElement | null)[]>([])
     const headerRef = useRef<HTMLUListElement>(null)
     const chipRefs = useRef<(HTMLLIElement | null)[]>([])
-
+    const [activeCategory, setActiveCategory] = useState<string | null>(
+        categories[0] ? categories[0].name : null,
+    )
     const [searchTerm, setSearchTerm] = useState('')
     const [filteredCategories, setFilteredCategories] = useState(categories)
     const isCustomer = useAppSelector((state) => state.session.type === 1)
