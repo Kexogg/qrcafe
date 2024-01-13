@@ -1,11 +1,9 @@
-import font from '../../../assets/Roboto-Bold.ttf'
-import { useEffect } from 'react'
-
 type QRCodePDFProps = {
     svgData: SVGElement
     pdf: typeof import('@react-pdf/renderer').default
+    font: string
 }
-export const QRCodePDF = ({ svgData, pdf }: QRCodePDFProps) => {
+export const QRCodePDF = ({ svgData, pdf, font }: QRCodePDFProps) => {
     const { Document, Page, StyleSheet, Font, Text, View, Svg, Path } = pdf
     Font.register({
         family: 'Roboto',
@@ -28,14 +26,6 @@ export const QRCodePDF = ({ svgData, pdf }: QRCodePDFProps) => {
             flexGrow: 1,
         },
     })
-    useEffect(() => {
-        Font.register({
-            family: 'Roboto',
-            src: font,
-            fontWeight: 'bold',
-        })
-    }, [Font])
-
     return (
         <Document>
             <Page size={'A4'} style={styles.page}>

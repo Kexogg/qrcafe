@@ -16,6 +16,7 @@ export const TableQrModal = ({ onClose, open, table }: TableQrModalProps) => {
     const restaurantId = useAppSelector((state) => state.session.restaurantId)
 
     const svgRef = useRef(null)
+    const [font, setFont] = useState<string>('')
     const [QrCode, setQRCode] = useState<
         typeof import('react-qr-code').default | null
     >(null)
@@ -29,6 +30,9 @@ export const TableQrModal = ({ onClose, open, table }: TableQrModalProps) => {
         })
         import('@react-pdf/renderer').then((pdf) => {
             setPdf(pdf.default)
+        })
+        import('../../../assets/Roboto-Bold.ttf').then((font) => {
+            setFont(font.default)
         })
     }, [])
 
@@ -46,11 +50,13 @@ export const TableQrModal = ({ onClose, open, table }: TableQrModalProps) => {
                     </div>
                     <Button
                         dark
+                        disabled={font === ''}
                         label={'Скачать'}
                         onClick={async () => {
                             await pdf
                                 .pdf(
                                     <QRCodePDF
+                                        font={font}
                                         svgData={
                                             svgRef.current as unknown as SVGElement
                                         }
