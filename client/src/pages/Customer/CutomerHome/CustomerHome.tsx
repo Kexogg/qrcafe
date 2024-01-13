@@ -25,7 +25,6 @@ export const CustomerHome = () => {
                         })
                         .filter((category) => category.foodList.length > 0),
                 )
-                console.log(catalog)
             },
         )
     }, [session.restaurantId, session.token])
