@@ -174,7 +174,7 @@ export const CustomerCart = () => {
                         Запросите счёт для оплаты заказа. Запросив счёт, вы
                         больше не сможете ничего заказать.
                     </p>
-                    <h2>Всего: {getCartTotal(cart)}₽</h2>
+                    <h2>Всего: {getCartTotal(order)}₽</h2>
                     <Button
                         label={'Запросить счёт'}
                         dark
