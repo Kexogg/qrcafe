@@ -110,13 +110,10 @@ export const DashboardEditorTemplate = <T extends WithId>({
                 setLastUpdate(Date.now())
                 console.log(response)
                 setError('')
-                if (response && response.status !== 204) {
-                    setItem(response as unknown as T)
-                    if (!itemExists) {
-                        setTimeout(() => {
-                            navigate(`${(response as unknown as T).id}`)
-                        }, 500)
-                    }
+                const data = (response.data as T) ?? response
+                if (data && response.status !== 204) {
+                    if (!itemExists) navigate(`${data.id}`)
+                    else setItem(data)
                 }
             })
             .catch((response) => {
