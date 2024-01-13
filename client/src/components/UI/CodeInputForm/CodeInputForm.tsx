@@ -1,4 +1,12 @@
-import { useCallback, useMemo, useRef } from 'react'
+import {
+    ChangeEvent,
+    KeyboardEvent,
+    ClipboardEvent,
+    useCallback,
+    useMemo,
+    useRef,
+    MutableRefObject,
+} from 'react'
 
 type CodeInputProps = {
     length: number
@@ -6,7 +14,7 @@ type CodeInputProps = {
 }
 
 export const CodeInputForm = ({ length, verifyCode }: CodeInputProps) => {
-    const modifierKeysPressed: React.MutableRefObject<string[]> = useRef([])
+    const modifierKeysPressed: MutableRefObject<string[]> = useRef([])
     const modifierKeys = useMemo(() => ['Control', 'Shift', 'Alt', 'Meta'], [])
     const allowedKeys = useMemo(
         () => [...modifierKeys, 'Enter', 'Tab'],
@@ -23,7 +31,7 @@ export const CodeInputForm = ({ length, verifyCode }: CodeInputProps) => {
     )
 
     const onInputChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
+        (e: ChangeEvent<HTMLInputElement>) => {
             const input = e.target
             if (input.value.length > 1) {
                 input.value = input.value.slice(0, 1)
@@ -50,7 +58,7 @@ export const CodeInputForm = ({ length, verifyCode }: CodeInputProps) => {
         [getNextInput, verifyCode],
     )
     const onInputKeyDown = useCallback(
-        (e: React.KeyboardEvent<HTMLInputElement>) => {
+        (e: KeyboardEvent<HTMLInputElement>) => {
             if (modifierKeys.includes(e.key)) {
                 modifierKeysPressed.current = [
                     ...modifierKeysPressed.current,
@@ -86,22 +94,19 @@ export const CodeInputForm = ({ length, verifyCode }: CodeInputProps) => {
         },
         [allowedKeys, getNextInput, modifierKeys],
     )
-    const onInputPaste = useCallback(
-        (e: React.ClipboardEvent<HTMLInputElement>) => {
-            e.preventDefault()
-            const text = e.clipboardData.getData('text/plain')
-            const boxes = document.getElementsByClassName('code_input')
-            let i = 0
-            for (const char of text) {
-                if (i >= boxes.length) break
-                ;(boxes[i] as HTMLInputElement).value = char
-                i++
-            }
-        },
-        [],
-    )
+    const onInputPaste = useCallback((e: ClipboardEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        const text = e.clipboardData.getData('text/plain')
+        const boxes = document.getElementsByClassName('code_input')
+        let i = 0
+        for (const char of text) {
+            if (i >= boxes.length) break
+            ;(boxes[i] as HTMLInputElement).value = char
+            i++
+        }
+    }, [])
     const onInputKeyUp = useCallback(
-        (e: React.KeyboardEvent<HTMLInputElement>) => {
+        (e: KeyboardEvent<HTMLInputElement>) => {
             if (modifierKeys.includes(e.key)) {
                 modifierKeysPressed.current =
                     modifierKeysPressed.current.filter((key) => key !== e.key)

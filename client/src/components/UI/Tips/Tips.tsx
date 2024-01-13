@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 
 type TipsProps = {
     onTipChange: (tip: number) => void
@@ -7,14 +7,12 @@ export const Tips = ({ onTipChange }: TipsProps) => {
     const [customTip, setCustomTip] = useState('')
     const [selectedTip, setSelectedTip] = useState('')
 
-    const handleCustomTipChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handleCustomTipChange = (event: ChangeEvent<HTMLInputElement>) => {
         setCustomTip(event.target.value)
         setSelectedTip('')
     }
 
-    const handleTipChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleTipChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedTip(event.target.value)
         setCustomTip('')
     }

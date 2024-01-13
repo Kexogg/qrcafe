@@ -4,6 +4,7 @@ import styles from './DashboardEditorTemplate.module.css'
 import {
     ComponentType,
     Dispatch,
+    FormEvent,
     SetStateAction,
     useEffect,
     useState,
@@ -96,7 +97,7 @@ export const DashboardEditorTemplate = <T extends WithId>({
             setLoading(false)
         }
     }, [getItem, session.restaurantId, session.token, id])
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         async function send() {
             return itemExists

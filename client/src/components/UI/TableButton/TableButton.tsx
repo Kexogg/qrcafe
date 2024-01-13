@@ -1,7 +1,7 @@
-import { ReactNode } from 'react'
+import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from 'react'
 
-type TableButtonProps = React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
+type TableButtonProps = DetailedHTMLProps<
+    ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
 > & {
     children: ReactNode

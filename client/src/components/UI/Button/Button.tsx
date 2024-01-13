@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
+import { ButtonHTMLAttributes, DetailedHTMLProps } from 'react'
 
-type ButtonProps = React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
+type ButtonProps = DetailedHTMLProps<
+    ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
 > & {
     label: string

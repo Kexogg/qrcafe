@@ -1,5 +1,7 @@
-type DropdownProps = React.DetailedHTMLProps<
-    React.SelectHTMLAttributes<HTMLSelectElement>,
+import { DetailedHTMLProps, SelectHTMLAttributes } from 'react'
+
+type DropdownProps = DetailedHTMLProps<
+    SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
 > & {
     options: { name: string; value: string }[] | string[]

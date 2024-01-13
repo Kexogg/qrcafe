@@ -1,7 +1,9 @@
+import { ReactNode } from 'react'
+
 type DashboardHomeCardProps = {
     title: string
     value: string
-    icon?: React.ReactNode
+    icon?: ReactNode
 }
 
 export const DashboardHomeCard = ({
