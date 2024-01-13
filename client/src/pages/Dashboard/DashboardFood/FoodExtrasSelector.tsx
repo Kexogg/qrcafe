@@ -16,15 +16,16 @@ export const FoodExtrasSelector = ({
     onChange,
 }: FoodExtraSelectorProps) => {
     const [open, setOpen] = useState(false)
-    const [current, setCurrent] = useState<{ name: string; price: number }>({
+    const [current, setCurrent] = useState<{ name: string; price: string }>({
         name: '',
-        price: 0,
+        price: '',
     })
     return (
-        <div>
+        <div className={'flex flex-col gap-3'}>
             <Modal open={open} onClose={() => setOpen(false)} autoHeight>
                 <h1>Добавление добавки</h1>
                 <TextField
+                    value={current.name}
                     onChange={(e) =>
                         setCurrent((c) => ({ ...c, name: e.target.value }))
                     }
@@ -32,10 +33,11 @@ export const FoodExtrasSelector = ({
                     placeholder={'Название'}
                 />
                 <TextField
+                    value={current.price}
                     onChange={(e) =>
                         setCurrent((c) => ({
                             ...c,
-                            price: Number(e.target.value),
+                            price: e.target.value,
                         }))
                     }
                     dark
@@ -43,7 +45,7 @@ export const FoodExtrasSelector = ({
                     type={'number'}
                 />
                 <Button
-                    disabled={current.name == '' || current.price <= 0}
+                    disabled={current.name == '' || current.price == ''}
                     onClick={() => {
                         onChange([
                             ...value,
@@ -53,7 +55,7 @@ export const FoodExtrasSelector = ({
                                 id: Number(Date.now().toString().slice(0, 4)),
                             },
                         ])
-                        setCurrent({ name: '', price: 0 })
+                        setCurrent({ name: '', price: '' })
                         setOpen(false)
                     }}
                     label={'Добавить'}
@@ -62,7 +64,10 @@ export const FoodExtrasSelector = ({
                 <Button
                     label={'Отмена'}
                     border
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                        setCurrent({ name: '', price: '' })
+                        setOpen(false)
+                    }}
                 />
             </Modal>
             <AutoTable
