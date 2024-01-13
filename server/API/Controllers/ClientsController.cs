@@ -1,5 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +8,18 @@ using QrCafe.Models;
 
 namespace QrCafe.Controllers;
 
+/// <summary>
+/// Контроллер для работы с клиентами
+/// </summary>
 [Route("api/restaurants/{restId:int}/[controller]")]
 [ApiController]
 public class ClientsController : ControllerBase
 {
     private readonly QrCafeDbContext _context;
 
+    /// <summary>
+    /// Конструктор контроллера клиентов
+    /// </summary>
     public ClientsController(QrCafeDbContext context)
     {
         _context = context;
@@ -37,12 +42,17 @@ public class ClientsController : ControllerBase
             .ThenInclude(fq=> fq.Food)
             .Select(c => new ClientDTO(c)).ToListAsync();
     }
-    
+
+
+    /// <summary>
+    /// Получить информацию о прикрепленном к клиенту сотруднике
+    /// </summary>
+    /// <param name="restId">ID ресторана</param>
+    /// <returns></returns>
     [HttpGet("employee")]
     [Authorize(Roles = "client")]
     public async Task<ActionResult<EmployeeDTO>> GetEmployeeInfo(int restId)
     {
-
             var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
             var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
             var client = await _context.Clients.Where(c => c.RestaurantId == restaurantClaim)
@@ -67,7 +77,7 @@ public class ClientsController : ControllerBase
 
         if (client == null)
         {
-            return NotFound();
+            return NotFound("Client not found");
         }
 
         return new ClientDTO(client);
@@ -85,7 +95,7 @@ public class ClientsController : ControllerBase
     {
         if (id != client.Id)
         {
-            return BadRequest();
+            return BadRequest("ID mismatch");
         }
 
         _context.Entry(client).State = EntityState.Modified;
@@ -98,32 +108,43 @@ public class ClientsController : ControllerBase
         {
             if (!ClientExists(id,restId))
             {
-                return NotFound();
+                return NotFound("Client not found");
             }
-            else
-            {
-                throw;
-            }
+            throw;
         }
 
         return NoContent();
     }
-    
-    [HttpPatch]
-    [Authorize(Roles = "client")]
-    public async Task<IActionResult> ChangeClientName(string clientName, int restId)
+    /// <summary>
+    /// Запрос изменения имени клиента
+    /// </summary>
+    public class ChangeClientNameRequest
     {
+        /// <summary>
+        /// Имя клиента
+        /// </summary>
+        public required string Name { get; set; }
+    }
+    /// <summary>
+    /// Изменение имени клиента
+    /// </summary>
+    /// <param name="request">Тело запроса</param>
+    /// <param name="restId">ID ресторана</param>
+    /// <returns></returns>
+    [HttpPatch]
+    [Route("name")]
+    [Authorize(Roles = "client")]
+    public async Task<IActionResult> ChangeClientName([FromBody] ChangeClientNameRequest request, int restId)
+    {
+        var clientName = request.Name;
         var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
         var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
-        if (restaurantClaim != restId) return BadRequest();
+        if (restaurantClaim != restId) return BadRequest("Restaurant ID mismatch");
         var client = await _context.Clients.Where(c => c.RestaurantId == restaurantClaim)
             .FirstOrDefaultAsync(c => c.Id == clientIdClaim);
-        if (client == null) return BadRequest("Клиента не существует");
-
+        if (client == null) return NotFound("Client not found");
         client.Name = clientName;
-
         await _context.SaveChangesAsync();
-
         return Ok();
     }
         
@@ -141,11 +162,11 @@ public class ClientsController : ControllerBase
     {
         var restaurant = _context.Restaurants.Include(restaurant => restaurant.Tables)
             .FirstOrDefault(r => r.Id == restId);
-        if (restaurant == null) return NotFound();
+        if (restaurant == null) return NotFound("Restaurant not found");
         var table = restaurant.Tables.FirstOrDefault(t => t.Id== tableId);
-        if (table == null) return BadRequest();
+        if (table == null) return NotFound("Table not found");
         var value = User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value;
-        if (table.AssignedEmployeeId != null) return BadRequest();
+        if (table.AssignedEmployeeId != null) return Conflict("Table is already assigned");
         Employee assignedEmployee;
         if (value != null)
         {
@@ -158,7 +179,7 @@ public class ClientsController : ControllerBase
         {
             assignedEmployee = Table.AssignEmployee(_context, table);
         }
-        if (assignedEmployee == null) return Conflict();
+        if (assignedEmployee == null) return Conflict("No employees available");
         table.AssignedEmployeeId = assignedEmployee.Id;
         var client = new Client(restId, tableId, assignedEmployee.Id);
         await _context.Clients.AddAsync(client);
@@ -203,7 +224,7 @@ public class ClientsController : ControllerBase
             .FirstOrDefaultAsync(c=> c.Id == id);
         if (client == null)
         {
-            return NotFound();
+            return NotFound("Client not found");
         }
 
         _context.Clients.Remove(client);
@@ -223,19 +244,20 @@ public class ClientsController : ControllerBase
     [Authorize(Roles = "client")]
     public async Task<IActionResult> EndSession(int restId)
     {
-        
         var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
         var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
         var restaurant = await _context.Restaurants.Include(r=> r.Clients)
             .ThenInclude(c=> c.FoodQueue)
             .ThenInclude(fq=> fq.FoodQueueExtras)
             .FirstOrDefaultAsync(r=> r.Id == restId);
-        if (restaurantClaim != restId || restaurant == null) return BadRequest();
+        if (restaurantClaim != restId ) return BadRequest("Restaurant ID mismatch");
+        if (restaurant == null) return NotFound("Restaurant not found");
         var client = restaurant.Clients.FirstOrDefault(c=> c.Id == clientIdClaim);
-        if (client == null) return NotFound();
+        if (client == null) return NotFound("Client not found");
         var table = await _context.Tables.Where(t=> t.RestaurantId == restId)
             .FirstOrDefaultAsync(t=> t.Id == client.TableId);
         _context.Clients.Remove(client);
+        if (table == null) return NotFound("Table not found");
         table.AssignedEmployeeId = null;
         await _context.SaveChangesAsync();
 
