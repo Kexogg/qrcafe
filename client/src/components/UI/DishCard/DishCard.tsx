@@ -1,4 +1,5 @@
 import { IDish } from '../../../types/IDish.ts'
+import { Block } from '@mui/icons-material'
 
 type DishCardProps = {
     dish: IDish
@@ -34,6 +35,14 @@ const DishCard = ({ dish, onClick }: DishCardProps) => {
                     <h3 className={'text-xl font-semibold text-primary-700'}>
                         {dish.name}
                     </h3>
+                    {!dish.available && (
+                        <div
+                            className={
+                                'flex items-center gap-1 font-bold text-accent-800'
+                            }>
+                            <Block /> В стоп-листе
+                        </div>
+                    )}
                     <p className={'font-normal text-primary-500 md:text-lg'}>
                         {dish.description}
                     </p>
