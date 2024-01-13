@@ -277,7 +277,7 @@ const PropertyEditor = <T extends WithId>({
                             }
                         }}
                     />
-                    <span>JPEG, размер файла не больше 1 мб</span>
+                    <small>JPEG, размер файла не больше 1 мб</small>
                 </div>
             )
         case 'custom':
