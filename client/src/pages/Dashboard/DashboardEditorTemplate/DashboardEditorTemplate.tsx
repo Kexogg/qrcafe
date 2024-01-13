@@ -246,22 +246,24 @@ const PropertyEditor = <T extends WithId>({
         case 'image':
             return (
                 <div className={'flex flex-col gap-3'}>
-                    {item[property.key] !== '' && (
-                        <img
-                            src={
-                                item[property.key] instanceof File
-                                    ? URL.createObjectURL(
-                                          item[property.key] as Blob,
-                                      )
-                                    : (item[property.key] as string) +
-                                      `?${Date.now()}` // Add timestamp to prevent caching
-                            }
-                            className={'h-40 w-40 object-cover'}
-                            alt={item[property.key] as string}
-                        />
-                    )}
+                    {item[property.key] !== '' &&
+                        item[property.key] !== undefined && (
+                            <img
+                                src={
+                                    item[property.key] instanceof File
+                                        ? URL.createObjectURL(
+                                              item[property.key] as Blob,
+                                          )
+                                        : (item[property.key] as string) +
+                                          `?${Date.now()}` // Add timestamp to prevent caching
+                                }
+                                className={'h-40 w-40 object-cover'}
+                                alt={item[property.key] as string}
+                            />
+                        )}
                     <input
                         type={'file'}
+                        accept="image/jpeg"
                         required={property.required}
                         className={'w-min'}
                         onChange={(event) =>
