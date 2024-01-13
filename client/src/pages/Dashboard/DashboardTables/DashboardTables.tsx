@@ -24,7 +24,7 @@ export const DashboardTables = () => {
                     navigate('edit')
                 }}
                 tableColumns={[
-                    { name: 'ID', key: 'id' },
+                    { name: 'ID', key: 'id', shrink: true },
                     { name: 'Название', key: 'name' },
                     {
                         name: 'Официант',
@@ -38,22 +38,6 @@ export const DashboardTables = () => {
                         shrink: true,
                         func: (param: IClient) =>
                             param ? 'Занят' : 'Свободен',
-                    },
-                    {
-                        name: 'Кол-во блюд',
-                        shrink: true,
-                        key: 'client',
-                        func: (param: IClient) =>
-                            param && param.order
-                                ? //SUM OF DISHES
-                                  param.order
-                                      .reduce(
-                                          (acc, orderEntry) =>
-                                              acc + orderEntry.count ?? 1,
-                                          0,
-                                      )
-                                      .toString()
-                                : '',
                     },
                 ]}
                 tableCustomButtons={[
