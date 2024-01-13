@@ -4,12 +4,13 @@ import { IDish } from '../types/IDish.ts'
 import { ITable } from '../types/ITable.ts'
 import { ICategory } from '../types/ICategory.ts'
 import { IOrderEntry } from '../types/IOrderEntry.ts'
+import { IRestaurant } from '../types/IRestaurant.ts'
 
 const toFormData = <T>(obj: T) => {
     const formData = new FormData()
     for (const key in obj) {
         if (obj[key] instanceof Array) {
-            for (const item of obj[key] as any[]) {
+            for (const item of obj[key] as Array<unknown>) {
                 formData.append(`${key}`, JSON.stringify(item))
             }
         } else if (key !== 'id') formData.append(key, obj[key] as string | Blob)
@@ -473,7 +474,12 @@ export const getOrder = async (token: string, restaurantId: string) => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then((response) => response.data)
+        .then((response) => {
+            response.data.map((item: IOrderEntry) =>
+                item.food.extras.map((extra) => (extra.applied = true)),
+            )
+            return response.data
+        })
 }
 
 export const getOrderById = async (
@@ -562,6 +568,24 @@ export const deleteClient = async (
     })
 }
 
+export const setCustomerName = async (
+    token: string,
+    restaurantId: string,
+    name: string,
+) => {
+    return api
+        .patch(
+            `/restaurants/${restaurantId}/clients/name`,
+            { name },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+
 export const getRestaurant = async (token: string, restaurantId: string) => {
     return api
         .get(`/restaurants/${restaurantId}`, {
@@ -570,4 +594,25 @@ export const getRestaurant = async (token: string, restaurantId: string) => {
             },
         })
         .then((response) => response.data)
+}
+
+export const updateRestaurant = async (
+    token: string,
+    restaurantId: string,
+    restaurant: IRestaurant,
+) => {
+    return api
+        .patch(
+            `/restaurants/${restaurantId}`,
+            {
+                name: restaurant.name,
+                address: restaurant.address,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
 }

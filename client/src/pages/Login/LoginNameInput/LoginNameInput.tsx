@@ -1,14 +1,16 @@
 import TextField from '../../../components/UI/Input/TextField/TextField.tsx'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { useState } from 'react'
-import { useAppDispatch } from '../../../hooks/hooks.ts'
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts'
 import { useNavigate } from 'react-router-dom'
 import { setCustomer } from '../../../features/customer/customerSlice.ts'
+import { setCustomerName } from '../../../api/api.ts'
 
 export const LoginNameInput = () => {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const [name, setName] = useState('')
+    const session = useAppSelector((state) => state.session)
     const verifyName = (name: string): boolean => {
         return !(
             name.length >= 2 &&
@@ -30,8 +32,14 @@ export const LoginNameInput = () => {
                     label={'Продолжить'}
                     disabled={verifyName(name)}
                     onClick={() => {
-                        dispatch(setCustomer({ name: name }))
-                        navigate('/login/welcome')
+                        setCustomerName(
+                            session.token!,
+                            session.restaurantId!,
+                            name,
+                        ).then(() => {
+                            dispatch(setCustomer({ name: name }))
+                            navigate('/login/welcome')
+                        })
                     }}
                 />
                 <Button
