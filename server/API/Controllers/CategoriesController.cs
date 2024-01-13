@@ -107,18 +107,30 @@ namespace QrCafe.Controllers
         /// <summary>
         /// Создание категории
         /// </summary>
-        /// <param name="category">Категория</param>
+        /// <param name="categoryDto">Категория</param>
         /// <param name="restId">ID ресторана</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<CategoryDTO>> PostCategory(Category category, int restId)
+        public async Task<ActionResult<CategoryDTO>> PostCategory(CategoryDTO categoryDto, int restId)
         {
-            var restaurant = await _context.Restaurants.Include(r => r.Categories).FirstOrDefaultAsync(r => r.Id == restId);
+            var restaurant = await _context.Restaurants.Include(r => r.Categories)
+                .Include(restaurant => restaurant.Foods).FirstOrDefaultAsync(r => r.Id == restId);
             if (restaurant == null) return NotFound();
-            if (restaurant.Categories.FirstOrDefault(c => c.Order == category.Order) != null) 
+            if (restaurant.Categories.FirstOrDefault(c => c.Order == categoryDto.Order) != null) 
                 return Conflict();
-            category.RestaurantId = restId;
+            var category = new Category(categoryDto)
+            {
+                RestaurantId = restId
+            };
             await _context.Categories.AddAsync(category);
+            if (categoryDto.FoodIdList != null)
+                foreach (var foodId in categoryDto.FoodIdList)
+                {
+                    var food = restaurant.Foods.FirstOrDefault(f => f.Id == foodId);
+                    if (food == null) continue;
+                    var foodCategory = new FoodCategory(foodId, category.Id, restId);
+                    await _context.FoodCategories.AddAsync(foodCategory);
+                }
             await _context.SaveChangesAsync();
             return Ok(new CategoryDTO(category));
         }

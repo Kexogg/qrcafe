@@ -16,7 +16,9 @@ public class CategoryDTO
         Available = category.Available;
     }
 
-    public int? Id { get; set; } = null!;
+    public int? Id { get; set; }
+
+    public int? RestaurantId { get; set; }
     
     public int Order { get; set; }
 
@@ -42,6 +44,7 @@ public partial class Category
         Separate = categoryDto.Separate;
         Name = categoryDto.Name;
         Description = categoryDto.Description;
+        Available = categoryDto.Available;
     }
     
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
