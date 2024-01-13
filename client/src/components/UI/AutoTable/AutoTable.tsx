@@ -43,7 +43,7 @@ export const AutoTable = <T extends WithId>({
                             {column.name}
                         </th>
                     ))}
-                    {onEdit && <th></th>}
+                    {(onEdit || customButtons) && <th></th>}
                 </tr>
             </thead>
             <tbody>
