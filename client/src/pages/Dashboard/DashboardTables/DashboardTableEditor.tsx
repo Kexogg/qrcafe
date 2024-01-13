@@ -9,12 +9,12 @@ import { IEmployee } from '../../../types/IEmployee.ts'
 export const DashboardTableEditor = () => {
     const params = useParams()
     const restaurantId = useAppSelector((state) => state.session.restaurantId)
-    const [QrCode, setQRCode] = useState<
+    const [QrCode, setQrCode] = useState<
         typeof import('react-qr-code').default | null
     >(null)
     useEffect(() => {
         import('react-qr-code').then((QRCode) => {
-            setQRCode(QRCode.default)
+            setQrCode(QRCode.default)
         })
     }, [])
     if (!QrCode) return null
@@ -55,17 +55,13 @@ export const DashboardTableEditor = () => {
                     type: 'custom',
                     requiresItem: true,
                     customComponent: (props) => (
-                        <>
-                            <QrCode
-                                className={
-                                    'aspect-square h-20 w-20 bg-white p-1'
-                                }
-                                value={getQRValue(
-                                    restaurantId!,
-                                    props.value as string,
-                                )}
-                            />
-                        </>
+                        <QrCode
+                            className={'aspect-square h-20 w-20 bg-white p-1'}
+                            value={getQRValue(
+                                restaurantId!,
+                                props.value as string,
+                            )}
+                        />
                     ),
                 },
             ]}
