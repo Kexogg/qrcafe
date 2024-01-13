@@ -20,11 +20,13 @@ export const DashboardEmployeeEditor = () => {
                     name: 'Полное имя',
                     key: 'fullName',
                     type: 'text',
+                    required: true,
                 },
                 {
                     name: 'Логин',
                     key: 'login',
                     type: 'text',
+                    required: true,
                 },
                 {
                     name: 'Пароль',
@@ -35,6 +37,7 @@ export const DashboardEmployeeEditor = () => {
                     name: 'Роль',
                     key: 'role',
                     type: 'dropdown',
+                    required: true,
                     options: [
                         {
                             name: 'Официант',

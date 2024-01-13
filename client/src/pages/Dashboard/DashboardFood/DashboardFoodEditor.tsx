@@ -16,11 +16,13 @@ export const DashboardFoodEditor = () => {
                     name: 'Название',
                     key: 'name',
                     type: 'text',
+                    required: true,
                 },
                 {
                     name: 'Описание',
                     key: 'description',
                     type: 'textarea',
+                    required: true,
                 },
                 {
                     name: 'Доступно',
@@ -30,12 +32,14 @@ export const DashboardFoodEditor = () => {
                 {
                     name: 'Цена',
                     key: 'price',
-                    type: 'text',
+                    type: 'number',
+                    required: true,
                 },
                 {
                     name: 'Вес',
                     key: 'weight',
-                    type: 'text',
+                    type: 'number',
+                    required: true,
                 },
                 {
                     name: 'Картинка',
