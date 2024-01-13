@@ -7,6 +7,11 @@ import { IEmployee } from '../../../types/IEmployee.ts'
 import { ITable } from '../../../types/ITable.ts'
 import { Link } from 'react-router-dom'
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
+import {
+    PeopleRounded,
+    SoupKitchenRounded,
+    TableRestaurantRounded,
+} from '@mui/icons-material'
 
 export const DashboardHome = () => {
     const session = useAppSelector((state) => state.session)
@@ -33,6 +38,7 @@ export const DashboardHome = () => {
                 <Link to={'../employees'}>
                     <DashboardHomeCard
                         title={'Сотрудников на смене'}
+                        icon={<PeopleRounded />}
                         value={employees
                             .filter((e) => e.available)
                             .length.toString()}
@@ -40,12 +46,14 @@ export const DashboardHome = () => {
                 </Link>
                 <Link to={'../tables'}>
                     <DashboardHomeCard
+                        icon={<TableRestaurantRounded />}
                         title={'Столиков занято'}
                         value={tables.length.toString()}
                     />
                 </Link>
                 <Link to={'../orders'}>
                     <DashboardHomeCard
+                        icon={<SoupKitchenRounded />}
                         title={'Еды в готовке'}
                         value={tables
                             .map((t) => t.client?.order?.length ?? 0)
