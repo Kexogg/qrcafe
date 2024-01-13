@@ -384,6 +384,7 @@ export const createCategory = async (
                 separate: category.separate,
                 order: category.order,
                 available: category.available,
+                foodIdList: category.foodList.map((f) => f.id) ?? [],
             },
             {
                 headers: {
@@ -498,7 +499,7 @@ export const createOrder = async (
         return {
             id: Number(entry.food.id),
             count: entry.count,
-            extras: entry.food.extras
+            extrasId: entry.food.extras
                 .filter((extra) => extra.applied)
                 .map((e) => e.id),
         }
