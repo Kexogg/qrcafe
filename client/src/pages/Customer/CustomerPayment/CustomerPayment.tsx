@@ -1,20 +1,18 @@
 import { useAppSelector } from '../../../hooks/hooks.ts'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Tips } from '../../../components/UI/Tips/Tips.tsx'
 import { RadioButtonChecked, RadioButtonUnchecked } from '@mui/icons-material'
 import { Button } from '../../../components/UI/Button/Button.tsx'
 import { PageTitle } from '../../../components/UI/PageTitle/PageTitle.tsx'
 import { getOrderEntryTotal } from '../../../types/IDish.ts'
 import { useNavigate } from 'react-router-dom'
+import { IOrderEntry } from '../../../types/IOrderEntry.ts'
+import { getOrder } from '../../../api/api.ts'
+import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.tsx'
 
 export const CustomerPayment = () => {
     const navigate = useNavigate()
-    const total = useAppSelector((state) =>
-        state.cart.items.reduce(
-            (acc, OrderEntry) => acc + getOrderEntryTotal(OrderEntry),
-            0,
-        ),
-    )
+
     const [tip, setTip] = useState(0)
     const [paymentMethod, setPaymentMethod] = useState('')
     const paymentMethods: string[] = [
@@ -23,6 +21,22 @@ export const CustomerPayment = () => {
         'Карта (терминал)',
         'Система быстрых платежей',
     ]
+    const session = useAppSelector((state) => state.session)
+    const [total, setTotal] = useState<number | null>(null)
+    useEffect(() => {
+        getOrder(session.token!, session.restaurantId!).then(
+            (r: IOrderEntry[]) => {
+                setTotal(
+                    r.reduce(
+                        (acc, OrderEntry) =>
+                            acc + getOrderEntryTotal(OrderEntry),
+                        0,
+                    ),
+                )
+            },
+        )
+    }, [session.restaurantId, session.token])
+    if (!total) return <LoadingSpinner screenOverlay />
     return (
         <section className={'flex flex-col gap-3 px-3 text-primary-700'}>
             <PageTitle title={'Оплата счёта'} />
