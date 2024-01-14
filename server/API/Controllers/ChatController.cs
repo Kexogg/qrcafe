@@ -15,11 +15,12 @@ public class ChatController : Hub
         _context = context;
     }
     public QrCafeDbContext _context;
-    public async Task Send(string message, [FromQuery] string chatId)
+    public async Task Send(string message)
     {
         try
         {
             var role = Context.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToString();
+            var restaurantIdClaim = int.Parse(Context.User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
             switch (role)
             {
                 case "client":
@@ -41,11 +42,18 @@ public class ChatController : Hub
                 {
                     if (Context.UserIdentifier is string employeeId)
                     {
-                        await Clients.Users(employeeId, chatId).SendAsync("Receive", message);
-                        await Clients.Users(chatId, employeeId).SendAsync("Receive", message);
-                        var messageData = new ChatMessage(message,Guid.Parse(chatId),1);
-                        await _context.ChatMessages.AddAsync(messageData);
-                        await _context.SaveChangesAsync();
+                        var httpContext = Context.GetHttpContext();
+                        var clientId = Guid.Parse(httpContext.Request.Query["clientId"]);
+                        var client = await _context.Clients.Where(c => c.RestaurantId == restaurantIdClaim)
+                            .FirstOrDefaultAsync(c => c.Id == clientId);
+                        if (client != null)
+                        {
+                            await Clients.Users(employeeId, clientId.ToString()).SendAsync("Receive", message);
+                            await Clients.Users(clientId.ToString(), employeeId).SendAsync("Receive", message);
+                            var messageData = new ChatMessage(message, Guid.Parse(clientId.ToString()), 1);
+                            await _context.ChatMessages.AddAsync(messageData);
+                            await _context.SaveChangesAsync();
+                        }
                     }
                 
                     break;
