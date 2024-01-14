@@ -36,7 +36,6 @@ public class ChatController : Hub
             }
         }
     }
-    [AllowAnonymous]
     public override async Task OnConnectedAsync()
     {
         await Clients.All.SendAsync("Notify", "Вошел в чат");
