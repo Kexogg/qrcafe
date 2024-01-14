@@ -22,9 +22,11 @@
     @apply border border-primary-200 p-1
 }
 .table thead tr > * {
-    @apply bg-primary-700 text-white border-y-0 border-primary-500;
+    @apply bg-primary-700 text-white border-y-0 border-primary-500 select-none;
+}
+.table thead tr th:hover {
+    @apply bg-primary-600;
 }
 .table tbody tr:last-child > * {
     @apply border-b-0
 }
-
