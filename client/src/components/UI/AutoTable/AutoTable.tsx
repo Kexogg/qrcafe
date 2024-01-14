@@ -1,17 +1,19 @@
 import { Table } from '../Table/Table.tsx'
 import { TableButton } from '../TableButton/TableButton.tsx'
-import { EditRounded } from '@mui/icons-material'
-import { ReactNode } from 'react'
+import { EditRounded, FilterListRounded } from '@mui/icons-material'
+import { ReactNode, useState } from 'react'
 import { WithId } from '../../../types/types.ts'
+
+interface IColumn {
+    name: string
+    key: string
+    func?: (param: never) => string
+    shrink?: boolean
+}
 
 type AutoTableProps<T extends WithId> = {
     data: T[]
-    columns: {
-        name: string
-        key: string
-        func?: (param: never) => string
-        shrink?: boolean
-    }[]
+    columns: IColumn[]
     selected?: T[]
     onSelected?: (rows: T[]) => void
     onEdit?: (row: T) => void
@@ -29,25 +31,63 @@ export const AutoTable = <T extends WithId>({
     onEdit,
     customButtons,
 }: AutoTableProps<T>) => {
+    const getCellValue = (row: T, column: IColumn) => {
+        if (column.func) {
+            return column.func(row[column.key] as never)
+        }
+        return row[column.key]
+    }
+    const [sortBy, setSortBy] = useState<number>(-1)
+    const [sortOrder, setSortOrder] = useState<number>(1)
+    const sortedData =
+        sortBy === -1
+            ? data
+            : structuredClone(data).sort((a, b) => {
+                  return (getCellValue(a, columns[sortBy]) as number) >
+                      (getCellValue(b, columns[sortBy]) as number)
+                      ? sortOrder
+                      : -1 * sortOrder
+              })
+
     return (
         <Table>
             <thead>
                 <tr>
                     {selected && <th></th>}
-                    {columns.map((column) => (
+                    {columns.map((column, index) => (
                         <th
+                            onClick={() => {
+                                if (sortBy === index) {
+                                    if (sortOrder === -1) {
+                                        setSortBy(-1)
+                                    }
+                                    setSortOrder(sortOrder * -1)
+                                } else {
+                                    setSortBy(index)
+                                    setSortOrder(1)
+                                }
+                            }}
                             key={column.key + column.name}
-                            className={
-                                column.shrink ? 'whitespace-nowrap' : ''
-                            }>
-                            {column.name}
+                            className={`${column.shrink ?? 'whitespace-nowrap'} column-sortable`}>
+                            <span
+                                className={`block whitespace-nowrap ${sortBy !== index && 'px-[10px]'}`}>
+                                <span>{column.name}</span>
+                                {sortBy === index && (
+                                    <span>
+                                        <FilterListRounded
+                                            className={`${sortOrder === 1 ? 'rotate-180' : ''}`}
+                                            fontSize={'small'}
+                                        />
+                                    </span>
+                                )}
+                            </span>
                         </th>
                     ))}
                     {(onEdit || customButtons) && <th></th>}
                 </tr>
             </thead>
             <tbody>
-                {data.map((row) => (
+                {sortedData.map((row) => (
                     <tr key={row.id}>
                         {selected && (
                             <td className={'w-0'}>
@@ -73,9 +113,7 @@ export const AutoTable = <T extends WithId>({
                                 className={`${
                                     column.shrink && 'w-0 whitespace-nowrap'
                                 }`}>
-                                {column.func
-                                    ? column.func(row[column.key] as never)
-                                    : (row[column.key] as string)}
+                                <>{getCellValue(row, column)}</>
                             </td>
                         ))}
                         {(onEdit || customButtons) && (
@@ -87,7 +125,6 @@ export const AutoTable = <T extends WithId>({
                                             <EditRounded fontSize={'small'} />
                                         </TableButton>
                                     )}
-
                                     {customButtons &&
                                         customButtons.map((button) => (
                                             <TableButton
