@@ -76,7 +76,7 @@ public partial class QrCafeDbContext : DbContext
             
             entity.HasOne(d => d.Table).WithOne(p => p.Client)
                 .HasForeignKey<Client>(d => d.TableId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("clients_tables_id_fk");
 
             entity.HasOne(d => d.Restaurant).WithMany(p => p.Clients)
