@@ -231,7 +231,7 @@ public class ClientsController : ControllerBase
         _context.Clients.Remove(client);
         var table = await _context.Tables.Where(t=> t.RestaurantId == restId)
             .FirstOrDefaultAsync(t=> t.Id == client.TableId);
-        table.AssignedEmployeeId = null;
+        if (table != null) table.AssignedEmployeeId = null;
         await _context.SaveChangesAsync();
 
         return NoContent();
