@@ -44,15 +44,19 @@ namespace QrCafe.Controllers
         // PUT: /api/organizations/{orgId:int}/Restaurants/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("/api/Restaurants/{id:int}")]
-        public async Task<IActionResult> PutRestaurant(int id, Restaurant restaurant)
+        public async Task<IActionResult> PatchRestaurant(int id, RestaurantDTO restaurant)
         {
-            if (id != restaurant.Id)
+            var restaurantData = await _context.Restaurants.FindAsync(id);
+
+            if (restaurantData != null)
+            {
+                restaurantData.Name = restaurant.Name;
+                restaurantData.Address = restaurant.Address;
+            }
+            else
             {
                 return BadRequest();
             }
-
-            _context.Entry(restaurant).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
