@@ -167,7 +167,7 @@ public class ClientsController : ControllerBase
         if (table == null) return NotFound("Table not found");
         var value = User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value;
         if (table.AssignedEmployeeId != null) return Conflict("Table is already assigned");
-        Employee assignedEmployee;
+        Employee? assignedEmployee;
         if (value != null)
         {
             var employeeIdClaim = Guid.Parse(value);
