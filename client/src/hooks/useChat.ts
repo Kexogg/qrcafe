@@ -27,7 +27,7 @@ const useChat = (url: string, accessToken: string) => {
     const sendMessage = async (message: string) => {
         if (connection) {
             try {
-                await connection.invoke('SendMessage', message)
+                await connection.invoke('Send', message)
             } catch (err) {
                 console.error(err)
             }
