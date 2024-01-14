@@ -53,7 +53,7 @@ public class ClientsController : ControllerBase
     [Authorize(Roles = "client")]
     public async Task<ActionResult<EmployeeDTO>> GetEmployeeInfo(int restId)
     {
-            var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
+            var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
             var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
             var client = await _context.Clients.Where(c => c.RestaurantId == restaurantClaim)
                 .Include(c => c.AssignedEmployee)
@@ -137,7 +137,7 @@ public class ClientsController : ControllerBase
     public async Task<IActionResult> ChangeClientName([FromBody] ChangeClientNameRequest request, int restId)
     {
         var clientName = request.Name;
-        var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
+        var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
         var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
         if (restaurantClaim != restId) return BadRequest("Restaurant ID mismatch");
         var client = await _context.Clients.Where(c => c.RestaurantId == restaurantClaim)
@@ -189,7 +189,8 @@ public class ClientsController : ControllerBase
         var claims = new List<Claim> { new(ClaimTypes.Role, "client"), 
             new("restId", client.RestaurantId.ToString()),
             new("clientId", client.Id.ToString()),
-            new("tableId", table.Id.ToString())
+            new("tableId", table.Id.ToString()),
+            new("assignedEmployeeId", client.AssignedEmployeeId.ToString())
         };
         var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
@@ -245,7 +246,7 @@ public class ClientsController : ControllerBase
     public async Task<IActionResult> EndSession(int restId)
     {
         var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
-        var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
+        var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
         var restaurant = await _context.Restaurants.Include(r=> r.Clients)
             .ThenInclude(c=> c.FoodQueue)
             .ThenInclude(fq=> fq.FoodQueueExtras)

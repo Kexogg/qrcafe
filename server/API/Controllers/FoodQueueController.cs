@@ -88,7 +88,7 @@ namespace QrCafe.Controllers
         [Authorize (Roles = "employee")]
         public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueueByEmployee(List<FoodOrder> foodList, int restId, Guid clientId)
         {
-            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value);
+            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id")?.Value);
             var restaurant = await _context.Restaurants.Include(r=>r.Employees)
                 .ThenInclude(r => r.Clients)
                 .Include(r => r.Foods).ThenInclude(food => food.FoodExtras)
@@ -127,7 +127,7 @@ namespace QrCafe.Controllers
         public async Task<ActionResult<IEnumerable<FoodQueueDTO>>> PostFoodQueue(List<FoodOrder> foodList, int restId)
         {
             var restaurantIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
-            var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "clientId").Value);
+            var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
             var tableIdClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "tableId")?.Value);
             var restaurant = await _context.Restaurants.Include(r => r.Clients)
                 .Include(r => r.Foods).ThenInclude(food => food.FoodExtras)

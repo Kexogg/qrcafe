@@ -57,7 +57,7 @@ namespace QrCafe.Controllers
         [HttpGet("info")]
         public async Task<ActionResult<EmployeeDTO>> GetEmployeeInfo(int restId)
         {
-            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value);
+            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id")?.Value);
             var employee = await _context.Employees.Where(e => e.RestaurantId == restId)
                 .FirstOrDefaultAsync(e=> e.Id == employeeIdClaim);
 
@@ -73,7 +73,7 @@ namespace QrCafe.Controllers
         [HttpPut]
         public async Task<IActionResult> ChangeShiftState([FromQuery] bool state, int restId)
         {
-            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "employeeId")?.Value);
+            var employeeIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id")?.Value);
             var employee = await _context.Employees.Where(e => e.RestaurantId == restId)
                 .FirstOrDefaultAsync(e=> e.Id == employeeIdClaim);
             if (employee == null) return NotFound();
@@ -180,7 +180,7 @@ namespace QrCafe.Controllers
             if (employee == null) return Unauthorized();
             var claims = new List<Claim> { new(ClaimTypes.Name, employee.Login),
                 new(ClaimTypes.Role,"employee"),
-                new("employeeId", employee.Id.ToString())
+                new("id", employee.Id.ToString())
             };
             var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
