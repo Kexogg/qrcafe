@@ -127,6 +127,7 @@ namespace QrCafe.Controllers
                 var foodCategory = new FoodCategory(foodId, category.Id, restId);
                 await _context.FoodCategories.AddAsync(foodCategory);
             }
+            await _context.SaveChangesAsync();
             return Ok(new CategoryDTO(category));
         }
 
