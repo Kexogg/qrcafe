@@ -2,19 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using QrCafe.Models;
 
 namespace QrCafe;
 
-public class Message
-{
-    public string Text;
-    public string ClientId;
-}
-
 [Authorize]
-public class Chat : Hub
+public class ChatController : Hub
 {
-    public async Task Send([FromBody] Message message)
+    public async Task Send([FromBody] ChatMessage message)
     {
         var role = Context.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToString();
         switch (role)
@@ -35,12 +30,17 @@ public class Chat : Hub
             {
                 if (Context.UserIdentifier is string employeeId)
                 {
-                    await Clients.Users(employeeId, message.ClientId).SendAsync("Receive", message.Text);
+                    await Clients.Users(employeeId, message.ClientId.ToString()).SendAsync("Receive", message.Text);
                 }
-
                 break;
             }
         }
+    }
+    [AllowAnonymous]
+    public override async Task OnConnectedAsync()
+    {
+        await Clients.All.SendAsync("Notify", "Гэй вошел в чат");
+        await base.OnConnectedAsync();
     }
 }
 

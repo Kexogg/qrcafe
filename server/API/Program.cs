@@ -99,7 +99,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapHub<Chat>("/api/chat");
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true)
+    .AllowCredentials());
+
+app.MapHub<ChatController>("/api/chat");
 
 app.UseAuthentication();
 app.UseAuthorization();

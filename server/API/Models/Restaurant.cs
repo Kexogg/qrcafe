@@ -65,6 +65,7 @@ public partial class Restaurant
 
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<FoodCategory> FoodCategories { get; set; } = new List<FoodCategory>();
+    
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual ICollection<Extra> Extras { get; set; } = new List<Extra>();
     
