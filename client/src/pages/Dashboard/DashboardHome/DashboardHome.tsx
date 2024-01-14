@@ -12,28 +12,44 @@ import {
     SoupKitchenRounded,
     TableRestaurantRounded,
 } from '@mui/icons-material'
+import { ErrorBox } from '../../../components/UI/ErrorBox/ErrorBox.tsx'
+import { AxiosError } from 'axios'
 
 export const DashboardHome = () => {
     const session = useAppSelector((state) => state.session)
-    const [restaurant, setRestaurant] = useState<IRestaurant | null>(null)
-    const [employees, setEmployees] = useState<IEmployee[] | null>(null)
-    const [tables, setTables] = useState<ITable[] | null>(null)
+    const [restaurant, setRestaurant] = useState<IRestaurant>({} as IRestaurant)
+    const [employees, setEmployees] = useState<IEmployee[]>([])
+    const [tables, setTables] = useState<ITable[]>([])
+    const [error, setError] = useState<string | Error | AxiosError>('')
+    const [loading, setLoading] = useState(true)
+
     useEffect(() => {
-        getRestaurant(session.token!, session.restaurantId!).then((r) => {
-            setRestaurant(r)
-        })
-        getEmployees(session.token!, session.restaurantId!).then((r) => {
-            setEmployees(r)
-        })
-        getTables(session.token!, session.restaurantId!).then((r) => {
-            setTables(r.filter((t) => t.client !== null))
-        })
+        // TODO: better error handling
+        const fetch = async () => {
+            getRestaurant(session.token!, session.restaurantId!)
+                .then((r) => {
+                    setRestaurant(r)
+                })
+                .catch((e) => setError(e))
+            getEmployees(session.token!, session.restaurantId!)
+                .then((r) => {
+                    setEmployees(r)
+                })
+                .catch((e) => setError(e))
+            getTables(session.token!, session.restaurantId!)
+                .then((r) => {
+                    setTables(r.filter((t) => t.client !== null))
+                })
+                .catch((e) => setError(e))
+        }
+        fetch().finally(() => setLoading(false))
     }, [session.restaurantId, session.token])
-    if (!restaurant || !employees || !tables) return <LoadingSpinner />
+    if (loading) return <LoadingSpinner />
     return (
         <section>
             <h1>{restaurant?.name}</h1>
             <h3>Адрес: {restaurant?.address}</h3>
+            {error && <ErrorBox error={error} />}
             <div className={'grid grid-cols-2 gap-3 lg:grid-cols-3'}>
                 <Link to={'../employees'}>
                     <DashboardHomeCard
