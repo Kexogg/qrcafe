@@ -118,15 +118,15 @@ namespace QrCafe.Controllers
                 RestaurantId = restId
             };
             await _context.Categories.AddAsync(category);
-            if (categoryDto.FoodIdList != null)
-                foreach (var foodId in categoryDto.FoodIdList)
-                {
-                    var food = restaurant.Foods.FirstOrDefault(f => f.Id == foodId);
-                    if (food == null) continue;
-                    var foodCategory = new FoodCategory(foodId, category.Id, restId);
-                    await _context.FoodCategories.AddAsync(foodCategory);
-                }
             await _context.SaveChangesAsync();
+            if (categoryDto.FoodIdList == null) return Ok(new CategoryDTO(category));
+            foreach (var foodId in categoryDto.FoodIdList)
+            {
+                var food = restaurant.Foods.FirstOrDefault(f => f.Id == foodId);
+                if (food == null) continue;
+                var foodCategory = new FoodCategory(foodId, category.Id, restId);
+                await _context.FoodCategories.AddAsync(foodCategory);
+            }
             return Ok(new CategoryDTO(category));
         }
 
