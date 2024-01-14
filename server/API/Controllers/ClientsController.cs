@@ -246,7 +246,7 @@ public class ClientsController : ControllerBase
     public async Task<IActionResult> EndSession(int restId)
     {
         var restaurantClaim = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
-        var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
+        var clientIdClaim = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "id")?.Value);
         var restaurant = await _context.Restaurants.Include(r=> r.Clients)
             .ThenInclude(c=> c.FoodQueue)
             .ThenInclude(fq=> fq.FoodQueueExtras)

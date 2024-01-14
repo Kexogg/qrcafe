@@ -178,7 +178,9 @@ namespace QrCafe.Controllers
             var employee = restaurant.Employees.FirstOrDefault(e =>
                 e.Login == employeeLoginData.Login && e.Password == employeeLoginData.Password);
             if (employee == null) return Unauthorized();
-            var claims = new List<Claim> { new(ClaimTypes.Name, employee.Login),
+            var claims = new List<Claim> { 
+                new("restId", employee.RestaurantId.ToString()),
+                new(ClaimTypes.Name, employee.Login),
                 new(ClaimTypes.Role,"employee"),
                 new("id", employee.Id.ToString())
             };

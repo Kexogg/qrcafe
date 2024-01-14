@@ -1,17 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace QrCafe.Models;
 
-[PrimaryKey(nameof(RestId),nameof(ClientId))]
 public class Chat
 {
-    public int RestId { get; set; }
-    
-    public Guid ClientId { get; set; }
+    public Chat(Client client)
+    {
+        Client = client;
+        Id = client.Id;
+        RestaurantId = client.RestaurantId;
+    }
 
     public ICollection<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
-
+    
+    public Guid Id { get; set; }
+    
     public Client Client { get; set; }
 
+    public int RestaurantId { get; set; }
+    
     public Restaurant Restaurant { get; set; }
 }

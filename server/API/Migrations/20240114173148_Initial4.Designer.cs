@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using QrCafe;
@@ -11,9 +12,11 @@ using QrCafe;
 namespace QrCafe.Migrations
 {
     [DbContext(typeof(QrCafeDbContext))]
-    partial class QrCafeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240114173148_Initial4")]
+    partial class Initial4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,53 +66,6 @@ namespace QrCafe.Migrations
                     b.HasIndex("RestaurantId");
 
                     b.ToTable("categories", (string)null);
-                });
-
-            modelBuilder.Entity("QrCafe.Models.Chat", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("RestId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RestaurantId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("RestaurantId");
-
-                    b.ToTable("Chats");
-                });
-
-            modelBuilder.Entity("QrCafe.Models.ChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly>("TimeStamp")
-                        .HasColumnType("time without time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("QrCafe.Models.Client", b =>
@@ -541,36 +497,6 @@ namespace QrCafe.Migrations
                     b.Navigation("Restaurant");
                 });
 
-            modelBuilder.Entity("QrCafe.Models.Chat", b =>
-                {
-                    b.HasOne("QrCafe.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("QrCafe.Models.Restaurant", "Restaurant")
-                        .WithMany()
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Restaurant");
-                });
-
-            modelBuilder.Entity("QrCafe.Models.ChatMessage", b =>
-                {
-                    b.HasOne("QrCafe.Models.Chat", "Chat")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
-                });
-
             modelBuilder.Entity("QrCafe.Models.Client", b =>
                 {
                     b.HasOne("QrCafe.Models.Employee", "AssignedEmployee")
@@ -780,11 +706,6 @@ namespace QrCafe.Migrations
             modelBuilder.Entity("QrCafe.Models.Category", b =>
                 {
                     b.Navigation("FoodCategories");
-                });
-
-            modelBuilder.Entity("QrCafe.Models.Chat", b =>
-                {
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("QrCafe.Models.Client", b =>
