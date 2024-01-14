@@ -69,7 +69,7 @@ namespace QrCafe.Controllers
         /// <param name="restId">ID ресторана</param>
         /// <returns></returns>
         [HttpPut("{id:int}/food")]
-        public async Task<IActionResult> PutCategory(int id, CategoryDTO categoryDto, int restId)
+        public async Task<ActionResult<CategoryDTO>> PutCategory(int id, CategoryDTO categoryDto, int restId)
         {
             var restaurant = await _context.Restaurants.Include(r => r.Foods)
                 .Include(r => r.Categories).FirstOrDefaultAsync(r => r.Id == restId);
@@ -94,12 +94,7 @@ namespace QrCafe.Controllers
                 }
 
             await _context.SaveChangesAsync();
-            var result = new
-            {
-                category,
-                addedFood
-            };
-            return Ok(result);
+            return await GetCategory(id, restId);
         }
 
         // POST: /api/restaurants/0/Categories
