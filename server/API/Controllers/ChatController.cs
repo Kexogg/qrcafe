@@ -6,7 +6,7 @@ using QrCafe.Models;
 
 namespace QrCafe;
 
-[AllowAnonymous]
+[Authorize]
 public class ChatController : Hub
 {
     public async Task Send([FromBody] ChatMessage message)
