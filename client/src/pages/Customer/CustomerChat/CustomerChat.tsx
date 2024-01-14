@@ -1,33 +1,13 @@
 import { useAppSelector } from '../../../hooks/hooks.ts'
 import { useState } from 'react'
-import * as signalR from '@microsoft/signalr'
-enum Sender {
-    CUSTOMER,
-    WAITER,
-}
-
-interface IMessage {
-    text: string
-    sender: Sender
-    time: string
-}
+import useChat from '../../../hooks/useChat.ts'
 
 export const CustomerChat = () => {
     const waiter = useAppSelector((state) => state.waiter)
     const session = useAppSelector((state) => state.session)
-    const [messages, setMessages] = useState<IMessage[]>([])
     const [message, setMessage] = useState('')
-    const sendMessage = () => {
-        //TODO: Placeholder
-        const newMessage = {
-            text: message,
-            sender: Sender.CUSTOMER,
-            time: new Date().toISOString(),
-        }
-        setMessages([...messages, newMessage])
-        setMessage('')
-    }
-    const connection = new signalR.HubConnectionBuilder()
+
+    /*const connection = new signalR.HubConnectionBuilder()
         .withUrl('/api/chat', {
             accessTokenFactory: () => session.token!,
         })
@@ -36,7 +16,8 @@ export const CustomerChat = () => {
     connection.on('send', (data) => {
         console.log(data)
     })
-    connection.start().then(() => connection.invoke('send', 'Hello'))
+    connection.start().then(() => connection.invoke('send', 'Hello'))*/
+    const { messages, sendMessage } = useChat('/api/chat', session.token!)
     return (
         <section className={'px-3'}>
             <header>
@@ -60,7 +41,7 @@ export const CustomerChat = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-                <button onClick={() => sendMessage()}>Отправить</button>
+                <button onClick={() => sendMessage(message)}>Отправить</button>
             </form>
         </section>
     )
