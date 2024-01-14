@@ -4,46 +4,64 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using QrCafe.Models;
-using SQLitePCL;
 
 namespace QrCafe;
 
 [Authorize]
 public class ChatController : Hub
 {
+    public ChatController(QrCafeDbContext context)
+    {
+        _context = context;
+    }
     public QrCafeDbContext _context;
     public async Task Send(string message, [FromQuery] string chatId)
     {
-        
-        var role = Context.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToString();
-        switch (role)
+        try
         {
-            case "client":
+            var role = Context.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToString();
+            switch (role)
             {
-                if (Context.UserIdentifier is string clientId)
+                case "client":
                 {
-                    var employee =
-                        Context.User.Claims.FirstOrDefault(c => c.Type == "assignedEmployeeId")?.Value.ToString();
+                    if (Context.UserIdentifier is string clientId)
+                    {
+                        var employee =
+                            Context.User.Claims.FirstOrDefault(c => c.Type == "assignedEmployeeId")?.Value.ToString();
 
-                    await Clients.Users(clientId, employee).SendAsync("Receive", message);
+                        await Clients.Users(clientId, employee).SendAsync("Receive", message);
+                        var messageData = new ChatMessage(message,Guid.Parse(clientId),0);
+                        await _context.ChatMessages.AddAsync(messageData);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    break;
                 }
-
-                break;
-            }
-            case "employee":
-            {
-                if (Context.UserIdentifier is string employeeId)
+                case "employee":
                 {
-                    await Clients.Users(employeeId, chatId).SendAsync("Receive", message);
+                    if (Context.UserIdentifier is string employeeId)
+                    {
+                        await Clients.Users(employeeId, chatId).SendAsync("Receive", message);
+                        await Clients.Users(chatId, employeeId).SendAsync("Receive", message);
+                        var messageData = new ChatMessage(message,Guid.Parse(chatId),1);
+                        await _context.ChatMessages.AddAsync(messageData);
+                        await _context.SaveChangesAsync();
+                    }
+                
+                    break;
                 }
-                break;
             }
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
     public override async Task OnConnectedAsync()
     {
-        await Clients.All.SendAsync("Notify", "Вошел в чат");
-        await base.OnConnectedAsync();
+        await Clients.All.SendAsync("Notify", "Entered chat");
         var restaurantIdClaim = int.Parse(Context.User.Claims.FirstOrDefault(c => c.Type == "restId")?.Value);
         var userIdClaim = Guid.Parse(Context.User?.Claims.FirstOrDefault(c => c.Type == "id")?.Value);
         var role = Context.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToString();
@@ -83,6 +101,7 @@ public class ChatController : Hub
                 }
             }
         }
+        await base.OnConnectedAsync();
     }
 }
 

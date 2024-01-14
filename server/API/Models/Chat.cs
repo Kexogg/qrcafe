@@ -5,6 +5,7 @@ namespace QrCafe.Models;
 
 public class Chat
 {
+    public Chat(){}
     public Chat(Client client)
     {
         Client = client;
@@ -16,6 +17,7 @@ public class Chat
     
     public Guid Id { get; set; }
     
+    [DeleteBehavior(DeleteBehavior.ClientCascade)]
     public Client Client { get; set; }
 
     public int RestaurantId { get; set; }
