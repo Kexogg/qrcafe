@@ -188,7 +188,7 @@ public class ClientsController : ControllerBase
         await _context.SaveChangesAsync();
         var claims = new List<Claim> { new(ClaimTypes.Role, "client"), 
             new("restId", client.RestaurantId.ToString()),
-            new("clientId", client.Id.ToString()),
+            new("id", client.Id.ToString()),
             new("tableId", table.Id.ToString()),
             new("assignedEmployeeId", client.AssignedEmployeeId.ToString())
         };

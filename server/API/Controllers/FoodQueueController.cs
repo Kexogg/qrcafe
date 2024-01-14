@@ -54,12 +54,12 @@ namespace QrCafe.Controllers
 
         // PUT: /api/restaurants/0/FoodQueue/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPatch]
+        [HttpPatch("{id:guid}")]
         [Authorize (Roles = "employee")]
         public async Task<IActionResult> PatchFoodQueue(Guid id, FoodQueue foodQueueData, int restId)
         {
             var foodQueue = await _context.FoodQueues.Where(fq => fq.RestaurantId == restId)
-                .FirstOrDefaultAsync(fq=> fq.Id == foodQueueData.Id);
+                .FirstOrDefaultAsync(fq=> fq.Id == id);
             if (foodQueue == null) return NotFound();
 
             foodQueue.State = foodQueueData.State;
@@ -75,10 +75,8 @@ namespace QrCafe.Controllers
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
 
             return NoContent();
