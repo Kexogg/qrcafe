@@ -6,7 +6,7 @@ using QrCafe.Models;
 
 namespace QrCafe;
 
-[Authorize]
+[AllowAnonymous]
 public class ChatController : Hub
 {
     public async Task Send([FromBody] ChatMessage message)
@@ -21,7 +21,7 @@ public class ChatController : Hub
                     var employee =
                         Context.User.Claims.FirstOrDefault(c => c.Type == "assignedEmployeeId")?.Value.ToString();
 
-                    await Clients.Users(employee, clientId).SendAsync("Receive", message.Text);
+                    await Clients.All.SendAsync("Receive", message.Text);
                 }
 
                 break;
@@ -39,7 +39,7 @@ public class ChatController : Hub
     [AllowAnonymous]
     public override async Task OnConnectedAsync()
     {
-        await Clients.All.SendAsync("Notify", "Гэй вошел в чат");
+        await Clients.All.SendAsync("Notify", "Вошел в чат");
         await base.OnConnectedAsync();
     }
 }
