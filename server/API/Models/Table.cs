@@ -47,12 +47,13 @@ public partial class Table
     
     public static Employee AssignEmployee(QrCafeDbContext db, Table table)
     {
-        var tables = db.Tables.Where(t => t.RestaurantId == table.RestaurantId).ToListAsync().Result;
+        var tables = db.Tables.Include(t=> t.AssignedEmployee).Where(t => t.RestaurantId == table.RestaurantId).ToListAsync().Result;
         var availableEmployees = db.Employees
             .Where(e => e.RestaurantId == table.RestaurantId && e.Available && e.Role == 1)
             .ToDictionary(employee => employee, _ => 0);
         if (availableEmployees.Count == 0) return null;
-        foreach (var tabl in tables.Where(tabl => tabl.AssignedEmployeeId != null))
+        foreach (var tabl in tables.Where(tabl => tabl.AssignedEmployee != null
+                                                  && tabl.AssignedEmployee.Role != 0))
         {
             availableEmployees[availableEmployees.Keys.FirstOrDefault(employee => employee.Id==tabl.AssignedEmployeeId)] += 1;
         }
