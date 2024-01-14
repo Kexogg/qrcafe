@@ -26,23 +26,27 @@ export const DashboardHome = () => {
     useEffect(() => {
         // TODO: better error handling
         const fetch = async () => {
-            getRestaurant(session.token!, session.restaurantId!)
+            return await getRestaurant(session.token!, session.restaurantId!)
                 .then((r) => {
                     setRestaurant(r)
-                })
-                .catch((e) => setError(e))
-            getEmployees(session.token!, session.restaurantId!)
-                .then((r) => {
-                    setEmployees(r)
-                })
-                .catch((e) => setError(e))
-            getTables(session.token!, session.restaurantId!)
-                .then((r) => {
-                    setTables(r.filter((t) => t.client !== null))
+                    getEmployees(session.token!, session.restaurantId!)
+                        .then((r) => {
+                            setEmployees(r)
+                            getTables(session.token!, session.restaurantId!)
+                                .then((r) => {
+                                    setTables(
+                                        r.filter((t) => t.client !== null),
+                                    )
+                                })
+                                .catch((e) => setError(e))
+                        })
+                        .catch((e) => setError(e))
                 })
                 .catch((e) => setError(e))
         }
-        fetch().finally(() => setLoading(false))
+        fetch().finally(() => {
+            setLoading(false)
+        })
     }, [session.restaurantId, session.token])
     if (loading) return <LoadingSpinner />
     return (

@@ -49,22 +49,40 @@ interface Property {
     requiresItem?: boolean
 }
 
-type DashboardEditorTemplateProps<T extends WithId> = {
+type DashboardEditorTemplatePropsBase<T extends WithId> = {
     pageTitle: string
-    id?: string
     getItem: (token: string, restaurantId: string, id: string) => Promise<T>
     updateItem: (
         token: string,
         restaurantId: string,
         item: T,
-    ) => Promise<AxiosResponse<unknown, unknown>>
-    createItem: (
-        token: string,
-        restaurantId: string,
-        item: T,
-    ) => Promise<AxiosResponse<unknown, unknown>>
+    ) => Promise<AxiosResponse<unknown, unknown>> | Promise<T>
     properties: Property[]
 }
+
+type DashboardEditorTemplatePropsWithExistingItem<T extends WithId> =
+    DashboardEditorTemplatePropsBase<T> & {
+        id: string
+        createItem?: (
+            token: string,
+            restaurantId: string,
+            item: T,
+        ) => Promise<AxiosResponse<unknown, unknown>>
+    }
+
+type DashboardEditorTemplatePropsWithCreateItem<T extends WithId> =
+    DashboardEditorTemplatePropsBase<T> & {
+        id?: string
+        createItem: (
+            token: string,
+            restaurantId: string,
+            item: T,
+        ) => Promise<AxiosResponse<unknown, unknown>>
+    }
+
+type DashboardEditorTemplateProps<T extends WithId> =
+    | DashboardEditorTemplatePropsWithExistingItem<T>
+    | DashboardEditorTemplatePropsWithCreateItem<T>
 
 export const DashboardEditorTemplate = <T extends WithId>({
     pageTitle,
@@ -100,9 +118,9 @@ export const DashboardEditorTemplate = <T extends WithId>({
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         async function send() {
-            return itemExists
-                ? await updateItem(session.token!, session.restaurantId!, item)
-                : await createItem(session.token!, session.restaurantId!, item)
+            return !itemExists && createItem
+                ? await createItem(session.token!, session.restaurantId!, item)
+                : await updateItem(session.token!, session.restaurantId!, item)
         }
 
         setLoading(true)

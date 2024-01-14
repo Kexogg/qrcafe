@@ -519,6 +519,29 @@ export const createOrder = async (
         .then((response) => response)
 }
 
+export const updateOrderItem = async (
+    token: string,
+    restaurantId: string,
+    orderId: string,
+    orderEntry: IOrderEntry,
+) => {
+    return api
+        .patch(
+            `/restaurants/${restaurantId}/foodQueue/${orderId}`,
+            {
+                id: Number(orderEntry.food.id),
+                count: orderEntry.count,
+                state: orderEntry.state,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+        .then((response) => response)
+}
+
 export const deleteOrder = async (
     token: string,
     restaurantId: string,

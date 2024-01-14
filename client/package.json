@@ -13,6 +13,7 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fontsource-variable/roboto-flex": "^5.0.8",
+    "@microsoft/signalr": "^8.0.0",
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.17",
     "@react-pdf/renderer": "^3.1.14",
@@ -24,7 +25,8 @@
     "react-qr-code": "^2.0.12",
     "react-qr-reader": "^3.0.0-beta-1",
     "react-redux": "^9.0.1",
-    "react-router-dom": "^6.18.0"
+    "react-router-dom": "^6.18.0",
+    "signalr": "^2.4.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

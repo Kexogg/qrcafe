@@ -1,6 +1,6 @@
 import { useAppSelector } from '../../../hooks/hooks.ts'
 import { useState } from 'react'
-
+import * as signalR from '@microsoft/signalr'
 enum Sender {
     CUSTOMER,
     WAITER,
@@ -14,6 +14,7 @@ interface IMessage {
 
 export const CustomerChat = () => {
     const waiter = useAppSelector((state) => state.waiter)
+    const session = useAppSelector((state) => state.session)
     const [messages, setMessages] = useState<IMessage[]>([])
     const [message, setMessage] = useState('')
     const sendMessage = () => {
@@ -26,6 +27,16 @@ export const CustomerChat = () => {
         setMessages([...messages, newMessage])
         setMessage('')
     }
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl('/api/chat', {
+            accessTokenFactory: () => session.token!,
+        })
+        .build()
+
+    connection.on('send', (data) => {
+        console.log(data)
+    })
+    connection.start().then(() => connection.invoke('send', 'Hello'))
     return (
         <section className={'px-3'}>
             <header>

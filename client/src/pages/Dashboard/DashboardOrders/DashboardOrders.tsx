@@ -24,7 +24,7 @@ export const DashboardOrders = () => {
                             ? param
                                   .reduce(
                                       (acc, orderEntry) =>
-                                          acc + orderEntry.count ?? 1,
+                                          acc + orderEntry.count,
                                       0,
                                   )
                                   .toString()
@@ -42,6 +42,10 @@ export const DashboardOrders = () => {
                                 0,
                             )
                             .toString() + ' ₽',
+                },
+                {
+                    name: 'Клиент',
+                    key: 'name',
                 },
                 /*{
                     name: 'Официант',
