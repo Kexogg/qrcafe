@@ -1,6 +1,7 @@
 import { IOrderEntry } from './IOrderEntry.ts'
+import { WithId } from './types.ts'
 
-export interface IClient {
+export interface IClient extends WithId {
     tableId: number
     restaurantId: number
     id: string

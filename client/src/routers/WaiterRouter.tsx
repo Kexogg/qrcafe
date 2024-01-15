@@ -6,6 +6,7 @@ import { WaiterChat } from '../pages/Waiter/WaiterChat/WaiterChat.tsx'
 import { WaiterProfile } from '../pages/Waiter/WaiterProfile/WaiterProfile.tsx'
 import { WaiterCatalog } from '../pages/Waiter/WaiterCatalog/WaiterCatalog.tsx'
 import { TablePage } from '../pages/Waiter/TablePage/TablePage.tsx'
+import { WaiterChatCustomer } from '../pages/Waiter/WaiterChat/WaiterChatCustomer.tsx'
 
 export const WaiterRouter = () => {
     return (
@@ -14,6 +15,7 @@ export const WaiterRouter = () => {
                 <Route index path="home" element={<WaiterHome />} />
                 <Route path="new-order/:id?" element={<NewOrder />} />
                 <Route path="chat" element={<WaiterChat />} />
+                <Route path="chat/:id" element={<WaiterChatCustomer />} />
                 <Route path="account" element={<WaiterProfile />} />
                 <Route path="catalog" element={<WaiterCatalog />} />
                 <Route path="table/:id" element={<TablePage />} />

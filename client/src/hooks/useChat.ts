@@ -7,7 +7,11 @@ interface IMessage {
     time: string
 }
 
-const useChat = (url: string, accessToken: string) => {
+const useChat = (
+    url: string,
+    accessToken: string,
+    clientId?: string | undefined,
+) => {
     const [connection, setConnection] = useState<signalR.HubConnection | null>(
         null,
     )
@@ -15,14 +19,14 @@ const useChat = (url: string, accessToken: string) => {
 
     useEffect(() => {
         const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl(url, {
+            .withUrl(url + (clientId ? `?clientId=${clientId}` : ''), {
                 accessTokenFactory: () => accessToken,
             })
             .withAutomaticReconnect()
             .build()
 
         setConnection(newConnection)
-    }, [url, accessToken])
+    }, [url, accessToken, clientId])
 
     const sendMessage = async (message: string) => {
         if (connection) {

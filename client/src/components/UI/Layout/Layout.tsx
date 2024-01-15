@@ -7,7 +7,7 @@ type LayoutProps = {
 const Layout = ({ customer }: LayoutProps) => {
     return (
         <div className={'flex min-h-[100dvh] flex-col bg-primary-100'}>
-            <main className={'container mx-auto mt-5 grow'}>
+            <main className={'container mx-auto mt-5 flex grow flex-col'}>
                 <Outlet />
             </main>
             <NavigationMenu customer={customer} />

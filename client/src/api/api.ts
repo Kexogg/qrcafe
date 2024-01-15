@@ -5,6 +5,7 @@ import { ITable } from '../types/ITable.ts'
 import { ICategory } from '../types/ICategory.ts'
 import { IOrderEntry } from '../types/IOrderEntry.ts'
 import { IRestaurant } from '../types/IRestaurant.ts'
+import { IClient } from '../types/IClient.ts'
 
 const toFormData = <T>(obj: T) => {
     const formData = new FormData()
@@ -577,8 +578,23 @@ export const getClients = async (token: string, restaurantId: string) => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then((response) => response.data)
+        .then((response) => response.data as IClient[])
 }
+
+export const getClientById = async (
+    token: string,
+    restaurantId: string,
+    clientId: string,
+) => {
+    return api
+        .get(`/restaurants/${restaurantId}/clients/${clientId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => response.data as IClient)
+}
+
 export const deleteClient = async (
     token: string,
     restaurantId: string,
